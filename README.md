@@ -1,4 +1,4 @@
-## Iot Atlas
+## IoT Atlas
 
 The content portion of the IoT Atlas
 
