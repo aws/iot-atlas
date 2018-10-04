@@ -1,6 +1,6 @@
 # Guidelines for contributing
 
-Thank you for your interest in contributing to AWS documentation! We greatly value feedback and contributions from our community.
+Thank you for your interest in contributing to the IoT Atlas! We greatly value feedback and contributions from our community.
 
 Please read through this document before you submit any pull requests or issues. It will help us work together more effectively.
 
@@ -8,11 +8,11 @@ Please read through this document before you submit any pull requests or issues.
 
 When you submit a pull request, our team is notified and will respond as quickly as we can. We'll do our best to work with you to ensure that your pull request adheres to our style and standards. If we merge your pull request, we might make additional edits later for style or clarity.
 
-The AWS documentation source files on GitHub aren't published directly to the official documentation website. If we merge your pull request, we'll publish your changes to the documentation website as soon as we can, but they won't appear immediately or automatically.
+The documentation in this repository are not published directly to the IoT Atlas website. If we merge your pull request, we'll publish your changes to the documentation website as soon as we can, but they won't appear immediately or automatically.
 
 We look forward to receiving your pull requests for:
 
-* New content you'd like to contribute (such as new code samples or tutorials)
+* New content you'd like to contribute (such as new designs, considerations, or examples)
 * Inaccuracies in the content
 * Information gaps in the content that need more detail to be complete
 * Typos or grammatical errors
@@ -25,23 +25,23 @@ We look forward to receiving your pull requests for:
 To contribute, send us a pull request. For small changes, such as fixing a typo or adding a link, you can use the [GitHub Edit Button](https://blog.github.com/2011-04-26-forking-with-the-edit-button/). For larger changes:
 
 1. [Fork the repository](https://help.github.com/articles/fork-a-repo/).
-2. In your fork, make your change in a branch that's based on this repo's **master** branch.
+2. In your fork, make your change in a branch that's based on this repository's **master** branch.
 3. Commit the change to your fork, using a clear and descriptive commit message.
 4. [Create a pull request](https://help.github.com/articles/creating-a-pull-request-from-a-fork/), answering any questions in the pull request form.
 
 Before you send us a pull request, please be sure that:
 
 1. You're working from the latest source on the **master** branch.
-2. You check [existing open](https://github.com/awsdocs/iot-atlas/pulls), and [recently closed](https://github.com/awsdocs/iot-atlas/pulls?q=is%3Apr+is%3Aclosed), pull requests to be sure that someone else hasn't already addressed the problem.
+2. You check [existing open](https://github.com/awsdocs/iot-atlas/pulls), and [recently closed](https://github.com/awsdocs/iot-atlas/pulls?q=is%3Apr+is%3Aclosed), pull requests to be sure that someone else has not already addressed the problem.
 3. You [create an issue](https://github.com/awsdocs/iot-atlas/issues/new) before working on a contribution that will take a significant amount of your time.
 
-For contributions that will take a significant amount of time, [open a new issue](https://github.com/awsdocs/iot-atlas/issues/new) to pitch your idea before you get started. Explain the problem and describe the content you want to see added to the documentation. Let us know if you'll write it yourself or if you'd like us to help. We'll discuss your proposal with you and let you know whether we're likely to accept it. We don't want you to spend a lot of time on a contribution that might be outside the scope of the documentation or that's already in the works.
+For contributions that will take a significant amount of time, [open a new issue](https://github.com/awsdocs/iot-atlas/issues/new) to pitch your idea before you get started. Explain the problem and describe the content you want to see added. Let us know if you'll write it yourself or if you'd like us to help. We'll discuss your proposal with you and let you know whether we're likely to accept it. We don't want you to spend a lot of time on a contribution that might be outside the scope of the IoT Atlas or that is already in the works.
 
 ## Finding contributions to work on
 
 If you'd like to contribute, but don't have a project in mind, look at the [open issues](https://github.com/awsdocs/iot-atlas/issues) in this repository for some ideas. Any issues with the [help wanted](https://github.com/awsdocs/iot-atlas/labels/help%20wanted) or [enhancement](https://github.com/awsdocs/iot-atlas/labels/enhancement) labels are a great place to start.
 
-In addition to written content, we really appreciate new examples and code samples for our documentation, such as examples for different platforms or environments, and code samples in additional languages.
+In addition to written content, we really appreciate new examples for each design, such as examples for different platforms or environments, and code samples in additional languages.
 
 ## Code of conduct
 
