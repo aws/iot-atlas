@@ -1,0 +1,27 @@
+
+h2 {
+    border-bottom: 3px solid #f28272;
+    /*display: inline-block;*/
+    /*border-bottom: 1px solid #dedede;*/
+    margin-bottom: 15px;
+}
+
+html {
+  font-size: 15px;
+}
+
+article > aside {
+  top: 2rem;
+  width: 15rem;
+}
+
+article > aside .menu .dd-item {
+  padding-left: 1rem;
+  list-style: none;
+  font-size: 14px;
+}
+
+.iotAtlasLeftSmall {
+  float: left;
+  height: 75px;
+}
