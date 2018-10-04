@@ -1,0 +1,22 @@
+{
+  "baseURL": "http://iotatlas.net",
+  "languageCode": "en-us",
+  "title": "IoT Atlas",
+  "theme": "docdock",
+  "params": {
+    "ordersectionsby": "weight",
+    "editURL": false
+  },
+  "taxonomies": {
+    "tag": "tags",
+    "category": "categories",
+    "persona": "personae"
+  },
+  "outputs": {
+    "home": [
+      "HTML",
+      "RSS",
+      "JSON"
+    ]
+  }
+}
