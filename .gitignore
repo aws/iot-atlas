@@ -1,0 +1,17 @@
+# IDE and Editor artifacts #
+*.bbprojectd
+.idea
+
+# Temporary Files #
+tmp_*
+cfg.tmp.json
+
+# OS generated files #
+.DS_Store
+.DS_Store?
+
+# Hugo generated content
+public/
+
+# Dev files
+Pipfile*
