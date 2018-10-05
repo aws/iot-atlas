@@ -17,7 +17,7 @@ IoT solutions need to reliably and securely receive data measured in a remote en
 ## Solution
 IoT solutions use the Telemetry design to ensure the delivery of sensed data across intermittent networks by supporting adept communication protocols, to provide scalable reception of data at different reporting frequencies and volumes, and to route data for use by other components.
 
-An IoT solution should implement the Telemetry design shown in the following diagram to deliver this functionality.
+The Telemetry design shown in the following diagram can deliver this functionality.
 
 ![Telemetry Architecture](telemetry.png) 
 

@@ -14,7 +14,7 @@ IoT solutions are required to provide a mechanism for devices to update their ow
 ## Solution
 IoT solutions that leverage the [Command]({{< ref "/designs/command" >}}) and [Device State Replica]({{< ref "/designs/device_state_replica" >}}) designs alongside a globally available and scalable storage solution are able to meet all the challenges inherent in updating the software of devices in a large fleet. 
 
-An IoT solution should implement the Software Update pattern shown in the following diagram to deliver this functionality. 
+The Software Update pattern shown in the following diagram can deliver this functionality. 
 
 ![Software Update](software-update.png)
 

@@ -16,7 +16,7 @@ In order to deliver insights, IoT solutions need to support real-time, batch-mod
 ## Solution
 IoT solutions ensure that the business can obtain the most current and evolving collection of insights by storing raw unprocessed sensor data in a manner supporting the in-order replay of those raw samples. The store-and-replay ability should make historic raw samples appear almost as if the samples were arriving in the normal time-ordered sequence of non-historic samples.
 
-An IoT solution should implement the Telemetry Archiving design shown in the following diagram to deliver this functionality.
+The Telemetry Archiving design shown in the following diagram can deliver this functionality.
 
 
 ![Telemetry Archiving Architecture](archiving.png) ([PPTx](atlas-archiving.pptx))

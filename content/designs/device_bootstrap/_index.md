@@ -19,7 +19,7 @@ A *privilege escalator* enables a device with short-lived, lower-privilege crede
 
 Although there are situations where an implementation might combine registration with the ability to obtain fully escalated privileges, by breaking down the challenges as this design does, each challenge can be addressed distinctly, using new or legacy systems. 
 
-An IoT solution should implement the Device Bootstrap design shown in the following diagram to deliver this functionality.
+The Device Bootstrap design shown in the following diagram can deliver this functionality.
 
 ![Device Bootstrapping](bootstrap.png)
 

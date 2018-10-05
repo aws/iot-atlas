@@ -12,7 +12,7 @@ IoT solutions are expected to interact with devices in such a way that the solut
 ## Solution
 IoT Solutions use the Command design to ask devices to perform an action and ensure reliable interactions by leveraging a simple concept: no requested action is deemed successful unless it is acknowledged as successful. 
 
-An IoT solution should implement the Command design shown in the following diagram to deliver this functionality.
+The Command design shown in the following diagram can deliver this functionality.
 
 ![Command Pattern](command.png)
     
