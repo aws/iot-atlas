@@ -33,7 +33,7 @@ draft: true
 > a component of an IoT solution responsible for managing message routing between authorized publishers and subscribers of topics.
 
 ### Message Topic
-> a message topic, aka. *topic*, is a subject associated with a message. Topics are often used for the routing of messages from publishers to subscribers.
+> a message topic, aka. *topic*, is a subject associated with a message. Topics are often used for the routing of messages from publishers to subscribers. In this context a message topic should be thought of as a direct map to the pub/sub concept of a subject and as a similar concept to the partial URLs used to describe request/response and REST endpoints.
 
 ### Ordered Store
 > a data store or micro-service which fulfills the role in an IoT solution of ensuring that all records stored within it are in time-series order.
