@@ -2,6 +2,7 @@
 title: "Telemetry"
 weight: 80
 draft: true
+personae: [foo, bar]
 ---
 
 {{< synopsis-telemetry >}}
@@ -15,15 +16,14 @@ IoT solutions use the Telemetry design to ensure the delivery of sensed data acr
 
 The Telemetry design shown in the following diagram can deliver this functionality.
 
-![Telemetry Architecture](telemetry.png) 
-
+![Telemetry Design](telemetry.png)
 ([PPTx](atlas-telemetry.pptx))
 
 ### Diagram Steps
 
 1. The device obtains a measurement from a sensor operating in an environment remote from the IoT solution. 
-2. The device publishes a message containing the measurement via a transport protocol to a protocol endpoint made available from the IoT solution. 
-3. The protocol endpoint may then apply rules messages in order to perform fine-grained routing upon some or all of the message's measurement data to send it to another component of the solution. 
+2. The device publishes a message containing the measurement via a transport protocol to a protocol endpoint made available by the Server. 
+3. The Server may then apply one or more [rule]({{< ref "/glossary#rule" >}})s to messages in order to perform fine-grained routing upon some or all of the message's measurement data. The routing can send a message to another component of the solution. 
 
 ## Considerations
 The **Telemetry** design is commonly engaged when a project has the requirement to "stream data from a device". Furthermore, when implementing an IoT solution, the word *telemetry* is often used both as a way of describing the above design diagram *and* a shorthand description for the entire collection of challenges inherent in sensing and sending data from a remote location into a larger solution. These considerations focus on topics which usually relate to implementing the above diagram. 
@@ -38,18 +38,18 @@ IoT solutions with processing latency requirements at the level of **Seconds**, 
 #### Are there lessons learned that make telemetry data easier to process in the IoT solution?
 **Solution Unique Device IDs** – Each device in a solution should have a *solution unique* ID. Although this ID does not need to be truly globally unique each device should have an ID that is and will forever be unique within the IoT solution. By embracing solution unique device IDs, the IoT solution will be better able to process and route the sensed data for use by components within the solution.  
 **Early Time-stamping** – The earlier sensed data obtains discrete timestamps in an IoT solution, the earlier more nuanced processing and analysis of that sensed data can occur.  
-**Closed Window Calculations** - Tracking a device's *last reported* timestamp could determine if/when an aggregation window is able to be considered **closed**. Any closed window calculations can then be easily and confidently cached throughout an IoT solution. These cached calculations often dramatically increase performance of the *sense-to-insight* or *sense-to-action* processing latency of the IoT solution.
+**Closed Window Calculations** - Tracking a device's `last reported` timestamp could determine if/when an aggregation window is able to be considered *closed*. Any closed window calculations can then be easily and confidently cached throughout an IoT solution. These cached calculations often dramatically increase performance of the *sense-to-insight* or *sense-to-action* processing latency of the IoT solution.
 
-#### How should "large" messages be handled?
-Large messages are defined in this design as *any message larger than the transport protocol supports*. Large messages require an additional question to be answered. Specifically, "Can a secondary protocol be used?"
+#### How should large messages be handled?
+Large messages are defined in this design as any message larger than the transport protocol natively supports. Large messages require an additional question to be answered, **"Can a secondary protocol be used?"**
 
-If the answer is **"yes"** a secondary transport protocol can be used, HTTP is recommended.
-If the answer is **"no"** a secondary transport cannot be used, then the large message must be broken in to parts, each part should have a unique part identifier and the parts should be sent using the transport protocol. 
+If **yes**, HTTP is recommended.  
+If **no**, then the large message must be broken in to parts, each part should have a unique part identifier and each part should be small enough to be sent using the transport protocol. 
 
 #### How should large messages be sent when using a secondary protocol?
-If large messages must be delivered as soon as possible, the large message can be uploaded directly to a globally available, highly durable object storage service.
+If large messages must be **delivered as soon as possible**, the large message can be uploaded directly to a globally available, highly durable object storage service.
 
-If large messages can be sent in batches and storage on the device is a constrained resource, the storage of messages until the batch can be sent should consider the same algorithmic trade-offs as a device acting as a device [gateway]({{< ref "/designs/gateway" >}}).   
+If large messages **can be sent in batches**, each message should be saved as a part of a batch until the batch can be sent. Since storage on a device is often a constrained resource, the batch processing of messages should consider the same [algorithmic trade-offs]({{< ref "/designs/gateway#how-should-data-be-processed-when-the-internet-is-unavailable" >}}) as a device acting as a [gateway]({{< ref "/designs/gateway" >}}).   
 
 #### What are the sample vs. reporting frequencies of a device?
 
@@ -62,12 +62,13 @@ Device-based code will either obtain sensed data and queue it for delivery or de
 The expected values for these two frequencies are important when determining the scale and cost of an IoT solution.
 
 #### Does the order of inbound messages need to be maintained?
+First, solutions should only depend on order when it is absolutely necessary.  
 
-If **no**, then processing messages from the topic immediately upon arrival should suffice.  
-If **yes**, this follow-on question needs an answer, "On how long of a time horizon does your solution require and prefer ordered messages?" If the answer is &#8230;
+If ordering is **not required**, then the solution can process messages from the topic immediately upon arrival.  
+If ordering is **required**, this follow-on question needs an answer, "On how long of a time horizon does a component of the solution require and prefer ordered messages?" 
 
-  - &#8230; *less than a one second horizon* – `needs a prescriptive answer`.
-  - &#8230; *greater than a one second horizon* – the IoT Solution should write every record to an [ordered store]({{< ref "/glossary#ordered-store" >}}). If the IoT solution must possess processing logic that **requires** messages to always be in-order, that logic can now be executed as a reader to the ordered store.
+If the follow-on answer is "less than a one second horizon on a single topic", the solution can gather messages from a topic `foo` into a buffer, then after each tick of the clock, the buffer is sorted and messages are emitted in order to another topic `foo/ordered`. 
+If the answer is "greater than a one second horizon", the IoT solution should write every record to an [ordered store]({{< ref "/glossary#ordered-store" >}}). Any component of the solution that **requires** messages to always be in-order, can now read and get updates from the ordered store.
 
 #### What are some of the cost drivers of telemetry in an IoT solution?
 
@@ -85,12 +86,6 @@ A common mistake that has a large impact, occurs when all devices in an IoT solu
 
   - &#8230; when the device is **already registered** with the new region and it already has the proper credentials, the device starts sending messages as if the new endpoint is the default.
   - &#8230; when the device is **not registered** with the new region, the device will need to complete a [device bootstrap]({{< ref "/designs/device_bootstrap" >}}) with the new regional endpoint.
-
-#### How do a device's resources influence the approach to the communication of sensed data?
-
-Option: Resource considerations of MQTT – `needs a prescriptive answer`  
-Option: Resource considerations of WebSocket – `needs a prescriptive answer`  
-Option: Resource constrained devices may require use of a Device Gateway  – `needs a prescriptive answer`
 
 #### How can messages be stored and available for future replay in the IoT solution?
 
