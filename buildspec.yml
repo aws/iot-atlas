@@ -26,4 +26,4 @@ phases:
       - hugo --buildDrafts -v
   post_build:
     commands:
-      - aws s3 sync public/ s3://iot-atlas --cache-control max-age=3600 --delete
+      - aws s3 sync public/ s3://iotatlas.net --cache-control max-age=3600 --delete
