@@ -32,7 +32,7 @@ When implementing this design, consider the following questions:
 Each command should have a solution unique type and each command message should contain a globally unique message ID. The command message's ID allows the solution to track the status of distinct commands and the command type enables the diagnoses any potential issues across categories of commands over time.   
 
 #### Do some commands in the solution run significantly longer than the norm?
-When some commands run longer than the norm, a simple `SUCCESS`  or `FAIL` command completion message will not suffice. Instead the solution should leverage at least three command states: `SUCCESS`, `FAIL`, and `RUNNING`. `RUNNING` should be returned by the device on an expected interval until the command's completion. By using a `RUNNING` state reported on an expected interval a solution can determine when a long-running command actually fails quietly.  
+When some commands run longer than the norm, a simple `SUCCESS`  or `FAIL` command completion message will not suffice. Instead the solution should leverage at least three command states: `SUCCESS`, `FAIL`, and `RUNNING`. `RUNNING` should be returned by the device on an expected interval until the command's completion. By using a `RUNNING` state reported on an expected interval, a solution can determine when a long-running command actually fails quietly.  
 
 
 #### Does a specific type of command require human-authorization?
