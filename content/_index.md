@@ -29,3 +29,8 @@ Designs in the IoT Atlas will use the concept of [message topics]({{< ref "/glos
 Designs in the IoT Atlas will all assume that a device always has a solution unique `deviceId`. When every device has a solution unique ID, each specific example is more clear and an explicit list of devices can be used to implement a design in a way that supports multiple devices. When a list of devices is crucial to the design, it will be called out.   
 
 Finally, each design will follow a few conventions. To convey an example of either data, or a code-related concept the `monospace` font will be used inline. When a word or concept is either crucial to the design or acting as a just-in-time definition a **bold** typeface will be used. When a block of code is best to convey or reinforce a concept, that block will be written at-least as pseudo-code. Over time we hope to have contributed and indexed examples of each design for a variety of languages and technologies.  
+
+# Team
+At this time, the core maintainers of the IoT Atlas are [Brett Francis](https://github.com/brettf), 
+[Gavin Adams](https://github.com/gadams999), and 
+[Craig Williams](https://github.com/typemismatch). We're excited to get these designs out in to the world so together we can accelerate IoT progress.   
