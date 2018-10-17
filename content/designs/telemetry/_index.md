@@ -22,7 +22,7 @@ The Telemetry design shown in the following diagram can deliver this functionali
 ### Diagram Steps
 
 1. The device obtains a measurement from a sensor operating in an environment remote from the IoT solution. 
-2. The device publishes a message containing the measurement via a transport protocol to a protocol endpoint made available by the Server. 
+2. The device publishes a message to the topic `deviceID/telemetry` containing the measurement. This message is sent via a transport protocol to a protocol endpoint made available by the Server. 
 3. The Server may then apply one or more [rule]({{< ref "/glossary#rule" >}})s to messages in order to perform fine-grained routing upon some or all of the message's measurement data. The routing can send a message to another component of the solution. 
 
 ## Considerations
@@ -31,9 +31,10 @@ The **Telemetry** design is commonly engaged when a project has the requirement 
 When implementing this design, consider the following questions:
 
 #### What is the desired *sense-to-insight* or *sense-to-action* processing latency of telemetry messages in the IoT solution?
-IoT solutions with processing latency requirements at the level of **&micro;-seconds or milliseconds** should perform that processing on the device itself or possibly on a device [gateway]({{< ref "/designs/gateway" >}}) connected to the device. 
-IoT solutions with processing latency requirements at the level of **Seconds**, **Minutes**, or even **Hours** should perform that processing on the cloud by default. In general processing of messages in "seconds" through "low minutes", should be performed by components connected directly to the protocol endpoint. Commonly a component's processing will be triggered by the arrival of messages that match certain criteria.  
-  Processing telemetry from "low minutes" through "hours" should be performed in an asynchronous fashion. When messages arrive that match desired criteria events will most often be placed in a processing queue and a component will perform the necessary work. Once complete, often the component will emit a message to a "work complete" [message topic]({{< ref "/glossary#message-topic" >}}). 
+IoT solutions with processing latency requirements at the level of **&micro;-seconds or milliseconds** should perform that processing on the device itself or possibly on a device [gateway]({{< ref "/designs/gateway" >}}) connected to the device.  
+IoT solutions with processing latency requirements at the level of **Seconds**, **Minutes**, or even **Hours** should perform that processing on the cloud by default.  
+In general processing of messages in "seconds" through "low minutes", should be performed by components connected directly to the protocol endpoint. Commonly a component's processing will be triggered by the arrival of messages that match certain criteria.  
+Processing telemetry from "low minutes" through "hours" should be performed in an asynchronous fashion. When messages arrive that match desired criteria events will most often be placed in a processing queue and a component will perform the necessary work. Once complete, often the component will emit a message to a "work complete" [message topic]({{< ref "/glossary#message-topic" >}}). 
 
 #### Are there lessons learned that make telemetry data easier to process in the IoT solution?
 **Solution Unique Device IDs** – Each device in a solution should have a *solution unique* ID. Although this ID does not need to be truly globally unique each device should have an ID that is and will forever be unique within the IoT solution. By embracing solution unique device IDs, the IoT solution will be better able to process and route the sensed data for use by components within the solution.  
@@ -135,7 +136,7 @@ Many existing solutions will have a message format already implemented. However,
 #### Device delivers a message
 Once the sensed data is placed in a message, the device publishes the message to the remote protocol endpoint on a reporting frequency.
 
-When reporting messages using the MQTT protocol, messages are sent with topics. Messages sent by a device with the topic `deviceId/telemetry/example` would be similar to the following pseudocode.
+When reporting messages using the MQTT protocol, messages are sent with topics. Messages sent by a device with the topic `deviceID/telemetry/example` would be similar to the following pseudocode.
 {{< highlight python3 >}}
 # get device ID of the device sending message
 device_id = get_device_id()
