@@ -19,15 +19,15 @@ The Software Update pattern shown in the following diagram can deliver this func
 ![Software Update](software-update.png)
 
 ### Diagram Steps
-1. A device subscribes to the delta [messaging topic]({{< ref "/glossary#message-topic" >}}) `deviceId/state/update/delta` upon which device-related state change messages will arrive.
+1. A device subscribes to the delta [messaging topic]({{< ref "/glossary#message-topic" >}}) `deviceID/state/update/delta` upon which device-related state change messages will arrive.
 2. An application obtains the new software distribution and places that into a storage solution accessible to production devices. 
 3. An application identifies a device that should receive the new software and publishes a desired state message to the device's topic `deviceID/state/update`. The desired state message contains a software update URL different form the device's current software version URL.
-4. The device state replica tracking this device records the desired device state in a persistent data store and publishes a delta message to the topic `deviceId/state/update/delta` that is sent to the device.
+4. The device state replica tracking this device records the desired device state in a persistent data store and publishes a delta message to the topic `deviceID/state/update/delta` that is sent to the device.
 5. The device receives a delta message that acts as the 'software update' command. Specifically, this message conveys the change between the current software version URL and the new URL
 6. The device obtains the new software update URL from the delta message.
 7. The device downloads the new software and applies the software locally.
 8. The device publishes an acknowledgement message reflecting the software version the device is now using to the update topic `deviceID/state/update` and a device state replica tracking this device records the new state in a persistent data store. 
-9. The device state replica publishes a message to the `deviceId/state/update/accepted` topic. The software update is now considered complete.
+9. The device state replica publishes a message to the `deviceID/state/update/accepted` topic. The software update is now considered complete.
 
 ## Considerations
 When implementing this design, consider the following questions:
