@@ -23,14 +23,14 @@ An IoT solution should leverage the following design when a *component* of the I
 
 ### Component-to-device Diagram Steps
 
-1. A device reports **initial device state** by publishing that state as a [message]({{< ref "/glossary#message" >}}) to the `deviceId/state/update` [topic]({{< ref "/glossary#message-topic" >}}).
-2. The Device State Replica tracking this device reads the message from the `deviceId/state/update` topic and records the device state in a persistent data store.
-3. A device subscribes to the delta messaging topic `deviceId/state/update/delta` upon which device-related state change messages will arrive.
-4. A component of the solution publishes a desired state message to the topic `deviceId/state/update`and the Device State Replica tracking this device records the desired device state in a persistent data store.
-5. The Device State Replica publishes a delta message to the topic `deviceId/state/update/delta` and the server sends the message to the device.
+1. A device reports **initial device state** by publishing that state as a [message]({{< ref "/glossary#message" >}}) to the `deviceID/state/update` [topic]({{< ref "/glossary#message-topic" >}}).
+2. The Device State Replica tracking this device reads the message from the `deviceID/state/update` topic and records the device state in a persistent data store.
+3. A device subscribes to the delta messaging topic `deviceID/state/update/delta` upon which device-related state change messages will arrive.
+4. A component of the solution publishes a desired state message to the topic `deviceID/state/update`and the Device State Replica tracking this device records the desired device state in a persistent data store.
+5. The Device State Replica publishes a delta message to the topic `deviceID/state/update/delta` and the server sends the message to the device.
 6. A device receives the delta message and performs the desired state changes.
-7. A device publishes a message reflecting the new state to the update topic `deviceId/state/update` and the Device State Replica tracking this device records the new state in a persistent data store.
-8. The Device State Replica publishes a message to the `deviceId/state/update/accepted` topic.
+7. A device publishes a message reflecting the new state to the update topic `deviceID/state/update` and the Device State Replica tracking this device records the new state in a persistent data store.
+8. The Device State Replica publishes a message to the `deviceID/state/update/accepted` topic.
 9. A component of the solution can now request the updated and current state form the Device State Replica.
 
 ### Device-to-component State Replica
@@ -40,18 +40,18 @@ An IoT solution should leverage the following design when the *device* is the so
 ![Device-to-component State Replication](d2c-state.png)
 
 ### Device-to-component Diagram Steps
-1. A device reports **initial device state** by publishing that state as a message to the update topic `deviceId/state/update`.
-2. A component subscribes to the delta messaging topic `deviceId/state/update/delta` upon which device-related state change messages will arrive.
-3. A device detects that its own state has changed and reports a new state value to the update topic `deviceId/state/update`.
+1. A device reports **initial device state** by publishing that state as a message to the update topic `deviceID/state/update`.
+2. A component subscribes to the delta messaging topic `deviceID/state/update/delta` upon which device-related state change messages will arrive.
+3. A device detects that its own state has changed and reports a new state value to the update topic `deviceID/state/update`.
 4. The Device State Replica tracking this device records the desired device state in a persistent data store.
-5. The Device State Replica publishes a delta message to the topic `deviceId/state/update/delta` and the server sends the message to the subscribed component.
+5. The Device State Replica publishes a delta message to the topic `deviceID/state/update/delta` and the server sends the message to the subscribed component.
 6. A component receives the delta message and uses the changed value as necessary.  
 
 ## Considerations
 When implementing this design, consider the following questions:
 
 #### How can a component simply get the current state of a Device State Replica?
-Using a pub/sub style of interaction a component can listen to the `deviceId/state/get/accepted` and `.../get/rejected` topics and then post a message to the `deviceId/state/get` topic. The Device State Replica would then respond with the state on the `.../get/accepted` topic. If the Device State Replica exposes a REST API, a component can execute a GET against the `deviceId/state/get` topic and expect a direct response. 
+Using a pub/sub style of interaction a component can listen to the `deviceID/state/get/accepted` and `.../get/rejected` topics and then post a message to the `deviceID/state/get` topic. The Device State Replica would then respond with the state on the `.../get/accepted` topic. If the Device State Replica exposes a REST API, a component can execute a GET against the `deviceID/state/get` topic and expect a direct response. 
 
 ## Example
     <tbd written scenario>
