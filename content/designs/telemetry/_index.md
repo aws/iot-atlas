@@ -65,7 +65,7 @@ The expected values for these two frequencies are important when determining the
 First, solutions should only depend on order when it is absolutely necessary.  
 
 If ordering is **not required**, then the solution can process messages from the topic immediately upon arrival.  
-If ordering is **required**, this follow-on question needs an answer, "On how long of a time horizon does a component of the solution require and prefer ordered messages?" 
+If ordering is **required**, this follow-on question needs an answer, "On how long of a time horizon does a component of the solution require ordered messages?" 
 
 If the follow-on answer is "less than a one second horizon on a single topic", the solution can gather messages from a topic `foo` into a buffer, then after each tick of the clock, the buffer is sorted and messages are emitted in order to another topic `foo/ordered`. 
 If the answer is "greater than a one second horizon", the IoT solution should write every record to an [ordered store]({{< ref "/glossary#ordered-store" >}}). Any component of the solution that **requires** messages to always be in-order, can now read and get updates from the ordered store.
