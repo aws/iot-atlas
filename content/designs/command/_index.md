@@ -58,7 +58,7 @@ Example showing receipt of a message, execution of an action, and acknowledgemen
 
 #### A component issues a request to a device to actuate a motor, using a quality of service to guarantee delivery
 
-1. The component send the *request* message to a topic to which the device is subscribed:  
+1. The component sends the command request message to the `deviceID/commands` topic to which the device is subscribed:  
 ```json
 {
     "cmd": "MOTOR_1_ON",
@@ -66,21 +66,21 @@ Example showing receipt of a message, execution of an action, and acknowledgemen
     "status": "REQUEST"
 }
 ```
-  The component also tracks the message `DEADBEEF` as issued and outstanding for the device.
+  The component also tracks the message's transaction ID of `DEADBEEF`, as issued and outstanding for the device.
 
-2. The device received the message, activates `motor 1`, and responds to a topic to which the component is subscribed, which receives it after a period of time:  
+2. The device receives the message from topic `deviceID/commands`, activates `motor 1`, and responds with an acknowledgement on the topic `deviceID/commands/ack` to which the component is subscribed. The component receives the following acknowledgment after a period of time:  
 ```json
    {
        "tid": "DEADBEEF",
        "status": "SUCCESS"
    }
 ```
-  The device no longer tracks the command request. The component maps the `SUCCESS` value to the transaction ID of `DEADBEEF` and removes that from its outstanding requests, signifying it has completed. A result of `FAILURE` might indicate a physical device problem to be investigated.
+3. The device no longer tracks the command request. The component maps the `SUCCESS` value to the transaction ID of `DEADBEEF` and removes the transaction from the list of outstanding requests, signifying the command has completed. A result of `FAILURE` might indicate a physical device problem to be investigated.
 
 ---
 #### A component issues a request to a device to actuate a motor, but the device is offline
 
-1. The component send the *request* message to a topic to which the device is subscribed:  
+1. The component sends the command request message to the `deviceID/commands` topic to which the device is subscribed:  
 ```json
 {
     "cmd": "MOTOR_1_ON",
@@ -88,6 +88,6 @@ Example showing receipt of a message, execution of an action, and acknowledgemen
     "status": "REQUEST"
 }
 ```
-  The component also tracks the message, `DEADBEEF`, as issued and outstanding for the device. **The device is offline and does not receive the message.**
+  The component also tracks the message transaction ID of `DEADBEEF`, as issued and outstanding for the device. **The device is offline and does not receive the message.**
 
-2. After a set period of time, the component will resend the command on a linear or back-off time period *with the same transaction ID*, and track the retry status. After a set amount of retries, the component will determine the device did not received the command, or was unable to reply, and take appropriate action.
+2. After a set period of time, the component will resend the command request message on a linear or back-off time period *with the same transaction ID*, and tracks the retry status. After a set amount of retries, the component will determine the device did not received the command, or was unable to reply, and take appropriate action.
