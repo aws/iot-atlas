@@ -34,7 +34,8 @@ The Device Bootstrap design shown in the following diagram can deliver this func
 When implementing this design, consider the following questions:
 
 #### Does the device's manufacturing process create and place the initial token on the device?
-If **no**, then the device must have a mechanism to receive a secure token or certificate after the device is manufactured. In this case, it is important that the initial token is used to enable only the minimal privileges necessary to register with the solution. Once the registration authority validates the initial token, the rest of the steps of this design should be followed.  
+If **no**, then the device must have a mechanism to receive a secure token or certificate after the device is manufactured. In this case, it is important that the initial token is used to enable only the minimal privileges necessary to register with the solution. Once the registration authority validates the initial token, the rest of the steps of this design should be followed.
+
 If **yes**, the device can be manufactured in a secure manner and the need for a Registration Authority can be reduced if not removed altogether. This is easy to say and difficult to achieve as many manufacturing processes are purposefully disconnected from the cloud. Regardless, since the solution may have an entire step removed when keys are introduced by the manufacturer, the customer experience and overall system simplicity will benefit.  
 
 #### Does the registration authority need to support custom authorization integration with an existing customer solution?
