@@ -5,7 +5,7 @@
   "theme": "docdock",
   "params": {
     "ordersectionsby": "weight",
-    "editURL": false
+    "editURL": "https://github.com/aws/iot-atlas/tree/master/content/"
   },
   "pygmentsCodeFences": true,
   "taxonomies": {
