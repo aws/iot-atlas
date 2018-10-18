@@ -88,6 +88,6 @@ Example showing receipt of a message, execution of an action, and acknowledgemen
     "status": "REQUEST"
 }
 ```
-  The compponent also tracks the message, `DEADBEEF`, as issued and outstanding for the device. **The device is offline and does not receive the message.**
+  The component also tracks the message, `DEADBEEF`, as issued and outstanding for the device. **The device is offline and does not receive the message.**
 
 2. After a set period of time, the component will resend the command on a linear or back-off time period *with the same transaction ID*, and track the retry status. After a set amount of retries, the component will determine the device did not received the command, or was unable to reply, and take appropriate action.
