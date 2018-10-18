@@ -6,6 +6,14 @@ h2 {
     margin-bottom: 15px;
 }
 
+h3 {
+    border-bottom: 2px solid #d5d5d5;
+    border-bottom-style: dashed;
+    /*display: inline-block;*/
+    /*border-bottom: 1px solid #dedede;*/
+    margin-bottom: 15px;
+}
+
 html {
   font-size: 15px;
 }

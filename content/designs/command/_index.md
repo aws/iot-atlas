@@ -51,10 +51,8 @@ In the case where rollbacks are necessary even when there is no connectivity to 
 
 ## Examples
 
-### Simple reqeust/response over reliable transport
+### Simple request/response over reliable transport
 A component issues a request to a device to actuate a motor, using a quality of service to guarantee delivery
-
----
 
 #### Component sends a command to a target device
 The component sends the command request message to the `deviceID/commands` topic to which the device is subscribed:  
@@ -69,8 +67,6 @@ The component sends the command request message to the `deviceID/commands` topic
 
 The component also tracks the message's transaction ID of `CAFED00D`, as issued and outstanding for the device.
 
----
-
 #### Device processes message
 The device receives the message from topic `deviceID/commands`, activates `motor 1`, and responds with an acknowledgement on the topic `deviceID/commands/ack` to which the component is subscribed. The component receives the following acknowledgment after a period of time:
 
@@ -81,20 +77,14 @@ The device receives the message from topic `deviceID/commands`, activates `motor
 }
 ```
 
----
-
 #### Device and component complete command (transaction) process
 
 The device no longer tracks the command request. The component maps the `SUCCESS` value to the transaction ID of `CAFED00D` and removes the transaction from the list of outstanding requests, signifying the command has completed. A result of `FAILURE` might indicate a physical device problem to be investigated.
 
----
-
 ### Transaction to offline or unavailable device
 A component issues a request to a device to actuate a motor, but the device is offline
 
----
-
-#### Component sends command to unaviable device
+#### Component sends command to unavailable device
 The component sends the command request message to the `deviceID/commands` topic to which the device is subscribed:
 
 ```json
@@ -106,8 +96,6 @@ The component sends the command request message to the `deviceID/commands` topic
 ```
 
 The component also tracks the message transaction ID of `CAFED00D`, as issued and outstanding for the device. **The device is offline and does not receive the message.**
-
----
 
 #### Timeout and reissue command
 

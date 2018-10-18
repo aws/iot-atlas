@@ -89,14 +89,10 @@ A common mistake that has a large impact, occurs when all devices in an IoT solu
 
 This can be accomplished with the [telemetry archiving]({{< ref "/designs/telemetry_archiving" >}}) design.
 
-----
-
 ## Examples
 
 ### Telemetry message creation, delivery, and routing.
 A detailed example of the logic involved to gather sensor data and send it through an IoT solution.
-
----
 
 #### A device samples a sensor and creates a message
 Either with code on the device or code operating in a device [gateway]({{< ref "/designs/gateway" >}}), a device samples a sensor in a fashion similar to the following pseudocode:
@@ -118,8 +114,6 @@ while should_poll():  # loop until we should no longer poll sensors
 
 The `create_message` pseudocode function above creates a message based upon the `device_id`, the `sensor_id`, the timestamp `ts`, and the `value` read from the sensor. 
 
----
-
 #### Device formats a message
 Many existing solutions will have a message format already implemented. However, if the message format is open for discussion, JSON is recommended. Here is an example JSON message format:
 
@@ -137,8 +131,6 @@ Many existing solutions will have a message format already implemented. However,
 }
 ```
 
----
-
 #### Device delivers a message
 Once the sensed data is placed in a message, the device publishes the message to the remote protocol endpoint on a reporting frequency.
 
@@ -155,8 +147,6 @@ topic = device_id + '/telemetry/example'
 while record in sensor_data:  
     mqtt_client.publish(topic, record, quality_of_service)
 ```
-
----
 
 #### Messages sent to subscribers
 Each published messages traverses the network to the protocol endpoint. Once received, the server software makes each message available to interested parties. Parties will often register their interest by subscribing to specific message topics.
