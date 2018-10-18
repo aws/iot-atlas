@@ -49,45 +49,66 @@ When a command in a solution requires human approval before a device should take
 If a solution has some commands which may need to be rolled back, it is almost always easier to manage that rollback from the solution itself instead of expecting each device to understand and remember the rollback considerations. For example, a device is sent a command to move an actuator from a current, reported position of `0`&#176; to a position of `45`&#176;. The Device performs this command successfully. At a later moment in time the solution requires that the device go back to the previous state, the previous state is often easier to track in the solution itself versus expecting every device to track its former state(s). The rollback of this situation would be performed by the solution sending a command for the device to change position to `0`&#176;.  
 In the case where rollbacks are necessary even when there is no connectivity to the server, the solution can leverage a [gateway]({{< ref "/designs/gateway" >}}) to record the former states of devices and to perform rollbacks based upon those values.  
 
-## Example
+## Examples
 
-Example showing receipt of a message, execution of an action, and acknowledgement of the action  
-**TODO:** `..mention something about use of QoS 1 or higher for MQTT for Command..`
+### Simple reqeust/response over reliable transport
+A component issues a request to a device to actuate a motor, using a quality of service to guarantee delivery
 
 ---
 
-#### A component issues a request to a device to actuate a motor, using a quality of service to guarantee delivery
+#### Component sends a command to a target device
+The component sends the command request message to the `deviceID/commands` topic to which the device is subscribed:  
 
-1. The component sends the command request message to the `deviceID/commands` topic to which the device is subscribed:  
 ```json
 {
     "cmd": "MOTOR_1_ON",
-    "tid": "DEADBEEF",
+    "tid": "CAFED00D",
     "status": "REQUEST"
 }
 ```
-  The component also tracks the message's transaction ID of `DEADBEEF`, as issued and outstanding for the device.
 
-2. The device receives the message from topic `deviceID/commands`, activates `motor 1`, and responds with an acknowledgement on the topic `deviceID/commands/ack` to which the component is subscribed. The component receives the following acknowledgment after a period of time:  
-```json
-   {
-       "tid": "DEADBEEF",
-       "status": "SUCCESS"
-   }
-```
-3. The device no longer tracks the command request. The component maps the `SUCCESS` value to the transaction ID of `DEADBEEF` and removes the transaction from the list of outstanding requests, signifying the command has completed. A result of `FAILURE` might indicate a physical device problem to be investigated.
+The component also tracks the message's transaction ID of `CAFED00D`, as issued and outstanding for the device.
 
 ---
-#### A component issues a request to a device to actuate a motor, but the device is offline
 
-1. The component sends the command request message to the `deviceID/commands` topic to which the device is subscribed:  
+#### Device processes message
+The device receives the message from topic `deviceID/commands`, activates `motor 1`, and responds with an acknowledgement on the topic `deviceID/commands/ack` to which the component is subscribed. The component receives the following acknowledgment after a period of time:
+
+```json
+{
+    "tid": "CAFED00D",
+    "status": "SUCCESS"
+}
+```
+
+---
+
+#### Device and component complete command (transaction) process
+
+The device no longer tracks the command request. The component maps the `SUCCESS` value to the transaction ID of `CAFED00D` and removes the transaction from the list of outstanding requests, signifying the command has completed. A result of `FAILURE` might indicate a physical device problem to be investigated.
+
+---
+
+### Transaction to offline or unavailable device
+A component issues a request to a device to actuate a motor, but the device is offline
+
+---
+
+#### Component sends command to unaviable device
+The component sends the command request message to the `deviceID/commands` topic to which the device is subscribed:
+
 ```json
 {
     "cmd": "MOTOR_1_ON",
-    "tid": "DEADBEEF",
+    "tid": "CAFED00D",
     "status": "REQUEST"
 }
 ```
-  The component also tracks the message transaction ID of `DEADBEEF`, as issued and outstanding for the device. **The device is offline and does not receive the message.**
 
-2. After a set period of time, the component will resend the command request message on a linear or back-off time period *with the same transaction ID*, and tracks the retry status. After a set amount of retries, the component will determine the device did not received the command, or was unable to reply, and take appropriate action.
+The component also tracks the message transaction ID of `CAFED00D`, as issued and outstanding for the device. **The device is offline and does not receive the message.**
+
+---
+
+#### Timeout and reissue command
+
+After a set period of time, the component will resend the command request message on a linear or back-off time period *with the same transaction ID*, and tracks the retry status. After a set amount of retries, the component will determine the device did not received the command, or was unable to reply, and take appropriate action.
