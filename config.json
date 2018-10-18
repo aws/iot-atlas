@@ -7,6 +7,7 @@
     "ordersectionsby": "weight",
     "editURL": false
   },
+  "pygmentsCodeFences": true,
   "taxonomies": {
     "tag": "tags",
     "category": "categories",
