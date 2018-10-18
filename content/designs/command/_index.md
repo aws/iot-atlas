@@ -51,16 +51,14 @@ In the case where rollbacks are necessary even when there is no connectivity to 
 
 ## Example
 
-Example showing receipt of a message, execution of an action, and acknowledgement of the action
-`..mention something about use of QoS 1 or higher for MQTT for Command..`
-
-    <Written scenarios>
-
-**A component issues a request to a device to actuate a motor, using a quality of service to guarantee delivery**
+Example showing receipt of a message, execution of an action, and acknowledgement of the action  
+**TODO:** `..mention something about use of QoS 1 or higher for MQTT for Command..`
 
 ---
 
-1. The component send the *request* message to a topic to which the device is subscribed:
+#### A component issues a request to a device to actuate a motor, using a quality of service to guarantee delivery
+
+1. The component send the *request* message to a topic to which the device is subscribed:  
 ```json
 {
     "cmd": "MOTOR_1_ON",
@@ -68,22 +66,21 @@ Example showing receipt of a message, execution of an action, and acknowledgemen
     "status": "REQUEST"
 }
 ```
-   The compponent also tracks the message, `DEADBEEF`, as issued and outstanding for the device.
+  The component also tracks the message `DEADBEEF` as issued and outstanding for the device.
 
-2. The device received the message, activates motor 1, and responds to a topic to which the component is subscribed, which receives it after a period of time:
+2. The device received the message, activates `motor 1`, and responds to a topic to which the component is subscribed, which receives it after a period of time:  
 ```json
    {
        "tid": "DEADBEEF",
        "status": "SUCCESS"
    }
 ```
-   The device no longer tracks the command request. The component maps the `SUCCESS` value to the transaction ID of `DEADBEEF` and removes that from its outstanding requests, signifying it has completed. A result of `FAILURE` might indicate a physcial device problem to be investigated.
-
-**A component issues a request to a device to actuate a motor, but the device is offline**
+  The device no longer tracks the command request. The component maps the `SUCCESS` value to the transaction ID of `DEADBEEF` and removes that from its outstanding requests, signifying it has completed. A result of `FAILURE` might indicate a physical device problem to be investigated.
 
 ---
+#### A component issues a request to a device to actuate a motor, but the device is offline
 
-1. The component send the *request* message to a topic to which the device is subscribed:
+1. The component send the *request* message to a topic to which the device is subscribed:  
 ```json
 {
     "cmd": "MOTOR_1_ON",
@@ -91,6 +88,6 @@ Example showing receipt of a message, execution of an action, and acknowledgemen
     "status": "REQUEST"
 }
 ```
-   The compponent also tracks the message, `DEADBEEF`, as issued and outstanding for the device. **The device is offline and does not recieve the message.**
+  The compponent also tracks the message, `DEADBEEF`, as issued and outstanding for the device. **The device is offline and does not receive the message.**
 
-2. After a set period of time, the component will resend the command on a linear or backoff time period *with the same transaction ID*, and track the retry status. After a set amount of retries, the component will determine the device did not received the command, or was unable to reply, and take appropriate action.
+2. After a set period of time, the component will resend the command on a linear or back-off time period *with the same transaction ID*, and track the retry status. After a set amount of retries, the component will determine the device did not received the command, or was unable to reply, and take appropriate action.

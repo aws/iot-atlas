@@ -95,11 +95,13 @@ This can be accomplished with the [telemetry archiving]({{< ref "/designs/teleme
 
 ### Telemetry message creation, delivery, and routing.
 A detailed example of the logic involved to gather sensor data and send it through an IoT solution.
-  
+
+---
+
 #### A device samples a sensor and creates a message
 Either with code on the device or code operating in a device [gateway]({{< ref "/designs/gateway" >}}), a device samples a sensor in a fashion similar to the following pseudocode:
 
-{{< highlight python3 >}}
+```python3
 device_id = get_device_id()
 while should_poll():  # loop until we should no longer poll sensors
     for sensor in list_of_sensors:
@@ -112,14 +114,16 @@ while should_poll():  # loop until we should no longer poll sensors
         send_sensor_message(msg)  # send or enqueue message
     # sleep according to the sample frequency before next reading
     sleep(<duration>)
-{{< / highlight >}}
+```
 
 The `create_message` pseudocode function above creates a message based upon the `device_id`, the `sensor_id`, the timestamp `ts`, and the `value` read from the sensor. 
+
+---
 
 #### Device formats a message
 Many existing solutions will have a message format already implemented. However, if the message format is open for discussion, JSON is recommended. Here is an example JSON message format:
 
-{{< highlight json >}} 
+``` json 
 {
   "version": "2016-04-01",
   "deviceId": "<solution_unique_device_id>",
@@ -131,13 +135,16 @@ Many existing solutions will have a message format already implemented. However,
     }
   ]
 }
-{{< /highlight >}} 
+```
+
+---
 
 #### Device delivers a message
 Once the sensed data is placed in a message, the device publishes the message to the remote protocol endpoint on a reporting frequency.
 
-When reporting messages using the MQTT protocol, messages are sent with topics. Messages sent by a device with the topic `deviceID/telemetry/example` would be similar to the following pseudocode.
-{{< highlight python3 >}}
+When reporting messages using the MQTT protocol, messages are sent with topics. Messages sent by a device with the topic `deviceID/telemetry/example` would be similar to the following pseudocode.  
+
+```python
 # get device ID of the device sending message
 device_id = get_device_id()
 # get the collection of unsent sensor messages
@@ -147,7 +154,9 @@ topic = device_id + '/telemetry/example'
 # loop through and publish all sensed data
 while record in sensor_data:  
     mqtt_client.publish(topic, record, quality_of_service)
-{{< /highlight >}}
+```
+
+---
 
 #### Messages sent to subscribers
 Each published messages traverses the network to the protocol endpoint. Once received, the server software makes each message available to interested parties. Parties will often register their interest by subscribing to specific message topics.
