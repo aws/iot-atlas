@@ -32,8 +32,7 @@ It is important to note that the Command design is not "telemetry in reverse". I
 
 When implementing this design, consider the following questions:
 
-#### How can the solution track the progress of commands per device?
-
+#### How can the solution track each device's command progress?
 Each command should have a solution unique type and each command message should contain a globally unique message ID. The command message's ID allows the solution to track the status of distinct commands and the command type enables the diagnoses any potential issues across categories of commands over time. The messages should be idempotent and not allow for being missed or duplicated without knowledge of the device *and* requestor.
 
 #### Do some commands in the solution run significantly longer than the norm?
