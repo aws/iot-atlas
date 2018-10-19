@@ -151,4 +151,4 @@ while record in sensor_data:
 #### Messages sent to subscribers
 Each published messages traverses the network to the protocol endpoint. Once received, the server software makes each message available to interested parties. Parties will often register their interest by subscribing to specific message topics.
 
-In addition to having components in the IoT solution subscribe directly to a messaging topic, some IoT solutions have a rule engine that allows a rule engine to subscribe to inbound messages. Then, on a message-by-message basis, rules in the rule engine can process messages or direct messages to other components in the IoT solution.
+In addition to having components in the IoT solution subscribe directly to a messaging topic, some IoT solutions have a rule engine that allows a rule engine to subscribe to inbound messages. Then, on a message-by-message basis, rules in a rule engine can process messages or direct messages to other components in the IoT solution.
