@@ -55,7 +55,7 @@ In the case where rollbacks are necessary even when there is no connectivity to 
 A component issues a request to a device to actuate a motor, using a quality of service to guarantee delivery
 
 #### Component sends a command to a target device
-The component sends the command request message to the `deviceID/commands` topic to which the device is subscribed:  
+The component sends the command request message to the `commands/deviceID` topic to which the device is subscribed:  
 
 ```json
 {
@@ -68,7 +68,7 @@ The component sends the command request message to the `deviceID/commands` topic
 The component also tracks the message's transaction ID of `CAFED00D`, as issued and outstanding for the device.
 
 #### Device processes message
-The device receives the message from topic `deviceID/commands`, activates `motor 1`, and responds with an acknowledgement on the topic `deviceID/commands/ack` to which the component is subscribed. The component receives the following acknowledgment after a period of time:
+The device receives the message from topic `commands/deviceID`, activates `motor 1`, and responds with an acknowledgement on the topic `commands/deviceID/ack` to which the component is subscribed. The component receives the following acknowledgment after a period of time:
 
 ```json
 {
@@ -85,7 +85,7 @@ The device no longer tracks the command request. The component maps the `SUCCESS
 A component issues a request to a device to actuate a motor, but the device is offline
 
 #### Component sends command to unavailable device
-The component sends the command request message to the `deviceID/commands` topic to which the device is subscribed:
+The component sends the command request message to the `commands/deviceID` topic to which the device is subscribed:
 
 ```json
 {

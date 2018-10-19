@@ -22,7 +22,7 @@ The Telemetry design shown in the following diagram can deliver this functionali
 ### Diagram Steps
 
 1. The device obtains a measurement from a sensor operating in an environment remote from the IoT solution. 
-2. The device publishes a message to the topic `deviceID/telemetry` containing the measurement. This message is sent via a transport protocol to a protocol endpoint made available by the Server. 
+2. The device publishes a message to the topic `telemetry/deviceID` containing the measurement. This message is sent via a transport protocol to a protocol endpoint made available by the Server. 
 3. The Server may then apply one or more [rule]({{< ref "/glossary#rule" >}})s to messages in order to perform fine-grained routing upon some or all of the message's measurement data. The routing can send a message to another component of the solution. 
 
 ## Considerations
@@ -134,7 +134,7 @@ Many existing solutions will have a message format already implemented. However,
 #### Device delivers a message
 Once the sensed data is placed in a message, the device publishes the message to the remote protocol endpoint on a reporting frequency.
 
-When reporting messages using the MQTT protocol, messages are sent with topics. Messages sent by a device with the topic `deviceID/telemetry/example` would be similar to the following pseudocode.  
+When reporting messages using the MQTT protocol, messages are sent with topics. Messages sent by a device with the topic `telemetry/deviceID/example` would be similar to the following pseudocode.  
 
 ```python
 # get device ID of the device sending message
@@ -142,7 +142,7 @@ device_id = get_device_id()
 # get the collection of unsent sensor messages
 sensor_data = get_sensor_messages()
 # the device's specific topic
-topic = device_id + '/telemetry/example'
+topic = 'telemetry/' + device_id + '/example'
 # loop through and publish all sensed data
 while record in sensor_data:  
     mqtt_client.publish(topic, record, quality_of_service)
