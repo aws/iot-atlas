@@ -51,7 +51,7 @@ An IoT solution should leverage the following design when the *device* is the so
 When implementing this design, consider the following questions:
 
 #### How can a component simply get the current state of a Device State Replica?
-Using a pub/sub style of interaction a component can listen to the `dstate/deviceID/get/accepted` and `.../get/rejected` topics and then post a message to the `state/deviceID/get` topic. The Device State Replica would then respond with the state on the `.../get/accepted` topic. If the Device State Replica exposes a REST API, a component can execute a GET against the `state/deviceID/get` topic and expect a direct response. 
+Using a pub/sub style of interaction a component can listen to the `state/deviceID/get/accepted` and `.../get/rejected` topics and then post a message to the `state/deviceID/get` topic. The Device State Replica would then respond with the state on the `.../get/accepted` topic. If the Device State Replica exposes a REST API, a component can execute a GET against the `state/deviceID/get` topic and expect a direct response. 
 
 ## Example
     <tbd written scenario>
