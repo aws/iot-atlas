@@ -1,9 +1,10 @@
 ---
 title: "Home"
 ---
+{{< atlas-logo >}} 
 # Welcome
 
-Welcome to the IoT Atlas, where successful journeys using the internet of things rely on a few maps.
+Welcome to the IoT Atlas, where successful journeys using the internet of things rely on maps.
 
 The most successful Internet of Things (aka IoT) projects progress from prototype, through pilot and limited production toward an identified business outcome delivered in production. The IoT Atlas attempts to support your project by explaining the why, what, and who of commonly used, modern IoT designs.
 
