@@ -25,7 +25,7 @@ Both designs in the above diagram expose a gateway endpoint using the same type 
 2. The device publishes a message containing the measurement via a transport protocol to the local protocol endpoint exposed by the gateway. 
 3. The gateway receives the message
 4. The gateway publishes the message to the server on the same topic as the received message.
-   1. if the gateway is unsuccessful sending the message to the server the message is processed using an upward message approach
+   - if the gateway is unsuccessful sending the message to the server, the message is processed using an upward message approach
 5. The server receives the message
 
 #### Down gateway
@@ -33,7 +33,7 @@ Both designs in the above diagram expose a gateway endpoint using the same type 
 2. The server publishes a message to the gateway via the transport protocol's endpoint
 3. The gateway receives the message
 4. The gateway publishes the message to the device listening on the gateway endpoint on the same topic as the received message 
-   1. if the gateway is unsuccessful sending the message to the device the message is processed using a downward message approach
+   - if the gateway is unsuccessful sending the message to the device, the message is processed using a downward message approach
 5. The device receives the message
 
 ## Considerations
