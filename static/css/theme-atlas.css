@@ -33,6 +33,10 @@ article > aside .menu .dd-item {
   font-size: 14px;
 }
 
+#navigation a {
+  color: #959595;
+}
+
 .iotAtlasLeftSmall {
   float: left;
   height: 75px;
