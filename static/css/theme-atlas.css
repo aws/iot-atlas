@@ -1,17 +1,21 @@
 
 h2 {
-    border-bottom: 3px solid #f28272;
-    /*display: inline-block;*/
-    /*border-bottom: 1px solid #dedede;*/
-    margin-bottom: 15px;
+  border-bottom: 3px solid #f28272;
+  /*display: inline-block;*/
+  /*border-bottom: 1px solid #dedede;*/
+  margin-bottom: 15px;
 }
 
 h3 {
-    border-bottom: 2px solid #d5d5d5;
-    border-bottom-style: dashed;
-    /*display: inline-block;*/
-    /*border-bottom: 1px solid #dedede;*/
-    margin-bottom: 15px;
+  border-bottom: 2px solid #d5d5d5;
+  border-bottom-style: dashed;
+  /*display: inline-block;*/
+  /*border-bottom: 1px solid #dedede;*/
+  margin-bottom: 15px;
+}
+
+h4 {
+  font-size: 22px;
 }
 
 html {
@@ -32,4 +36,18 @@ article > aside .menu .dd-item {
 .iotAtlasLeftSmall {
   float: left;
   height: 75px;
+}
+
+/* Table of contents */
+.toc ul { list-style: none; margin: 0; padding: 0 5px;  }
+.toc ul li { display: inline; }
+#TableOfContents > ul > li > ul > li > ul li { margin-right: 8px; }
+#TableOfContents > ul > li > ul > li > a, #TableOfContents > ul > li > a   { font-weight: bold; background-color: #eeeeee; padding: 0 10px; margin: 0 2px; }
+#TableOfContents > ul > li > ul > li > a { font-style: italic; }
+.toc.compact ul > li > ul > li > ul  { display: none; }
+
+#toc {
+    position:fixed;
+    background-color: rgba(0, 0, 0, 0.1);
+    padding: 10px 50px 10px 20px;
 }
