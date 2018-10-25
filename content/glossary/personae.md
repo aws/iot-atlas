@@ -1,20 +1,25 @@
 ---
 title: "Personae"
-date: 2018-09-24
 ---
+Descriptions of who is commonly interested in an IoT solution.
+<!--more-->
 
-#### Business Decision Maker
+{{% notice note %}}
+**TODO:** Complete all TBDs  
+{{% /notice %}}
 
-#### Data Engineer
+### Business Decision Maker
 
-#### Device Engineer 
+### Data Engineer
 
-#### Fleet Manager 
+### Device Engineer 
 
-#### Industrial Engineer
+### Fleet Manager
 
-#### Operations Analyst
+### Industrial Engineer
 
-#### Security Architect
+### Operations Analyst
 
-#### Security Operations
+### Security Architect
+
+### Security Operations
