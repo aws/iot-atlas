@@ -40,6 +40,47 @@ The solution can ensure that only the device targeted for a software update can 
 **Temporary Credential** - a device interacts with the solution to obtain a temporary credential associated with only the privilege of accessing the storage solution to download the update. The benefit of using a temporary credential is that only the device with that credential can access the update, even when the device does not have a publicly resolvable IP address. The slight negative of this approach is that it requires the device and solution to be more complex because the device must go through a separate process to obtain temporary credentials.
 
 ## Example
-Example showing a targeted device receiving and executing an "upgrade thyself" Command. Specifically, the device will obtain new firmware, perform an upgrade on itself, and acknowledge success.
+### Device perspective of a software upgrade 
+An example of the logic involved for a device in an IoT solution to receive and execute an "update" command received through a [Device State Replica]({{< ref "/designs/device_state_replica" >}}). Specifically, the device will obtain new software, perform an update using that software, and acknowledge completion.
 
-    <tbd written scenario>
+#### Device gets ready for update commands
+A device subscribes a message listener function to process messages coming from the `.../update/delta` topic
+```python
+def message_listener(message):
+    # ..will do something with 'message'.. 
+
+main():
+    sub = topic_subscribe('state/deviceID/update/delta', message_listener)
+    wait_until_exit()
+```
+
+#### Device reads download URL from message and downloads software
+After some time passes the device receives a delta message that acts as the 'software update' command.
+```python
+def message_listener(message):
+    msg = parse_message(message)
+    if msg is UPDATE_COMMAND:
+        job_id = msg.get_job_id()
+        url = msg.read_value('softwareURL')
+        software = download_software(url)
+        apply_software(software, job_id)
+```
+
+#### Device applies software and publishes acknowledgement message
+A device will apply the downloaded software and acknowledge command completion with message to `.../update/accepted` topic
+```python
+def apply_software(software, job_id):
+    # do the local, device-specific work to apply the software
+    # and produce a result value of SUCCESS or FAILURE
+    
+    if result is SUCCESS:
+      message = 'jobID:' + job_id + " SUCCESS"
+    else:
+        message = 'jobID:' + job_id + "FAILURE"
+    
+    topic = 'state/deviceID/update/accepted'
+    message_publish(topic, message, quality_of_service)
+    
+    return result
+```
+
