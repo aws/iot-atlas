@@ -47,10 +47,12 @@ An example of the logic involved for a device in an IoT solution to receive and 
 A device subscribes a message listener function to process [command message]({{< ref "/glossary/vocabulary#command-message" >}})s coming from the `.../update/delta` topic
 ```python
 def message_listener(message):
-    # ..will do something with 'message'.. 
+    # ..do something with 'message'.. 
 
-main():
+def main():
+    # subscribe the message listener function to the topic
     sub = topic_subscribe('state/deviceID/update/delta', message_listener)
+    # now wait until the program should end
     wait_until_exit()
 ```
 
@@ -58,11 +60,17 @@ main():
 After some time passes the device receives a delta message that acts as the 'software update' command message.
 ```python
 def message_listener(message):
+    # parse the message from raw format into something the program can use
     msg = parse_message(message)
+    # determine if the message is an update command type 
     if msg is UPDATE_COMMAND:
+        # get the globally unique job ID from the command message
         job_id = msg.get_job_id()
+        # read the software update URL from the command message
         url = msg.read_value('softwareURL')
+        # download the software from the given URL
         software = download_software(url)
+        # ..and apply the software update triggered by the specific job ID
         apply_software(software, job_id)
 ```
 
