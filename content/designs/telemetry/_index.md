@@ -101,7 +101,7 @@ Either with code on the device or code operating in a device [gateway]({{< ref "
 device_id = get_device_id()
 while should_poll():  # loop until we should no longer poll sensors
     for sensor in list_of_sensors:
-        # get timestamp of this sensor reading
+        # get timestamp of this 'sensor' reading
         ts = get_timestamp()
         # read the current sensor's value
         value = sensor.read_value()
