@@ -21,7 +21,7 @@ The Telemetry Archiving design shown in the following diagram can deliver this f
 
 1. The device obtains a measurement from a sensor operating in an environment remote from the IoT solution. 
 2. The device publishes a message to the topic `telemetry/deviceID` containing the measurement. This message is sent via a transport protocol to a protocol endpoint made available by the Server. 
-3. The Server may then apply one or more [rule]({{< ref "/glossary#rule" >}})s to messages in order to perform fine-grained routing upon some or all of the [message]({{< ref "/glossary#message" >}})'s measurement data. These rules fan out the messages to at least a processing path **`(4)`** and a raw storage path **`(5)`**
+3. The Server may then apply one or more [rule]({{< ref "/glossary/vocabulary#rule" >}})s to messages in order to perform fine-grained routing upon some or all of the [message]({{< ref "/glossary/vocabulary#message" >}})'s measurement data. These rules fan out the messages to at least a processing path **`(4)`** and a raw storage path **`(5)`**
 4. The message processing path performs fundamental calculations necessary by other components of the solution and stores the processed results. 
 5. The raw message storage path saves the original raw message in a manner supporting the in-order replay of the original messages.
 6. At some point in the future, a component can read raw messages from a point in time and replay those messages into a `telemetry/deviceID/replay` topic. The solution processes the replayed messages as necessary.

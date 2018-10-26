@@ -28,7 +28,7 @@ The Device Bootstrap design shown in the following diagram can deliver this func
 2. The registration authority validates the authenticity of the credentials, attribute or token, registers the device, and returns short-lived credentials to the device.
 3. A device uses the short-lived credentials to contact the privilege escalator and to share more information about itself
 4. The privilege escalator determines the device's type and determines if the device should be authorized in the IoT solution. If the device is authorized, the privilege escalator returns long-lived credentials associated with privileges corresponding to the device's purpose within the IoT solution.
-5. A device uses the long-lived privileges to subscribe and publish to the device's [messaging topic]({{< ref "/glossary#messaging-topic" >}})s via the server's protocol endpoint.
+5. A device uses the long-lived privileges to subscribe and publish to the device's [messaging topic]({{< ref "/glossary/vocabulary#messaging-topic" >}})s via the server's protocol endpoint.
 
 ## Considerations
 When implementing this design, consider the following questions:

@@ -23,7 +23,7 @@ The Telemetry design shown in the following diagram can deliver this functionali
 
 1. The device obtains a measurement from a sensor operating in an environment remote from the IoT solution. 
 2. The device publishes a message to the topic `telemetry/deviceID` containing the measurement. This message is sent via a transport protocol to a protocol endpoint made available by the Server. 
-3. The Server may then apply one or more [rule]({{< ref "/glossary#rule" >}})s to messages in order to perform fine-grained routing upon some or all of the message's measurement data. The routing can send a message to another component of the solution. 
+3. The Server may then apply one or more [rule]({{< ref "/glossary/vocabulary#rule" >}})s to messages in order to perform fine-grained routing upon some or all of the message's measurement data. The routing can send a message to another component of the solution. 
 
 ## Considerations
 The **Telemetry** design is commonly engaged when a project has the requirement to "stream data from a device". Furthermore, when implementing an IoT solution, the word *telemetry* is often used both as a way of describing the above design diagram *and* a shorthand description for the entire collection of challenges inherent in sensing and sending data from a remote location into a larger solution. These considerations focus on topics which usually relate to implementing the above diagram. 
@@ -34,7 +34,7 @@ When implementing this design, consider the following questions:
 IoT solutions with processing latency requirements at the level of **&micro;-seconds or milliseconds** should perform that processing on the device itself or possibly on a device [gateway]({{< ref "/designs/gateway" >}}) connected to the device.  
 IoT solutions with processing latency requirements at the level of **Seconds**, **Minutes**, or even **Hours** should perform that processing on the cloud by default.  
 In general processing of messages in "seconds" through "low minutes", should be performed by components connected directly to the protocol endpoint. Commonly a component's processing will be triggered by the arrival of messages that match certain criteria.  
-Processing telemetry from "low minutes" through "hours" should be performed in an asynchronous fashion. When messages arrive that match desired criteria events will most often be placed in a processing queue and a component will perform the necessary work. Once complete, often the component will emit a message to a "work complete" [message topic]({{< ref "/glossary#message-topic" >}}). 
+Processing telemetry from "low minutes" through "hours" should be performed in an asynchronous fashion. When messages arrive that match desired criteria events will most often be placed in a processing queue and a component will perform the necessary work. Once complete, often the component will emit a message to a "work complete" [message topic]({{< ref "/glossary/vocabulary#message-topic" >}}). 
 
 #### Are there lessons learned that make telemetry data easier to process in the IoT solution?
 **Solution Unique Device IDs** – Each device in a solution should have a *solution unique* ID. Although this ID does not need to be truly globally unique each device should have an ID that is and will forever be unique within the IoT solution. By embracing solution unique device IDs, the IoT solution will be better able to process and route the sensed data for use by components within the solution.  
@@ -54,7 +54,7 @@ If large messages **can be sent in batches**, each message should be saved as a 
 
 #### What are the sample vs. reporting frequencies of a device?
 
-**Sample frequency** is the frequency at which sensed data is retrieved, or *sampled* from an attached [sensor]({{< ref "/glossary#sensor" >}}).  
+**Sample frequency** is the frequency at which sensed data is retrieved, or *sampled* from an attached [sensor]({{< ref "/glossary/vocabulary#sensor" >}}).  
 
 **Reporting frequency** is the frequency at which sample data stored on the device is sent into the broader IoT solution.
   
@@ -69,11 +69,11 @@ If ordering is **not required**, then the solution can process messages from the
 If ordering is **required**, this follow-on question needs an answer, "On how long of a time horizon does a component of the solution require ordered messages?" 
 
 If the follow-on answer is "less than a one second horizon on a single topic", the solution can gather messages from a topic `foo` into a buffer, then after each tick of the clock, the buffer is sorted and messages are emitted in order to another topic `foo/ordered`. 
-If the answer is "greater than a one second horizon", the IoT solution should write every record to an [ordered store]({{< ref "/glossary#ordered-store" >}}). Any component of the solution that **requires** messages to always be in-order, can now read and get updates from the ordered store.
+If the answer is "greater than a one second horizon", the IoT solution should write every record to an [ordered store]({{< ref "/glossary/vocabulary#ordered-store" >}}). Any component of the solution that **requires** messages to always be in-order, can now read and get updates from the ordered store.
 
 #### What are some of the cost drivers of telemetry in an IoT solution?
 
-Usually the most common drivers of cost in an IoT solution are the number of devices, the device sample and reporting frequencies, the necessary *sense-to-insight* or *sense-to-action* telemetry processing latency, the [device data density]({{< ref "/glossary#device-data-density" >}}) and finally the retention duration of [telemetry archiving]({{< ref "/designs/telemetry_archiving" >}})
+Usually the most common drivers of cost in an IoT solution are the number of devices, the device sample and reporting frequencies, the necessary *sense-to-insight* or *sense-to-action* telemetry processing latency, the [device data density]({{< ref "/glossary/vocabulary/v#device-data-density" >}}) and finally the retention duration of [telemetry archiving]({{< ref "/designs/telemetry_archiving" >}})
 
 #### Does each device "actively un-align" its reporting interval with other devices?
 

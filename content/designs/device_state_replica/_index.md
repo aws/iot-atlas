@@ -13,7 +13,7 @@ IoT solutions are expected to interact with devices to perform and track device 
 ## Solution
 IoT solutions that leverage the Device State Replica design are able to manage device-related state changes in a reliable, scalable, and straightforward fashion. 
 
-The Device State Replica design describes how to replicate a device's current state, desired future state, and the difference between current and desired states. The Device State Replica design is similar to [Command]({{< ref "/designs/command" >}}) in that both use [message]({{< ref "/glossary#message" >}})s as triggers for actions and acknowledgement messages when actions are complete. However, the Device State Replica design goes farther than the Command design, by taking a prescriptive approach to both the management of device-related state and how the state and changes are communicated. 
+The Device State Replica design describes how to replicate a device's current state, desired future state, and the difference between current and desired states. The Device State Replica design is similar to [Command]({{< ref "/designs/command" >}}) in that both use [message]({{< ref "/glossary/vocabulary#message" >}})s as triggers for actions and acknowledgement messages when actions are complete. However, the Device State Replica design goes farther than the Command design, by taking a prescriptive approach to both the management of device-related state and how the state and changes are communicated. 
 
 ### Component-to-device State Replica
 
@@ -23,7 +23,7 @@ An IoT solution should leverage the following design when a *component* of the I
 
 ### Component-to-device Diagram Steps
 
-1. A device reports **initial device state** by publishing that state as a [message]({{< ref "/glossary#message" >}}) to the `state/deviceID/update` [topic]({{< ref "/glossary#message-topic" >}}).
+1. A device reports **initial device state** by publishing that state as a [message]({{< ref "/glossary/vocabulary#message" >}}) to the `state/deviceID/update` [topic]({{< ref "/glossary/vocabulary/v#message-topic" >}}).
 2. The Device State Replica tracking this device reads the message from the `state/deviceID/update` topic and records the device state in a persistent data store.
 3. A device subscribes to the delta messaging topic `state/deviceID/update/delta` upon which device-related state change messages will arrive.
 4. A component of the solution publishes a desired state message to the topic `state/deviceID/update`and the Device State Replica tracking this device records the desired device state in a persistent data store.

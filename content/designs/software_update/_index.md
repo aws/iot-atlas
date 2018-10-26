@@ -43,7 +43,7 @@ The solution can ensure that only the device targeted for a software update can 
 ### Device perspective of a software upgrade 
 An example of the logic involved for a device in an IoT solution to receive and execute an "update" command received through a [Device State Replica]({{< ref "/designs/device_state_replica" >}}). Specifically, the device will obtain new software, perform an update using that software, and acknowledge completion.
 
-#### Device gets ready for update command message
+#### Device prepare for update command messages
 A device subscribes a message listener function to process [command message]({{< ref "/glossary/vocabulary#command-message" >}})s coming from the `.../update/delta` topic
 ```python
 def message_listener(message):
@@ -75,7 +75,7 @@ def message_listener(message):
 ```
 
 #### Device applies software and publishes acknowledgement message
-A device will apply the downloaded software and acknowledge command completion with message to `.../update/accepted` topic
+A device will apply the downloaded software and acknowledge the command completion with a message to `.../update/accepted` topic
 ```python
 def apply_software(software, job_id):
     # do the local, device-specific work to apply the software

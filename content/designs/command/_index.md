@@ -21,8 +21,8 @@ The Command design shown in the following diagram can deliver this functionality
 
 ### Diagram Steps
 
-1. A [device]({{< ref "/glossary#device" >}}) configures itself to communicate with a protocol endpoint so that Command messages can be sent and received.
-2. A component of the solution publishes a [command message]({{< ref "/glossary#command-message" >}}) targeted at one or more devices.
+1. A [device]({{< ref "/glossary/vocabulary#device" >}}) configures itself to communicate with a protocol endpoint so that Command messages can be sent and received.
+2. A component of the solution publishes a [command message]({{< ref "/glossary/vocabulary#command-message" >}}) targeted at one or more devices.
 3. The server uses the protocol endpoint to send the Command message to each previously configured device.
 4. Upon completion of the Command's requested action, the device publishes a command completion message to the server via the protocol endpoint.
 
