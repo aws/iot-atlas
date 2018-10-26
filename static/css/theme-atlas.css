@@ -33,6 +33,13 @@ article > aside .menu .dd-item {
   font-size: 14px;
 }
 
+article {
+  margin-top: 2.5rem;
+}
+article section.page {
+  padding: 2rem 1rem;
+}
+
 #navigation a {
   color: #959595;
 }
