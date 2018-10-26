@@ -19,11 +19,11 @@ The Software Update pattern shown in the following diagram can deliver this func
 ![Software Update](software-update.png)
 
 ### Diagram Steps
-1. A device subscribes to the delta [messaging topic]({{< ref "/glossary#message-topic" >}}) `state/deviceID/update/delta` upon which device-related state change messages will arrive.
+1. A device subscribes to the delta [message topic]({{< ref "/glossary/vocabulary#message-topic" >}}) `state/deviceID/update/delta` upon which device-related state change messages will arrive from the device state replica.
 2. An application obtains the new software distribution and places that into a storage solution accessible to production devices. 
 3. An application identifies a device that should receive the new software and publishes a desired state message to the device's topic `state/deviceID/update`. The desired state message contains a software update URL different form the device's current software version URL.
 4. The device state replica tracking this device records the desired device state in a persistent data store and publishes a delta message to the topic `state/deviceID/update/delta` that is sent to the device.
-5. The device receives a delta message that acts as the 'software update' command. Specifically, this message conveys the change between the current software version URL and the new URL
+5. The device receives a delta message that acts as the 'software update' command message. Specifically, this message conveys the change between the current software version URL and the new URL
 6. The device obtains the new software update URL from the delta message.
 7. The device downloads the new software and applies the software locally.
 8. The device publishes an acknowledgement message reflecting the software version the device is now using to the update topic `state/deviceID/update` and a device state replica tracking this device records the new state in a persistent data store. 
@@ -43,8 +43,8 @@ The solution can ensure that only the device targeted for a software update can 
 ### Device perspective of a software upgrade 
 An example of the logic involved for a device in an IoT solution to receive and execute an "update" command received through a [Device State Replica]({{< ref "/designs/device_state_replica" >}}). Specifically, the device will obtain new software, perform an update using that software, and acknowledge completion.
 
-#### Device gets ready for update commands
-A device subscribes a message listener function to process messages coming from the `.../update/delta` topic
+#### Device gets ready for update command message
+A device subscribes a message listener function to process [command message]({{< ref "/glossary/vocabulary#command-message" >}})s coming from the `.../update/delta` topic
 ```python
 def message_listener(message):
     # ..will do something with 'message'.. 
@@ -55,7 +55,7 @@ main():
 ```
 
 #### Device reads download URL from message and downloads software
-After some time passes the device receives a delta message that acts as the 'software update' command.
+After some time passes the device receives a delta message that acts as the 'software update' command message.
 ```python
 def message_listener(message):
     msg = parse_message(message)
@@ -74,13 +74,15 @@ def apply_software(software, job_id):
     # and produce a result value of SUCCESS or FAILURE
     
     if result is SUCCESS:
-      message = 'jobID:' + job_id + " SUCCESS"
+        # make a success message
+        message = 'jobID:' + job_id + " SUCCESS"
     else:
+        #make a failure message
         message = 'jobID:' + job_id + "FAILURE"
     
+    # the topic used to publish the acknowledge message
     topic = 'state/deviceID/update/accepted'
+    # ...and finally, publish the acknowledge message
     message_publish(topic, message, quality_of_service)
-    
-    return result
 ```
 
