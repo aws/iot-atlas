@@ -5,7 +5,10 @@ Descriptions of who is commonly interested in an IoT solution.
 <!--more-->
 
 ### Business Decision Maker
-> the CEO, CTO, CSIO or manager of the Big Data team who is constantly on the lookout for solutions that will solve the company's problems
+> the CEO, CTO, CSIO, or manager of the Big Data team who is constantly on the lookout for solutions that will solve the company's problems
+
+### Line of Business Application Developer
+> a cloud-knowledgeable developer who creates, owns, and maintains an entire application or service vital for the effective operation of an enterprise's critical processes
 
 ### Data Engineer
 > a technically-savvy person who knows both how to setup the cloud data infrastructure for the company and who is responsible for making sure it works right 
