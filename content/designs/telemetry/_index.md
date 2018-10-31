@@ -73,7 +73,7 @@ If the answer is "greater than a one second horizon", the IoT solution should wr
 
 #### What are some of the cost drivers of telemetry in an IoT solution?
 
-Usually the most common drivers of cost in an IoT solution are the number of devices, the device sample and reporting frequencies, the necessary *sense-to-insight* or *sense-to-action* telemetry processing latency, the [device data density]({{< ref "/glossary/vocabulary/v#device-data-density" >}}) and finally the retention duration of [telemetry archiving]({{< ref "/designs/telemetry_archiving" >}})
+Usually the most common drivers of cost in an IoT solution are the number of devices, the device sample and reporting frequencies, the necessary *sense-to-insight* or *sense-to-action* telemetry processing latency, the [device data density]({{< ref "/glossary/vocabulary#device-data-density" >}}) and finally the retention duration of [telemetry archiving]({{< ref "/designs/telemetry_archiving" >}})
 
 #### Does each device "actively un-align" its reporting interval with other devices?
 

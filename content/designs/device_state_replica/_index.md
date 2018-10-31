@@ -23,7 +23,7 @@ An IoT solution should leverage the following design when a *component* of the I
 
 ### Component-to-device Diagram Steps
 
-1. A device reports **initial device state** by publishing that state as a [message]({{< ref "/glossary/vocabulary#message" >}}) to the `state/deviceID/update` [topic]({{< ref "/glossary/vocabulary/v#message-topic" >}}).
+1. A device reports **initial device state** by publishing that state as a [message]({{< ref "/glossary/vocabulary#message" >}}) to the `state/deviceID/update` [topic]({{< ref "/glossary/vocabulary#message-topic" >}}).
 2. The Device State Replica tracking this device reads the message from the `state/deviceID/update` topic and records the device state in a persistent data store.
 3. A device subscribes to the delta messaging topic `state/deviceID/update/delta` upon which device-related state change messages will arrive.
 4. A component of the solution publishes a desired state message to the topic `state/deviceID/update`and the Device State Replica tracking this device records the desired device state in a persistent data store.

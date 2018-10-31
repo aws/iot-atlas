@@ -1,7 +1,6 @@
 ---
 title: "Gateway"
 weight: 50
-draft: true
 ---
 
 {{< synopsis-gateway >}}
