@@ -2,7 +2,7 @@
 
 This repository contains the content of the [IoT Atlas](http://iotatlas.net)
 
-The IoT Atlas attempts to support your project by explaining the why, what, and who of commonly used, modern IoT designs.
+The IoT Atlas strives to support your project by explaining the why, what, and who of commonly used, modern IoT designs.
 
 It would be great to have you join us and [contribute](https://github.com/aws/iot-atlas/blob/master/CONTRIBUTING.md) your ideas for designs, considerations, and examples. 
 
