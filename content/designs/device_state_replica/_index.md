@@ -10,7 +10,7 @@ draft: true
 ## Challenge
 IoT solutions are expected to interact with devices to perform and track device state changes. There are two ways this challenge manifests. First, even when experiencing intermittent network connectivity the solution needs the device to perform an action that changes the state of a device, and second the device needs the solution to reflect a state change which has occurred on the device.
 
-It is privotal in all Command and Control scenarios to know the state of a device and to be able to verify state changes and using a Device State Replica pattern allows you to do this.  
+It is pivotal in all Command and Control scenarios to know the state of a device and to be able to verify state changes and using a Device State Replica pattern allows you to do this.  
 
 ## Solution
 IoT solutions that leverage the Device State Replica design are able to manage device-related state changes in a reliable, scalable, and straightforward fashion. 
