@@ -34,7 +34,7 @@ When implementing this design, consider the following questions:
 
 #### Have you first considered the Device State Replica?
 
-The [Device State Replica](/designs/device_state_replica/) is the preferred method of commmand and control. This pattern implements state management and control message recovery for you such as being to detect state changes when coming back online from an offline state. In situations where DSR isn't suitable or exceeds some implementation limits then consider this COMMAND pattern and custom implementation of control.
+The [Device State Replica](/designs/device_state_replica/) is the preferred method of command and control. This pattern implements state management and control message recovery for you such as being to detect state changes when coming back online from an offline state. In situations where DSR isn't suitable or exceeds some implementation limits then consider this COMMAND pattern and custom implementation of control.
 
 #### How can the solution track each device's command progress?
 Each command should have a solution unique type and each command message should contain a globally unique message ID. The command message's ID allows the solution to track the status of distinct commands and the command type enables the diagnoses any potential issues across categories of commands over time. The messages should be idempotent and not allow for being missed or duplicated without knowledge of the device *and* requestor.
