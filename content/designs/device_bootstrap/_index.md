@@ -34,21 +34,21 @@ The Device Bootstrap design shown in the following diagram can deliver this func
 When implementing this design, consider the following questions:
 
 #### Does the device's manufacturing process create and place the initial token on the device?
-If **no**, then the device must have a mechanism to receive a secure token or certificate after the device is manufactured. Such a mechanism could involve configuring a device over a BLE (Bluetooth Low Energy) connection from a mobile application. This has the added advantage of being able to immediately associate a device to a customer while they are logged into a mobile application.
+If **no**, then the device must have a mechanism to receive a secure token or [certificate](https://en.wikipedia.org/wiki/Public_key_certificate) after the device is manufactured. Such a mechanism could involve configuring a device over a Bluetooth Low Energy ([BLE](https://en.wikipedia.org/wiki/Bluetooth_Low_Energy)) connection from a mobile application. This has the added advantage of being able to immediately associate a device to a customer while they are logged into a mobile application.
 
 If **yes - with token/shared credentials**, In this case, it is important that the initial token or shared credentials are used to enable only the minimal privileges necessary to register with the solution. Once the registration authority validates the initial token or shared credentials, the rest of the steps of this design should be followed.
 
 If **yes - with certificate**, the device can be manufactured in a secure manner and the need for a Registration Authority can be reduced if not removed altogether. This is easy to say and difficult to achieve as many manufacturing processes are purposefully disconnected from the cloud. Regardless, since the solution may have an entire step removed when keys are introduced by the manufacturer, the customer experience and overall system simplicity will benefit.
 
-#### How can customers be associated with their devices?
-In almost all cases when devices are provisioned we need to associate the device to either a customer or a device profile within an established system. This involves gathering additional information from the device to complete the device registration. This can be accomplished with one or a combination of the following:
+#### How are customers associated with their devices?
+In almost all cases when devices are provisioned, we need to associate the device to either a customer or a device profile within an established system. This involves gathering additional information from the device to complete the device registration. Gathering this additional information can be accomplished with one or a combination of the following:
 
-* Devices are provisioned during manufacturing process with **certificates** and those can be pre-mapped to a device profile. This is common with customers who have known large fleets of devices.
-* Devices report their model and serial numbers during the communication with the Registration Authority, that information can be pre-mapped to a device profile.
-* Devices use BLE or another local form of communication to receive information about their identity, such a customer profile. For consumer devices, handling this via a mobile application is the most common form of device provisioning. This can be coupled with certificates installed during manufacturing allowing for the registration process to be completed in a single step.
+* Devices are provisioned during the manufacturing process with [certificate](https://en.wikipedia.org/wiki/Public_key_certificate)s and those certificates can be pre-mapped to a device profile. This is common for solutions with large fleets of known devices.
+* Devices report their model and serial numbers during their communication with the Registration Authority, that information can be pre-mapped to a device profile.
+* Devices use BLE or another local form of communication to receive information about their identity, such as a customer profile. Handling this via a mobile application is the most common form of device provisioning. Using local communication can be coupled with the installation of certificates during manufacturing, enabling both the customer association and registration process to be completed in a single step.
 
 #### Are you using device certificates?
-Although the thought of trying to provision every single device in your solution with a certificate can at first be daunting, it is by far the most secure way for you to provision them. It is important to establish mutual authentication with such a proven technology to prevent threats like man in the middle attacks. When bootstrapping your devices, certificates should always be your first choice for device identity.
+Although the thought of trying to provision every single device in a solution with a certificate can be daunting, it is by far the most secure way to provision devices. It is important to establish mutual authentication to prevent threats like [man in the middle](https://en.wikipedia.org/wiki/Man-in-the-middle_attack) attacks. When bootstrapping your devices, certificates should always be your first choice for device identity.
 
 #### Does the registration authority need to support custom authorization integration with an existing customer solution?
 If **yes**, the design's registration authority step can be implemented using an Application Programming Interface ([API](https://en.wikipedia.org/wiki/Application_programming_interface)) in front of an existing customer solution. This API can then perform the registration authority job while leveraging the customer's existing solution.
