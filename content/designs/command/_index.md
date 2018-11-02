@@ -34,7 +34,7 @@ When implementing this design, consider the following questions:
 
 #### Have you first considered the Device State Replica?
 
-Since the execution of commands actually results in the change of state in a device, the [Device State Replica](/designs/device_state_replica/) (DSR) is the preferred method of command and control. The DSR design implements state management and control message recovery for a solution, such as detecting state changes when coming back online from an offline state. In situations where DSR isn't suitable or exceeds some implementation limits, then consider this Command design and a custom implementation of control.
+Since the execution of commands actually results in the change of state in a device, the [Device State Replica](/designs/device_state_replica/) (DSR) design is the preferred method executing commands in an IoT solution. In situations where DSR isn't suitable or exceeds some implementation limits, then consider this Command design and a custom implementation of control.
 
 #### How can the solution track each device's command progress?
 Each command should have a solution unique type and each command message should contain a globally unique message ID. The command message's ID allows the solution to track the status of distinct commands and the command type enables the diagnoses any potential issues across categories of commands over time. The messages should be idempotent and not allow for being missed or duplicated without knowledge of the device *and* requestor.
