@@ -10,6 +10,8 @@ draft: true
 ## Challenge
 IoT solutions are expected to interact with devices to perform and track device state changes. There are two ways this challenge manifests. First, even when experiencing intermittent network connectivity the solution needs the device to perform an action that changes the state of a device, and second the device needs the solution to reflect a state change which has occurred on the device.
 
+It is privotal in all Command and Control scenarios to know the state of a device and to be able to verify state changes and using a Device State Replica pattern allows you to do this.  
+
 ## Solution
 IoT solutions that leverage the Device State Replica design are able to manage device-related state changes in a reliable, scalable, and straightforward fashion. 
 
@@ -52,6 +54,9 @@ When implementing this design, consider the following questions:
 
 #### How can a component simply get the current state of a Device State Replica?
 Using a pub/sub style of interaction a component can listen to the `state/deviceID/get/accepted` and `.../get/rejected` topics and then post a message to the `state/deviceID/get` topic. The Device State Replica would then respond with the state on the `.../get/accepted` topic. If the Device State Replica exposes a REST API, a component can execute a GET against the `state/deviceID/get` topic and expect a direct response. 
+
+#### How does a Device know what changed while offline?
+The first action a device should take when connecting or re-establishing a connection is to obtain the current desired state and compare that to it's last known state. Ideally the server tracking the Device State Replica can calculate the delta automatically and so a connecting Device would subscribe to `state/deviceID/update/delta` and can then act on any changes that occurred while in an offline state.
 
 ## Example
     <tbd written scenario>
