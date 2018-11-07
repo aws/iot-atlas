@@ -4,6 +4,7 @@ h2 {
   /*display: inline-block;*/
   /*border-bottom: 1px solid #dedede;*/
   margin-bottom: 15px;
+  padding-bottom: 0.2rem;
 }
 
 h3 {
@@ -19,7 +20,7 @@ h4 {
 }
 
 html {
-  font-size: 15px;
+  font-size: 0.95rem;
 }
 
 article > aside {
