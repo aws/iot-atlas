@@ -5,10 +5,6 @@ draft: true
 Words and definitions used across the IoT Atlas.  
 <!--more-->
 
-{{% notice note %}}
-**TODO:** Complete all TBDs  
-{{% /notice %}}
-
 ### Actuator
 > an actuator is used to move or control a mechanism in the environment
 
@@ -25,7 +21,7 @@ Words and definitions used across the IoT Atlas.
 > an endpoint is ...tbd
 
 ### Limited Production
-> tbd
+> effort to validate customer acceptance of the project's edge and cloud software at scale, in order to meet the majority of customer use-cases with a blueprint for mass production.
 
 ### Message
 > a unit of communication in an IoT solution, often containing either sensed or command-related data
@@ -40,19 +36,19 @@ Words and definitions used across the IoT Atlas.
 > a data store or micro-service which fulfills the role in an IoT solution of ensuring that all records stored within it are in time-series order.
 
 ### Pilot
-> tbd
+> effort performed to test a small set of customer use-cases, device configurations, and/or end-user features in order to identify a business outcome, software architecture, and/or create device blueprints.
 
 ### Production
-> tbd
+> effort to mass produce devices and roll-out the IoT product to the market.
 
 ### Prototype
-> tbd
+> effort taken for the purpose of education in order to obtain approval by a customer’s management to start the pilot phase.
 
 ### Rule
-> tbd
+> a singular collection of logic and actions executed by a rules engine
 
 ### Rule Engine
-> tbd
+> see Wikipedia ([Business rules engine](https://en.wikipedia.org/wiki/Business_rules_engine))
 
 ### Sensor
 > a sensor is used to measure some aspect of the environment around it
