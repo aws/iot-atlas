@@ -19,7 +19,7 @@ The Gateway design shown in the following diagram can deliver this functionality
 
 Both designs in the above diagram expose a gateway endpoint using the same type of protocol endpoint as the server. In both the *up* and *down* gateway diagrams, the gateway is connected to the server.  
 
-#### Up gateway (aka. "North")
+#### Up gateway (aka "North")
 1. the "up" gateway design is configured to mirror "upward" messages; in the diagram, messages arriving from the device with the `telemetry/deviceID` topic will be mirrored up to the server using the same topic.
 2. The device publishes a message containing the measurement via a transport protocol to the local protocol endpoint exposed by the gateway. 
 3. The gateway receives the message
@@ -27,7 +27,7 @@ Both designs in the above diagram expose a gateway endpoint using the same type 
    - if the gateway is unsuccessful sending the message to the server, the message is processed using an upward message approach
 5. The server receives the message
 
-#### Down gateway (aka. "South")
+#### Down gateway (aka "South")
 1. the "down" gateway is configured to listen to the server and mirror "downward" messages; in the diagram, messages arriving from the server with the `commands/deviceID` topic will be mirrored down to the device listening for messages with the same topic.
 2. The server publishes a message to the gateway via the transport protocol's endpoint
 3. The gateway receives the message
