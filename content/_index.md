@@ -6,7 +6,7 @@ title: "Home"
 
 Welcome to the IoT Atlas, where successful journeys using the internet of things rely on maps.
 
-The most successful Internet of Things (aka IoT) projects have clearly defined business outcomes. The vast majority of IoT projects traverse different phases, starting from prototype, through pilot and limited production toward production to achieve the identified business outcome at scale. The IoT Atlas supports your project by explaining the why, what, and who of commonly used, modern IoT designs.
+The most successful Internet of Things (aka IoT) projects have clearly defined business outcomes. The vast majority of IoT projects traverse different phases, starting from prototype, through pilot and limited production toward production, to achieve the identified business outcome at scale. The IoT Atlas supports your project by explaining the why, what, and who of commonly used, modern IoT designs.
 
 ## Overview
 Many IoT designs now being used globally are well-worn and time-tested but not widely known. The designs often come from mature domains such as *sensor networks*, *[control system](https://en.wikipedia.org/wiki/Control_system)* architectures, *[machine-to-machine ](https://en.wikipedia.org/wiki/Machine_to_machine)* networks, and *[embedded system](https://en.wikipedia.org/wiki/Embedded_system)* development. But the lack of visibility of those mature designs is causing many people to [reinvent the wheel](https://en.wikipedia.org/wiki/Reinventing_the_wheel) for their solution, when they'd prefer not. Further complicating the matter for experienced practitioners, even when a long-standing design is known, the design often needs to be revised to take into account cloud development concepts. 
