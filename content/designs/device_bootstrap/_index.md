@@ -13,7 +13,7 @@ IoT solutions need devices to perform some sort of privilege escalation to go fr
 ## Solution
 An IoT solution can manage the challenges of bootstrapping a device by deconstructing those challenges into a flow across two distinct concepts: a *registration authority* and a *privilege escalator*.  
 
-A **registration authority** is the component that validates expected certificate, token, or shared credentials received from the device and then returns solution credentials for use by the device. A registration authority will at least be a collection of policies dictating the ability of un-registered devices to subscribe or publish to defined topics on the server.
+A **registration authority** is the component that validates expected certificates, tokens, or shared credentials received from the device and then returns solution credentials for use by the device. A registration authority will at least be a collection of policies dictating the ability of un-registered devices to subscribe or publish to defined topics on the server.
 
 A **privilege escalator** enables a device with short-lived, lower-privilege credentials to share more attributes about itself or to exhibit proper behavior before obtaining higher-privileges in the solution. A distinct privilege escalation step also enables the injection of human approval into the privilege escalation process, if the solution requires. 
 
