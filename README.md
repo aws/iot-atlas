@@ -1,6 +1,6 @@
-## IoT Atlas
+## IoT Atlas (Chinese Simplified)
 
-This repository contains the content of the [IoT Atlas](http://iotatlas.net)
+This repository contains the content of the [IoT Atlas](http://iotatlas.net) in Chinses Simpified
 
 The IoT Atlas supports your project by explaining the why, what, and who of commonly used, modern IoT designs.
 
