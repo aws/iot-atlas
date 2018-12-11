@@ -76,7 +76,7 @@ IoT Atlas中的设计都会假设设备始终具有针对该解决方案唯一�
 Finally, each design will follow a few conventions. To convey an example of either data, or a code-related concept the `monospace` font will be used inline. When a word or concept is either crucial to the design or acting as a just-in-time definition a **bold** typeface will be used. When a block of code is best to convey or reinforce a concept, that block will be written at-least as monospaced `pseudo-code`. Over time we hope to have contributed and indexed examples of each design for a variety of languages and technologies.  
 
 
-最后，每个设计都遵循一些约定。当描述数据或代码相关概念的例子时，`monospace`字体会被使用。当一个词或概念对设计至关重要或作为即时定义时，**粗体**字体会被使用。当用代码块来描述或强化一个概念时，该块会至少被写成等宽的“伪代码”。随着时间的推移，我们希望为每个设计提供针对各种语言和技术的示例，这些示例是被贡献进来并索引的。
+最后，每个设计都遵循一些约定。当描述数据或代码相关概念的例子时，`monospace`字体会被使用。当一个词或概念对设计至关重要或作为即时定义时，**粗体**字体会被使用。当用代码块来描述或强化一个概念时，该块会至少被写成等宽的`伪代码`。随着时间的推移，我们希望为每个设计提供针对各种语言和技术的示例，这些示例是被贡献进来并索引的。
 
 ## Team
 ## 团队
