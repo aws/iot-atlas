@@ -44,25 +44,46 @@ To meet the bar for publication, a fully-formed IoT Atlas design will provide a 
 ## 设计的考虑因素
   
 #### Level of Abstraction
-#### 抽象级别
+#### 抽象程度
 
 Each design attempts to describe the pattern at a level of abstraction that incorporates as many details as possible, but no more than necessary. Of course this is a hard balance to achieve and will surely adjust over the lifetime of this effort. 
 
-
+每个设计都会试图在一定的抽象程度上用足够多的细节去描述相关的模式，但不会过多。当然这是一个非常难达到的平衡，并且肯定会在这项工作的整个生命周期内进行调整。
 
 Initially the IoT Atlas will describe designs just **above** the details of which communication protocol, which vendor, or which programming language might be used in an implementation. For example, the [Telemetry](/designs/telemetry) design is purposefully described just above the details of [CoAP](http://coap.technology/), [MQTT](http://mqtt.org/), or [AMQP](https://www.amqp.org/product/architecture) and yet someone familiar with these protocols would still understand the design's concept without any or only a slight amount of transformation. This position is taken because the designs should benefit as many people as possible regardless of tooling and vendor-specific implementation details. However, vendor-specific Examples can accelerate understanding for those starting out. As such the IoT Atlas will accept Example reference implementations of Designs which are more specific than pseudo-code can achieve.
+
+一开始时IoT Atlas将描述这些设计的实现细节，包括使用哪种通信协议，哪个供应商和哪种编程语言。比如说，[遥测](/designs/telemetry)设计的描述包括了[CoAP](http://coap.technology/), [MQTT](http://mqtt.org/)和[AMQP](https://www.amqp.org/product/architecture)的细节，熟悉这些协议的人可以理解这个设计的概念而无须或仅须少量的概念转换。这样做是因为无论工具和特定供应商的实施细节如何，设计都应使尽可能多的人受益。但是，特定于供应商的示例是可以帮助那些刚刚开始的人加速理解的。因此，IoT Atlas将会包括针对设计的示例参考实现，这些实现会比伪代码更为具体而有针对性。
  
 It is unlikely that all possible perspectives can be incorporated, but the goal of describing designs at this level of abstraction is in line with the primary intent to help practitioners understand the design across the widest possible set of IoT solutions.
 
+一般很难做到将方方面面的知识点都涵盖在设计里，但在这个抽象层面去描述设计的目标是与我们的初衷相符的，即我们希望能够帮助从业者去理解尽可能广的物联网解决方案的设计
+
 #### Key Concepts
+#### 关键概念
+
 Designs in the IoT Atlas will use the concept of [message topics]({{< ref "/glossary#message-topic" >}}) to convey the detailed flow of messages between devices, between devices and components, or between components of an IoT solution. A message topic in this context should be thought of as a direct map to the pub/sub concept of a [subject](#) and as a similar concept to the partial URLs used to describe [request/response](#) and [REST](#) endpoints. By using a single concept to describe the subject of messages used in a design's flow, the IoT Atlas attempts to describe the concepts in the designs more simply.
+
+IoT Atlas里的设计将采用[消息主题]({{< ref "/glossary#message-topic" >}})的概念来表达设备之间、设备与组件之间和组件与IoT解决方案之间详细的消息流。在这个上下文里，消息主题可以被视为对某个[主题](#)的发布/订阅概念，并且与用于描述[请求/返回](#)和[REST](#)端点的相对URL的概念类似。
+
 
 Designs in the IoT Atlas will all assume that a device always has a solution unique `deviceID`. When every device has a solution unique ID, each specific example is more clear and an explicit list of devices can be used to implement a design in a way that supports multiple devices. When a list of devices is crucial to the design, it will be called out.   
 
+IoT Atlas中的设计都会假设设备始终具有针对该解决方案唯一的`deviceID`。当每个设备都具有解决方案唯一ID时，每个特定示例会更加清晰，一个明确的设备列表可以被用来实现一个支持多设备的设计。当设备列表对设计至关重要时，它将会被列出。
+
 #### Conventions
+#### 约定
+
 Finally, each design will follow a few conventions. To convey an example of either data, or a code-related concept the `monospace` font will be used inline. When a word or concept is either crucial to the design or acting as a just-in-time definition a **bold** typeface will be used. When a block of code is best to convey or reinforce a concept, that block will be written at-least as monospaced `pseudo-code`. Over time we hope to have contributed and indexed examples of each design for a variety of languages and technologies.  
 
+
+最后，每个设计都遵循一些约定。当描述数据或代码相关概念的例子时，`monospace`字体会被使用。当一个词或概念对设计至关重要或作为即时定义时，**粗体**字体会被使用。当用代码块来描述或强化一个概念时，该块会至少被写成等宽的“伪代码”。随着时间的推移，我们希望为每个设计提供针对各种语言和技术的示例，这些示例是被贡献进来并索引的。
+
 ## Team
+## 团队
 At this time, the core maintainers of the IoT Atlas are [Brett Francis](https://github.com/brettf), 
 [Gavin Adams](https://github.com/gadams999), and 
 [Craig Williams](https://github.com/typemismatch). We're excited to get these designs out into the world so together we can accelerate IoT progress with you.   
+
+目前，IoT Atlas的核心维护者是[Brett Francis](https://github.com/brettf), 
+[Gavin Adams](https://github.com/gadams999)和 
+[Craig Williams](https://github.com/typemismatch).我们非常兴奋把这些设计发布出来，因此我们可以与你一起加速IoT的进程
