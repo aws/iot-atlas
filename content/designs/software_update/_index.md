@@ -86,7 +86,7 @@ def apply_software(software, job_id):
         message = 'jobID:' + job_id + " SUCCESS"
     else:
         #make a failure message
-        message = 'jobID:' + job_id + "FAILURE"
+        message = 'jobID:' + job_id + " FAILURE"
     
     # the topic used to publish the acknowledge message
     topic = 'state/deviceID/update/accepted'
