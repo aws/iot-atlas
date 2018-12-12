@@ -16,8 +16,7 @@ IoT Solutions use the Command design to ask devices to perform an action and ens
 
 The Command design shown in the following diagram can deliver this functionality.
 
-![Command Design](command.png) 
-([PPTx](atlas-command.pptx))
+![Command Design](command.png) ([PPTx](/designs/iot-atlas-patterns.pptx))
 
 ### Diagram Steps
 

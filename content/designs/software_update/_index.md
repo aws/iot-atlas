@@ -16,7 +16,7 @@ IoT solutions that leverage the [Command]({{< ref "/designs/command" >}}) and [D
 
 The Software Update pattern shown in the following diagram can deliver this functionality. 
 
-![Software Update](software-update.png)
+![Software Update](software-update.png) ([PPTx](/designs/iot-atlas-patterns.pptx))
 
 ### Diagram Steps
 1. A device subscribes to the delta [message topic]({{< ref "/glossary/vocabulary#message-topic" >}}) `state/deviceID/update/delta` upon which device-related state change messages will arrive from the device state replica.

@@ -14,8 +14,7 @@ IoT solutions use the Gateway design to overcome the common constraints experien
 
 The Gateway design shown in the following diagram can deliver this functionality. In the diagram, the Server resides on a cloud. The Gateway resides on a network the Device can access. 
 
-![Gateway Design](gateway.png)
-([PPTx](atlas-gateway.pptx))
+![Gateway Design](gateway.png) ([PPTx](/designs/iot-atlas-patterns.pptx))
 
 Both designs in the above diagram expose a gateway endpoint using the same type of protocol endpoint as the server. In both the *up* and *down* gateway diagrams, the gateway is connected to the server.  
 

@@ -16,8 +16,7 @@ IoT solutions use the Telemetry design to ensure the delivery of sensed data acr
 
 The Telemetry design shown in the following diagram can deliver this functionality.
 
-![Telemetry Design](telemetry.png)
-([PPTx](atlas-telemetry.pptx))
+![Telemetry Design](telemetry.png) ([PPTx](/designs/iot-atlas-patterns.pptx))
 
 ### Diagram Steps
 

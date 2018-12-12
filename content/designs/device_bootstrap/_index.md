@@ -21,7 +21,7 @@ Although there are situations where an implementation might combine registration
 
 The Device Bootstrap design shown in the following diagram can deliver this functionality.
 
-![Device Bootstrapping](bootstrap.png)
+![Device Bootstrapping](bootstrap.png) ([PPTx](/designs/iot-atlas-patterns.pptx))
 
 ### Diagram Steps
 1. A device registers with the registration authority using shared credentials or token.

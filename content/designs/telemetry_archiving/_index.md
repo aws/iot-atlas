@@ -15,7 +15,7 @@ IoT solutions ensure that the business can obtain the most current and evolving 
 The Telemetry Archiving design shown in the following diagram can deliver this functionality.
 
 
-![Telemetry Archiving Architecture](archiving.png) ([PPTx](atlas-archiving.pptx))
+![Telemetry Archiving Architecture](archiving.png) ([PPTx](/designs/iot-atlas-patterns.pptx))
 
 ### Diagram Steps ####
 

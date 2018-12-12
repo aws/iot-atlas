@@ -21,7 +21,7 @@ The Device State Replica design describes how to replicate a device's current st
 
 An IoT solution should leverage the following design when a *component* of the IoT solution is the source of the desired state change and that change should be replicated in a device.
 
-![Component-to-device State Replica](c2d-state.png)
+![Component-to-device State Replica](c2d-state.png) ([PPTx](/designs/iot-atlas-patterns.pptx))
 
 ### Component-to-device Diagram Steps
 
@@ -39,7 +39,7 @@ An IoT solution should leverage the following design when a *component* of the I
 
 An IoT solution should leverage the following design when the *device* is the source of the state change that should be communicated to components of the IoT solution.
 
-![Device-to-component State Replication](d2c-state.png)
+![Device-to-component State Replication](d2c-state.png) ([PPTx](/designs/iot-atlas-patterns.pptx))
 
 ### Device-to-component Diagram Steps
 1. A device reports **initial device state** by publishing that state as a message to the update topic `state/deviceID/update`.
