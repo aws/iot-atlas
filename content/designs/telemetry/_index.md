@@ -21,7 +21,7 @@ The Telemetry design shown in the following diagram can deliver this functionali
 ### Diagram Steps
 
 1. The device obtains a measurement from a sensor operating in an environment remote from the IoT solution. 
-2. The device publishes a message to the topic `telemetry/deviceID` containing the measurement. This message is sent via a transport protocol to a protocol endpoint made available by the Server. 
+2. The device publishes a message to the [message topic]({{< ref "/glossary/vocabulary#message-topic" >}}) `telemetry/deviceID` containing the measurement. This message is sent via a transport protocol to a protocol endpoint made available by the Server. 
 3. The Server may then apply one or more [rule]({{< ref "/glossary/vocabulary#rule" >}})s to messages in order to perform fine-grained routing upon some or all of the message's measurement data. The routing can send a message to another component of the solution. 
 
 ## Considerations
