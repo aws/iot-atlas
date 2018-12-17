@@ -19,11 +19,11 @@ The Gateway design shown in the following diagram can deliver this functionality
 Both designs in the above diagram expose a gateway endpoint using the same type of protocol endpoint as the server. In both the *up* and *down* gateway diagrams, the gateway is connected to the server.  
 
 #### Up gateway (aka "North")
-1. the "up" gateway design is configured to mirror "upward" messages; in the diagram, messages arriving from the device with the `telemetry/deviceID` topic will be mirrored up to the server using the same topic.
+1. the "up" gateway design is configured to mirror "upward" messages; in the diagram, messages arriving from the device with the `telemetry/deviceID` [topic]({{< ref "/glossary/vocabulary#message-topic" >}}) will be mirrored up to the server using the same topic.
 2. The device publishes a message containing the measurement via a transport protocol to the local protocol endpoint exposed by the gateway. 
 3. The gateway receives the message
 4. The gateway publishes the message to the server on the same topic as the received message.
-   - if the gateway is unsuccessful sending the message to the server, the message is processed using an upward message approach
+   - if the gateway is unsuccessful sending the message to the server, the message is processed using an upward message [approach](#what-approach-should-be-used-when-storing-messages-for-later-delivery)
 5. The server receives the message
 
 #### Down gateway (aka "South")
@@ -31,7 +31,7 @@ Both designs in the above diagram expose a gateway endpoint using the same type 
 2. The server publishes a message to the gateway via the transport protocol's endpoint
 3. The gateway receives the message
 4. The gateway publishes the message to the device listening on the gateway endpoint on the same topic as the received message 
-   - if the gateway is unsuccessful sending the message to the device, the message is processed using a downward message approach
+   - if the gateway is unsuccessful sending the message to the device, the message is processed using a downward message [approach](#what-approach-should-be-used-when-storing-messages-for-later-delivery)
 5. The device receives the message
 
 ## Considerations
@@ -39,7 +39,7 @@ Both designs in the above diagram expose a gateway endpoint using the same type 
 When implementing this design, consider the following questions:
 
 #### Why should the Gateway explicitly mirror only certain topics in a certain direction?
-`needs answer`
+Since message topics are the interface through which components in an IoT solution interact with one another, by configuring a Gateway design to take explicit steps to mirror certain topics in certain directions, devices in the solution will only have the ability to interact with those topics which are essential to perform a device's intended function. This aligns well with the security best practice of following the [principle of least privilege](https://en.wikipedia.org/wiki/Principle_of_least_privilege) for device-to-cloud and cloud-to-device communications.
 
 #### How should the Gateway process data when the network to the Device is unavailable?
 The simple answer is, the Gateway needs a *downward message approach* used to save the messages on the gateway until they can be reported to the device.  
