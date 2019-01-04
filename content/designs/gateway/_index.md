@@ -10,7 +10,7 @@ weight: 50
 [Endpoint]({{< ref "/glossary/vocabulary#endpoint" >}})s in an IoT solution are often not capable enough to connect directly to the internet nor are they operating on networks with direct access to the internet. Even with these constraints, obtaining data from and interacting with endpoints requires a mechanism of connectivity. 
 
 ## Solution
-IoT solutions use the Gateway design to overcome the common constraints experienced by endpoints. In doing so a gateway enables reliable and secure communication with otherwise inaccessible endpoints. 
+IoT solutions use the Gateway design to overcome the common constraints experienced by endpoints. In doing so a gateway enables reliable and secure communication with otherwise inaccessible endpoints. Additionally a gateway enables continued isolation between the local endpoints and cloud connectivity. 
 
 The Gateway design shown in the following diagram can deliver this functionality. In the diagram, the Server resides on a cloud. The Gateway resides on a network the Device can access. 
 
@@ -61,5 +61,8 @@ The general categories of approaches to consider are: **FIFO**, **Culling**, and
 
 **Aggregate** – This [approach](https://en.wikipedia.org/wiki/Aggregate_function) is useful when the detailed shape of the curve is not as important as the minimum, maximum, average, and sum values over a period of time. In the message processing diagram this approach's data arrives from the left. Once local storage has filled beyond an *aggregate point* some sweeper logic performs aggregation on the stored values. Examples of data include: [kWh](https://en.wikipedia.org/wiki/Kilowatt_hour), [insolation](https://en.wikipedia.org/wiki/insolation), [flow](https://en.wikipedia.org/wiki/Flow_measurement), [CPU time](https://en.wikipedia.org/wiki/CPU_time), [temperature](https://en.wikipedia.org/wiki/Temperature), [wind speed](https://en.wikipedia.org/wiki/Wind_speed), etc.
 
+#### What are local area network topologies that devices might use?
+There are two topologies that devices most commonly take: a [mesh network](https://en.wikipedia.org/wiki/Mesh_networking) and a hub-and-spoke network (aka. [star network](https://en.wikipedia.org/wiki/Network_topology#Star)). A gateway in a hub-and-spoke network provides connectivity and services to the devices that are the spokes of that network. A gateway in a mesh network will commonly act as a hub, also providing primary cloud connectivity for a collection of devices or connectivity when devices cannot access the cloud directly. In both topologies, the devices connected to a gateway are purposefully accessible from and to the cloud only through the gateway. 
+ 
 ## Example
     <tbd written scenario>

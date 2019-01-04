@@ -18,7 +18,7 @@ Words and definitions used across the IoT Atlas.
 > a device's data density is: `density = sample frequency * sample size * reporting frequency`
 
 ### Endpoint
-> an endpoint is ...tbd
+> an endpoint is another name for a device, but often describing a device as an endpoint also implies the device operates on-premises with limited connectivity to the cloud
 
 ### Limited Production
 > effort to validate customer acceptance of the project's edge and cloud software at scale, in order to meet the majority of customer use-cases with a blueprint for mass production.
