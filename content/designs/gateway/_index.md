@@ -38,7 +38,7 @@ Both designs in the above diagram expose a gateway endpoint using the same type 
 
 When implementing this design, consider the following questions:
 
-#### Why should the Gateway explicitly mirror only certain topics in a certain direction?
+#### Why should the Gateway explicitly mirror/route only certain topics in a certain direction?
 Since message topics are the interface through which components in an IoT solution interact with one another, by configuring a Gateway design to take explicit steps to mirror certain topics in certain directions, devices in the solution will only have the ability to interact with those topics which are essential to perform a device's intended function. This aligns well with the security best practice of following the [principle of least privilege](https://en.wikipedia.org/wiki/Principle_of_least_privilege) for device-to-cloud and cloud-to-device communications.
 
 #### How should the Gateway process data when the network to the Device is unavailable?
@@ -68,7 +68,7 @@ There are two topologies that devices most commonly take: a [mesh network](https
 
 **Mesh Network** – A gateway in a mesh network provides cloud routing capabilities to some or all of the devices on the mesh. Since devices physically close to one another communicate directly, a gateway is usually not responsible for device-to-device communication; however, the gateway may provide additional local capabilities such as time series data storage, data analysis, and machine learning inference.
 
-In both a hub-and-spoke or a mesh network topology, to enable explicit routing of all messages, each device and the gateway should be addressable by a unique message topic. 
+In both a hub-and-spoke or a mesh network topology, to enable explicit routing of all messages, each device and the gateway itself should be addressable by a unique message topic. 
  
 ## Example
     <tbd written scenario>
