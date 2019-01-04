@@ -61,8 +61,14 @@ The general categories of approaches to consider are: **FIFO**, **Culling**, and
 
 **Aggregate** – This [approach](https://en.wikipedia.org/wiki/Aggregate_function) is useful when the detailed shape of the curve is not as important as the minimum, maximum, average, and sum values over a period of time. In the message processing diagram this approach's data arrives from the left. Once local storage has filled beyond an *aggregate point* some sweeper logic performs aggregation on the stored values. Examples of data include: [kWh](https://en.wikipedia.org/wiki/Kilowatt_hour), [insolation](https://en.wikipedia.org/wiki/insolation), [flow](https://en.wikipedia.org/wiki/Flow_measurement), [CPU time](https://en.wikipedia.org/wiki/CPU_time), [temperature](https://en.wikipedia.org/wiki/Temperature), [wind speed](https://en.wikipedia.org/wiki/Wind_speed), etc.
 
-#### What are local area network topologies that devices might use?
-There are two topologies that devices most commonly take: a [mesh network](https://en.wikipedia.org/wiki/Mesh_networking) and a hub-and-spoke network (aka. [star network](https://en.wikipedia.org/wiki/Network_topology#Star)). A gateway in a hub-and-spoke network provides connectivity and services to the devices that are the spokes of that network. A gateway in a mesh network will commonly act as a hub, also providing primary cloud connectivity for a collection of devices or connectivity when devices cannot access the cloud directly. In both topologies, the devices connected to a gateway are purposefully accessible from and to the cloud only through the gateway. 
+#### Which local area network topology is used by devices connected to a gateway?
+There are two topologies that devices most commonly take: a [mesh network](https://en.wikipedia.org/wiki/Mesh_networking) and a hub-and-spoke network (aka. [star network](https://en.wikipedia.org/wiki/Network_topology#Star)).
+
+**Hub-and-spoke Network** - A gateway in a hub-and-spoke network provides all device connectivity to and from the cloud, device-to-device communication, and additional local capabilities such as time series data storage, data analysis, and machine learning inference. Since the gateway in this topology provides device-to-device communication, *upward messages* can come *from* a device spoke to the gateway and then immediately *down* to another device spoke, **or** *upward messages* can come *from* a device spoke destined for the server's protocol endpoint. The message topic should be route-able by the gateway to either type of destination.   
+
+**Mesh Network** – A gateway in a mesh network may provide cloud routing capabilities to some or all of the devices on the mesh. Since devices physically close to one another communicate directly, a gateway is usually not responsible for device-to-device communication; however, the gateway may provide additional local capabilities such as time series data storage, data analysis, and machine learning inference.
+
+In both a hub-and-spoke or a mesh network topology, to enable explicit routing of all local messages, each device and the gateway should be addressable by a unique message topic. 
  
 ## Example
     <tbd written scenario>
