@@ -66,9 +66,9 @@ There are two topologies that devices most commonly take: a [mesh network](https
 
 **Hub-and-spoke Network** - A gateway in a hub-and-spoke network provides all device connectivity to and from the cloud, device-to-device communication, and additional local capabilities such as time series data storage, data analysis, and machine learning inference. Since the gateway in this topology provides device-to-device communication, *upward messages* can come *from* a device spoke to the gateway and then immediately *down* to another device spoke, **or** *upward messages* can come *from* a device spoke destined for the server's protocol endpoint. The message topic should be route-able by the gateway to either type of destination.   
 
-**Mesh Network** – A gateway in a mesh network may provide cloud routing capabilities to some or all of the devices on the mesh. Since devices physically close to one another communicate directly, a gateway is usually not responsible for device-to-device communication; however, the gateway may provide additional local capabilities such as time series data storage, data analysis, and machine learning inference.
+**Mesh Network** – A gateway in a mesh network provides cloud routing capabilities to some or all of the devices on the mesh. Since devices physically close to one another communicate directly, a gateway is usually not responsible for device-to-device communication; however, the gateway may provide additional local capabilities such as time series data storage, data analysis, and machine learning inference.
 
-In both a hub-and-spoke or a mesh network topology, to enable explicit routing of all local messages, each device and the gateway should be addressable by a unique message topic. 
+In both a hub-and-spoke or a mesh network topology, to enable explicit routing of all messages, each device and the gateway should be addressable by a unique message topic. 
  
 ## Example
     <tbd written scenario>
