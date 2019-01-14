@@ -86,15 +86,22 @@ In almost all cases when devices are provisioned, we need to associate the devic
 * Devices use BLE or another local form of communication to receive information about their identity, such as a customer profile. Handling this via a mobile application is the most common form of device provisioning. Using local communication can be coupled with the installation of certificates during manufacturing, enabling both the customer association and registration process to be completed in a single step.
 
 * 通过在制造过程中使用[证书](https://en.wikipedia.org/wiki/Public_key_certificate)可以完成设备的配置，并且可以将这些证书预先映射到设备配置文件。这对于具有大量已知设备的解决方案来说是常见的。
-*设备在与注册机构通信期间报告其型号和序列号，该信息可以预先映射到设备配置文件。
-*设备使用BLE或其他本地通信形式来接收有关其身份的信息，例如客户资料。通过移动应用程序处理这是最常见的设备配置形式。使用本地通信可以在制造期间与证书的安装相结合，使得客户关联和注册过程能够在单个步骤中完成。
+* 设备在与注册机构通信期间报告其型号和序列号，该信息可以预先映射到设备配置文件。
+* 设备使用BLE或其他本地通信形式来接收有关其身份的信息，例如用户资料。通过移动应用程序处理是最常见的设备配置形式。本地通信可以与制造期间安装证书两者相结合，使得用户关联和注册过程能够在单个步骤中完成。
 
 #### Are you using device certificates?
+#### 您是否使用设备证书？
 Although the thought of trying to provision every single device in a solution with a certificate can be daunting, it is by far the most secure way to provision devices. It is important to establish mutual authentication to prevent threats like [man-in-the-middle](https://en.wikipedia.org/wiki/Man-in-the-middle_attack) attacks. When bootstrapping your devices, certificates should always be your first choice for device identity.
 
+尽管在解决方案中尝试使用证书配置每个设备的想法可能令人生畏，但它是迄今为止配置设备最安全的方式。建立相互身份验证对于防止类似[中间人]（https://en.wikipedia.org/wiki/Man-in-the-middle_attack）攻击这样的威胁是非常重要的。引导设备时，证书应始终是设备标识的首选。
+
 #### Does the registration authority need to support custom authorization integration with an existing customer solution?
+#### 注册机构是否需要支持与现有客户授权方案的进行定制化集成?
 If **yes**, the design's registration authority step can be implemented using an Application Programming Interface ([API](https://en.wikipedia.org/wiki/Application_programming_interface)) in front of an existing customer solution. This API can then perform the registration authority job while leveraging the customer's existing solution.
 
+如果**是**，则可以使用应用程序编程接口（[API]（https://en.wikipedia.org/wiki/Application_programming_interface））在现有客户授权方案前面实现本设计的注册机构步骤。然后，此API可以在利用客户现有解决方案的同时执行注册机构的相关工作。
+
 ## Examples
+## 示例
 
     <tbd written scenario>
