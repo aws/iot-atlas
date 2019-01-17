@@ -6,115 +6,57 @@ draft: true
 {{< synopsis-command >}}
 <!--more-->
 
-## Challenge
-
 ## 挑战
 
-IoT solutions are expected to interact with devices in such a way that the solution, or people using the solution, may reliably ask devices to perform an action. Furthermore, this interaction must occur across intermittent networks, often using devices with limited resources.
-
-IoT解决方案应该能以这样的方式与设备进行交互：解决方案或是使用该解决方案的人，可以可靠地要求设备执行某个动作。更进一步的，这样的交互需要在会出现间隙性中断的网络环境中进行，并通常需要利用到资源非常有限的设备。
-
-## Solution
+IoT解决方案应该能以这样的方式与设备进行交互：解决方案或是使用该解决方案的人，可以可靠地要求设备执行某个动作。更进一步的，这样的交互需要在会出现间隙性中断的网络环境中进行，并通常需要使用资源非常有限的设备。
 
 ## 解决方案
 
-IoT Solutions use the Command design to ask devices to perform an action and ensure reliable interactions by leveraging a simple concept: no requested action is deemed successful unless it is acknowledged as successful.
+IoT解决方案使用"命令"设计来要求设备执行操作，并通过利用一个简单的概念确保可靠的交互：除非被确认为成功，否则任何请求的操作都不会被视为成功。
 
-IoT解决方案使用"命令(Command)"设计来要求设备执行操作，并通过利用一个简单的概念确保可靠的交互：除非被确认为成功，否则任何请求的操作都不会被视为成功。
-
-The Command design shown in the following diagram can deliver this functionality.
-
-下图中显示的"命令"(Command)设计可以提供此功能：
+下图中显示的"命令"设计可以提供此功能：
 
 ![Command Design](command.png) 
 ([PPTx](atlas-command.pptx))
 
-### Diagram Steps
-
 ### 步骤说明
-
-1. A [device]({{< ref "/glossary/vocabulary#device" >}}) configures itself to communicate with a protocol endpoint so that Command messages can be sent and received.
-2. A component of the solution publishes a [command message]({{< ref "/glossary/vocabulary#command-message" >}}) targeted at one or more devices.
-3. The server uses the protocol endpoint to send the Command message to each previously configured device.
-4. Upon completion of the Command's requested action, the device publishes a command completion message to the server via the protocol endpoint.
-
-
 1. [设备]({{< ref "/glossary/vocabulary#device" >})将自身配置为与协议端点通信，以便可以发送和接收命令消息。
-2. 解决方案的一个组件发布针对一个或多个设备的[命令消息]（{{<ref“/ glossary / vocabulary＃command-message”>}}）
+2. 解决方案的一个组件发布针对一个或多个设备的[命令消息]({{<ref"/ glossary / vocabulary＃command-message">}})
 3. 服务器使用协议端点将命令消息发送到每个先前配置的设备。
 4. 完成命令的请求操作后，设备通过协议端点向服务器发布命令完成消息。
 
 
-## Considerations
-
 ## 考虑点
-
-It is important to note that the Command design is not "telemetry in reverse". Instead the Command design addresses the challenge inherent for a solution that needs to reliably trigger actions on a device operating in a remote location.
-
 值得注意的是，"命令"设计并不是“反向遥测”。相反，"命令"设计解决了需要在远程位置运行的设备上可靠地触发操作的解决方案所固有的挑战。
-
-When implementing this design, consider the following questions:
 
 实施此设计时，请考虑以下问题：
 
-#### Have you first considered the Device State Replica?
-
 #### 您是否首先考虑了"设备状态副本"设计
 
-Since the execution of commands actually results in the change of state in a device, the [Device State Replica](/designs/device_state_replica/) (DSR) design is the preferred method of executing commands in an IoT solution. In situations where DSR isn't suitable or exceeds some implementation limits, then consider this Command design and a custom implementation of control.
-
-由于命令的执行实际上导致设备中状态的改变，因此"[设备状态副本](/designs/device_state_replica/)"设计是在IoT解决方案中执行命令的首选方法。在"设备状态副本"设计不适合或超过某些实现限制的情况下，请考虑“命令“设计并定制化实现控制。
-
-#### How can the solution track each device's command progress?
+由于命令的执行实际上导致设备中状态的改变，因此"[设备状态副本](/designs/device_state_replica/)"设计是在IoT解决方案中执行命令的首选方法。在"设备状态副本"设计不适合或超过某些实现限制的情况下，请考虑"命令"设计并定制化实现控制。
 
 #### 该解决方案如何跟踪每个设备的命令进度
 
-Each command should have a solution unique type and each command message should contain a globally unique message ID. The command message's ID allows the solution to track the status of distinct commands and the command type enables the diagnoses any potential issues across categories of commands over time. The messages should be idempotent and not allow for being missed or duplicated without knowledge of the device *and* requestor.
-
 每个命令都应具有解决方案唯一的类型，并且每个命令消息应包含全局唯一的消息ID。命令消息的ID允许解决方案跟踪不同命令的状态，通过命令类型可以诊断不同命令类别的潜在问题。消息应该是幂等的，不允许在不知道设备*和*请求者的情况下被丢失或重复。
-
-#### Do some commands in the solution run significantly longer than the norm?
 
 #### 解决方案中的某些命令运行时间明显超过正常范围吗？
 
-When some commands run longer than the norm, a simple `SUCCESS`  or `FAILURE` command completion message will not suffice. Instead the solution should leverage at least three command states: `SUCCESS`, `FAILURE`, and `RUNNING`. `RUNNING` should be returned by the device on an expected interval until the command's completion. By using a `RUNNING` state reported on an expected interval, a solution can determine when a long-running command actually fails quietly.  
-
 当某些命令的运行时间超过正常范围时，简单的返回“SUCCESS”或“FAILURE”命令完成消息是不足够的。相反，解决方案应该至少利用三个命令状态：“SUCCESS”，“FAILURE”和“RUNNING”。设备应在预期的时间间隔内返回“RUNNING”，直到命令完成。通过使用在预期间隔上报告的“RUNNING”状态，解决方案可以确定长时间运行的命令在什么时候事实上已经失败了。
-
-#### Does a specific type of command require human authorization?
 
 #### 特定类型的命令是否需要人为授权
 
-When a command in a solution requires human approval before a device should take action, a human-workflow component should be added to the solution. This component would intercept commands of particular types and queue them up for human approval before actually sending them onward to a device.
-
 当解决方案中的命令需要人为批准才能在设备执行操作之前，应该在解决方案中添加人为工作流(human-workflow)组件。该组件将拦截特定类型的命令，并在将它们实际发送到设备之前将它们排队等待人工批准。
 
-#### Does a type of command ever need to be rolled back to a previous state?
-
 #### 是否需要将某种类型的命令回滚到先前的状态
-
-If a solution has some commands which may need to be rolled back, it is almost always easier to manage that rollback from the solution itself instead of expecting each device to understand and remember the rollback considerations. For example, a device is sent a command to move an actuator from a current, reported position of `0`&#176; to a position of `45`&#176;. The Device performs this command successfully. At a later moment in time the solution requires that the device go back to the previous state, the previous state is often easier to track in the solution itself versus expecting every device to track its former state(s). The rollback of this situation would be performed by the solution sending a command for the device to change position to `0`&#176;.  
-In the case where rollbacks are necessary even when there is no connectivity to the server, the solution can leverage a [gateway]({{< ref "/designs/gateway" >}}) to record the former states of devices and to perform rollbacks based upon those values.  
-
 如果解决方案有一些可能需要回退的命令，那么大部分时候从解决方案本身来管理回滚是更容易的，而不是期望每个设备理解并记住回滚注意事项。例如，向设备发送命令以便将执行器(actuator)从当前报告的位置`0`&#176;移动到 `45`&#176;的位置。设备成功执行了该命令。在稍后的时刻，解决方案要求设备返回到先前的状态，先前的状态通常更容易在解决方案本身中进行跟踪，而不是期望每个设备跟踪其先前的状态。这种情况的回滚将由解决方案来执行，即向设备发送命令以将其位置改变为`0`&#176;。
 如果在没有与服务器连接的情况下也需要回滚的话，那解决方案可以利用[网关]({{<ref“/designs/gateway”>}})来记录设备的先前状态并执行基于这些值的回滚。
 
-## Examples
-
 ## 示例
 
-### Simple request/response over reliable transport
-
 ### 可靠传输上的简单的请求/响应
-A component issues a request to a device to actuate a motor, using a quality of service to guarantee delivery
-
 组件向设备发出启动电机的请求，并通过服务质量(Quality of Service)以保证命令传达。
 
-#### Component sends a command to a target device
-
 #### 组件向目标设备发送命令
-
-The component sends the command request message to the `commands/deviceID` topic to which the device is subscribed:  
 
 组件将命令请求消息发送到设备订阅的`commands/deviceID`主题：
 
@@ -126,15 +68,9 @@ The component sends the command request message to the `commands/deviceID` topic
 }
 ```
 
-The component also tracks the message's transaction ID of `CAFED00D`, as issued and outstanding for the device.
-
 该组件同时跟踪消息的事务ID “CAFED00D”，该消息已发布但未完成。
 
-#### Device processes message
-
 #### 设备处理消息
-
-The device receives the message from topic `commands/deviceID`, activates `motor 1`, and responds with an acknowledgement on the topic `commands/deviceID/ack` to which the component is subscribed. The component receives the following acknowledgment after a period of time:
 
 设备从主题`commands/deviceID`接收消息，启动`motor 1`，并对组件订阅的主题`commands/deviceID/ack`进行确认响应。该组件在一段时间后收到以下确认：
 
@@ -144,28 +80,15 @@ The device receives the message from topic `commands/deviceID`, activates `motor
     "status": "SUCCESS"
 }
 ```
-
-#### Device and component complete command (transaction) process
-
 #### 设备与组件完成命令(事务)处理
-
-The device no longer tracks the command request. The component maps the `SUCCESS` value to the transaction ID of `CAFED00D` and removes the transaction from the list of outstanding requests, signifying the command has completed. A result of `FAILURE` might indicate a physical device problem to be investigated.
 
 设备不再跟踪命令请求。组件将`SUCCESS`值映射到`CAFED00D'的事务ID，并从未完成的请求列表中删除该事务，表示该命令已完成。 “FAILURE”的结果可能表示需要调查物理设备问题。
 
-### Transaction to offline or unavailable device
-
 ### 与离线或不可用设备相关的事务
-
-A component issues a request to a device to actuate a motor, but the device is offline
 
 组件向设备发出请求以启动电机，但设备处于离线状态
 
-#### Component sends command to unavailable device
-
 #### 组件向不可用设备发送命令
-
-The component sends the command request message to the `commands/deviceID` topic to which the device is subscribed:
 
 组件将命令请求消息发送到设备订阅的`commands/deviceID`主题：
 
@@ -177,14 +100,8 @@ The component sends the command request message to the `commands/deviceID` topic
 }
 ```
 
-The component also tracks the message transaction ID of `CAFED00D`, as issued and outstanding for the device. **The device is offline and does not receive the message.**
-
 该组件还跟踪“CAFED00D”的消息事务ID，该消息已发布且未完成。 **设备处于离线状态，但未收到消息。**
 
-#### Timeout and reissue command
-
 #### 超时并重新发送命令
-
-After a set period of time, the component will resend the command request message on a linear or back-off time period *with the same transaction ID*, and tracks the retry status. After a set amount of retries, the component will determine the device did not received the command, or was unable to reply, and take appropriate action.
 
 在一段设定的时间之后，组件将基于线性或退避(back-off)时间段，并使用*相同的事务ID*重新发送命令请求消息，同时跟踪重试状态。经过一定次数的重试后，组件将确定设备没有收到命令，或者无法回复，并采取适当的措施。
