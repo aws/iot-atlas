@@ -1,6 +1,5 @@
 {
   "baseURL": "http://iotatlas.net",
-  "languageCode": "en-us",
   "title": "IoT Atlas",
   "theme": "docdock",
   "params": {
@@ -19,5 +18,13 @@
       "RSS",
       "JSON"
     ]
+  },
+  "DefaultContentLanguage": "en-us",
+  "languages": {
+    "en-us": {
+      "contentDir": "content/en-us",
+      "languageName": "English",
+      "weight": 1
+    }
   }
 }
