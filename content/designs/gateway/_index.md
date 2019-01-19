@@ -1,5 +1,5 @@
 ---
-title: "Gateway"
+title: "网关"
 weight: 50
 ---
 
@@ -7,60 +7,65 @@ weight: 50
 <!--more-->
 
 ## Challenge
-[Endpoint]({{< ref "/glossary/vocabulary#endpoint" >}})s in an IoT solution are often not capable enough to connect directly to the internet nor are they operating on networks with direct access to the internet. Even with these constraints, obtaining data from and interacting with endpoints requires a mechanism of connectivity. 
+IoT解决方案中的端点({{< ref "/glossary/vocabulary#endpoint" >}})通常不具备直接连接互联网的能力，或者是运行在无法直接访问互联网的网络中。即使存在这些限制，从端点获取数据并与这些端点进行交互需要有相应的连通机制
 
 ## Solution
-IoT solutions use the Gateway design to overcome the common constraints experienced by endpoints. In doing so a gateway enables reliable and secure communication with otherwise inaccessible endpoints. 
+IoT解决方案使用"网关"设计来克服端点通常遇到的限制。通过这样的设计网关可以实现与端点的可靠及安全的通信
 
-The Gateway design shown in the following diagram can deliver this functionality. In the diagram, the Server resides on a cloud. The Gateway resides on a network the Device can access. 
+如下图所示的"网关"设计可以提供这样的功能。图中服务器(Server)是运行在云中。网关(Gateway)则运行在设备可以访问的网络中
 
 ![Gateway Design](gateway.png)
 ([PPTx](atlas-gateway.pptx))
 
-Both designs in the above diagram expose a gateway endpoint using the same type of protocol endpoint as the server. In both the *up* and *down* gateway diagrams, the gateway is connected to the server.  
+上图中的两个设计均提供一个网关端点，其使用与服务器相同类型的协议端点(Protocol Endpoint)。在*上行*和*下行*网关设计图中，网关是连接到服务器的
 
-#### Up gateway (aka "North")
-1. the "up" gateway design is configured to mirror "upward" messages; in the diagram, messages arriving from the device with the `telemetry/deviceID` topic will be mirrored up to the server using the same topic.
-2. The device publishes a message containing the measurement via a transport protocol to the local protocol endpoint exposed by the gateway. 
-3. The gateway receives the message
-4. The gateway publishes the message to the server on the same topic as the received message.
-   - if the gateway is unsuccessful sending the message to the server, the message is processed using an upward message approach
-5. The server receives the message
+### 上行网关(即"北向")
 
-#### Down gateway (aka "South")
-1. the "down" gateway is configured to listen to the server and mirror "downward" messages; in the diagram, messages arriving from the server with the `commands/deviceID` topic will be mirrored down to the device listening for messages with the same topic.
-2. The server publishes a message to the gateway via the transport protocol's endpoint
-3. The gateway receives the message
-4. The gateway publishes the message to the device listening on the gateway endpoint on the same topic as the received message 
-   - if the gateway is unsuccessful sending the message to the device, the message is processed using a downward message approach
-5. The device receives the message
+1. "上行"网关设计是用来复制上行消息;在这个设计图中，`telemetry/deviceID`主题上的消息是来自于设备，这些消息会被复制到服务器同样的主题里
+2. 设备发布包含测量值的消息，通过传输协议来到网关提供的本地协议端口
+3. 网关接收到消息
+4. 网关将消息发布到服务器中同样的主题
+- 如果网关无法成功将消息发送至服务器，则消息会进行相应处理
+5. 服务器接收到消息
 
-## Considerations
+### 下行网关(即"南向")
 
-When implementing this design, consider the following questions:
+1. 下行网关是用来监听服务器并复制下行的消息; 在设计图中，来自服务器的消息在`commands/deviceID`主题并且会被复制到监听同样主题的设备
+2. 服务器通过传输协议端点向网关发布消息
+3. 网关接收到消息
+4. 网关向监听同样主题的服务发布消息
+  - 如果网关无法成功将消息发送到设备，则消息会进行相应处理
+5. 设备接收消息
 
-#### Why should the Gateway explicitly mirror only certain topics in a certain direction?
-`needs answer`
+## 考虑点
 
-#### How should the Gateway process data when the network to the Device is unavailable?
-The simple answer is, the Gateway needs a *downward message approach* used to save the messages on the gateway until they can be reported to the device.  
-Unfortunately the simple answer belies the reality, which is more complex. A key thing to determine is the right [approach](#what-approach-should-be-used-when-storing-messages-for-later-delivery) to take with the downward messages when the network is absent.  
+当实现这个设计时，需要考虑如下问题：
 
-#### How should the Gateway process data when the network to the Server is unavailable?
-The simple answer is, the Gateway needs a *upward message approach* used to save the messages on the gateway until they can be reported to the server.  
-Unfortunately the simple answer belies the reality, which is more complex. A key thing to determine is the right [approach](#what-approach-should-be-used-when-storing-messages-for-later-delivery) to take with the upward messages when the network is absent.  
+### 为什么网关在某个方向上应该只显式的复制特定的主题？
+`待答`
 
-#### What approach should be used when storing messages for later delivery? 
-Generally, local storage and processing of messages on the gateway will follow a First-In-First-Out (aka. **FIFO**) approach. That being said, the answer *might* be different depending upon the data actually contained in the message. In this case determining how the gateway's logging approach influences the actual reported data can help avoid future solution issues.  
+### 在与设备间的网络不可用时，网关该如何处理数据？
 
-The general categories of approaches to consider are: **FIFO**, **Culling**, and **Aggregate** as shown in the following diagram.
+简单的回答是网关需要一种*下行消息处理方法*，将数据保存在网关上直至他们可以被发送给设备。不幸的是，简单的答案掩盖了更为复杂的现实。需要确定的一个关键事情是正确的方法在网络不可用时处理下行消息
+
+### 在与服务器的网络不可用时，网关该如何处理数据？
+
+简单的回答是网关需要一种*上行消息处理方法*，将数据保存在网关上直至他们可以被发送给服务器。不幸的是，简单的答案掩盖了更为复杂的现实。需要确定的一个关键事情是正确的方法在网络不可用时处理上行消息
+
+### 应该使用什么方法来存储后续需要发送的消息？ 
+
+通常来说，网关上消息的本地存储和处理将遵循先进先出（即 **FIFO**）方法。话虽如此，但答案*可能*会有所不同，这具体取决于消息中实际包含的数据。在这种情况下，通过确定网关日志记录方法对实际报告数据的影响，可以帮助我们避免以后出现的问题。
+
+如下图所示，通常考虑三种类型的方法：**先进先出(FIFO)**, **剔除(Culling)** 和 **聚合(Aggregate)**。
+
 ![Message Processing Algorithms](algorithms.png)
 
-**FIFO** – This [approach](https://en.wikipedia.org/wiki/FIFO_(computing_and_electronics)) is usually straightforward to implement and useful in a wide variety of situations. In the message processing diagram this approach’s data arrives from the left and exits to the right when the allocated local storage is full. Examples of data include: operations measurements and general-purpose telemetry. 
+**先进先出(FIFO)** – 这种[方法](https://en.wikipedia.org/wiki/FIFO_(computing_and_electronics))通常实现起来比较直接，在多种场景下都很有用。在这种方法的消息处理图中可以看到，数据从左侧到达，当本地存储空间满后，数据从右侧离开。具体数据的例子包括：维护测量数据和通用的遥测数据
 
-**Culling** – This approach is useful for retaining absolute point values at a loss of curve detail. In the message processing diagram this approach’s data arrives from the left. Once local storage has been filled beyond a *culling point*, some sweeper logic then removes every other (or every `N`<sup>th</sup>) sample. Examples of data include: [kW](https://en.wikipedia.org/wiki/Watt#Kilowatt), [Amperage](https://en.wikipedia.org/wiki/Amperage), [Voltage](https://en.wikipedia.org/wiki/Voltage), etc.  
+**剔除(Culling)** - 这种方法对于在丢失曲线细节时保留绝对点值非常有用。在消息处理图中，此方法的数据从左侧到达。一旦本地存储中已存放超过*剔除点*的数据，则一些清除逻辑会移除出其他所有样本（或每`N`个样本）。具体数据的例子包括: [千瓦(kW)](https://en.wikipedia.org/wiki/Watt#Kilowatt), [安培(Amperage)](https://en.wikipedia.org/wiki/Amperage), [伏特(Voltage)](https://en.wikipedia.org/wiki/Voltage), etc
 
-**Aggregate** – This [approach](https://en.wikipedia.org/wiki/Aggregate_function) is useful when the detailed shape of the curve is not as important as the minimum, maximum, average, and sum values over a period of time. In the message processing diagram this approach's data arrives from the left. Once local storage has filled beyond an *aggregate point* some sweeper logic performs aggregation on the stored values. Examples of data include: [kWh](https://en.wikipedia.org/wiki/Kilowatt_hour), [insolation](https://en.wikipedia.org/wiki/insolation), [flow](https://en.wikipedia.org/wiki/Flow_measurement), [CPU time](https://en.wikipedia.org/wiki/CPU_time), [temperature](https://en.wikipedia.org/wiki/Temperature), [wind speed](https://en.wikipedia.org/wiki/Wind_speed), etc.
+**聚合(Aggregate)** – 当曲线的详细形状不如一段时间内的最小值，最大值，平均值和总和值那么重要时，此方法很有用。在消息处理图中，此方法的数据从左侧到达。一旦本地存储存放超过*聚合点*数据时，一些清除逻辑就对存储的值执行聚合。数据的例子包括: [千瓦时(kWh)](https://en.wikipedia.org/wiki/Kilowatt_hour), [日照时间](https://en.wikipedia.org/wiki/insolation), [流](https://en.wikipedia.org/wiki/Flow_measurement), [CPU时间](https://en.wikipedia.org/wiki/CPU_time), [温度](https://en.wikipedia.org/wiki/Temperature), [风速](https://en.wikipedia.org/wiki/Wind_speed)等等.
 
-## Example
+
+## 示例
     <tbd written scenario>
