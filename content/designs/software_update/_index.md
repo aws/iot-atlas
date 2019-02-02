@@ -1,5 +1,5 @@
 ---
-title: "Software Update"
+title: "软件更新"
 weight: 70
 draft: true
 
@@ -8,43 +8,46 @@ draft: true
 {{< synopsis-software-update >}}
 <!--more-->
 
-## Challenge
-IoT solutions are required to provide a mechanism for devices to update their own software. Supporting software updates without human intervention is both critical for scaling solutions to millions of devices and for delivering a great customer experience. However, achieving a full update of large sets of devices in a secure, scalable, and reliable fashion requires a solution that can scale to meet device load, a resilient command mechanism, and a way of tracking the state of the the entire fleet of devices. 
+## 挑战
+IoT解决方案需要为设备提供更新自己软件的机制。无需人工干预的软件更新的支持，对于将解决方案扩展到数百万台设备以及提供出色的客户体验都是至关重要。然而，以安全、可扩展和可靠的方式实现大量设备的全量更新需要可扩展以满足设备负载的解决方案、弹性的命令机制以及可以跟踪整个设备组状态的方法。
 
-## Solution
-IoT solutions that leverage the [Command]({{< ref "/designs/command" >}}) and [Device State Replica]({{< ref "/designs/device_state_replica" >}}) designs alongside a globally available and scalable storage solution are able to meet all the challenges inherent in updating the software of devices in a large fleet. 
+## 解决方案
+利用["命令"]({{< ref "/designs/command" >}})和["设备状态副本"]({{< ref "/designs/device_state_replica" >}})设计的IoT解决方案，加上一个全球可用且可扩展的存储解决方案，足以应对大量设备进行软件更新时所带来的所有挑战。
 
-The Software Update pattern shown in the following diagram can deliver this functionality. 
+如下图所示的软件更新的模式可以提供这样的功能。
 
 ![Software Update](software-update.png)
 
-### Diagram Steps
-1. A device subscribes to the delta [message topic]({{< ref "/glossary/vocabulary#message-topic" >}}) `state/deviceID/update/delta` upon which device-related state change messages will arrive from the device state replica.
-2. An application obtains the new software distribution and places that into a storage solution accessible to production devices. 
-3. An application identifies a device that should receive the new software and publishes a desired state message to the device's topic `state/deviceID/update`. The desired state message contains a software update URL different form the device's current software version URL.
-4. The device state replica tracking this device records the desired device state in a persistent data store and publishes a delta message to the topic `state/deviceID/update/delta` that is sent to the device.
-5. The device receives a delta message that acts as the 'software update' command message. Specifically, this message conveys the change between the current software version URL and the new URL
-6. The device obtains the new software update URL from the delta message.
-7. The device downloads the new software and applies the software locally.
-8. The device publishes an acknowledgement message reflecting the software version the device is now using to the update topic `state/deviceID/update` and a device state replica tracking this device records the new state in a persistent data store. 
-9. The device state replica publishes a message to the `state/deviceID/update/accepted` topic. The software update is now considered complete.
+### 步骤说明
+1. 设备订阅差异[消息主题]({{< ref "/glossary/vocabulary#message-topic" >}}) `state/deviceID/update/delta` 并从设备状态副本接收到设备相关的状态变化消息。
+2. 应用程序获取新的软件更新包并将其放置在一个可被生产设备访问到的存储解决方案中。
+3. 应用程序确认需要接收新软件包的设备，并向设备的主题`state/deviceID/update`发布一条期望状态消息。该消息包含一个软件更新的URL，该URL与设备当前软件版本的URL是不同的
+4. 追踪该设备的设备状态副本会将期望设备状态记录在一个持久化数据存储中，并向主题`state/deviceID/update/delta`发布一条差异消息，该消息会被发送到设备。
+5. 设备获取到差异消息，该消息做为“软件更新”的命令控制消息。具体而言，该消息传递了当前软件版本URL和新URL之间的变化
+6. 设备从差异消息获取到新的软件更新URL
+7. 设备下载新版本软件并在本地进行软件更新
+8. 设备向更新主题`state/deviceID/update`发布一条确认消息，反馈设备当前所使用的软件版本。追踪该设备的软件状态副本会将新状态记录在一个持久化数据存储中。
+9. 设备状态副本向主题`state/deviceID/update/accepted`发布一条消息，确认软件更新已经完成。
 
-## Considerations
-When implementing this design, consider the following questions:
 
-#### How does the targeted device and only that device obtain the software update from the given URL?  
-The solution can ensure that only the device targeted for a software update can obtain the update by using a **pre-signed URL** or a **temporary credential**. Each approach has different considerations. 
+## 考虑
+当实现这个设计时，请考虑如下问题：
 
-**Pre-signed URL** - the benefit of a pre-signed URL is that it constrains the ability for a device to download a software update within a period of time and by devices with specific public IP addresses. The negative of this approach arises when the device downloading the the update does not have a publicly resolvable IP address. Without a publicly resolvable IP address the solution can only place a time boundary on the interaction with the software update. The practitioner of a solution may or may not find this acceptable.    
+#### 目标设备如何从给定URL获取软件升级包, 并确保只有该设备能够获取？
+通过使用**预签名URL**或者**临时凭证**，解决方案可以确保只有需要进行软件更新的目标设备才能获取软件更新包。这两种方法有不同的考虑点。
 
-**Temporary Credential** - a device interacts with the solution to obtain a temporary credential associated with only the privilege of accessing the storage solution to download the update. The benefit of using a temporary credential is that only the device with that credential can access the update, even when the device does not have a publicly resolvable IP address. The slight negative of this approach is that it requires the device and solution to be more complex because the device must go through a separate process to obtain temporary credentials.
+**预签名URL**　- 预签名URL的好处是它能够限制设备只能在一段时间内进行软件更新，或是设备需要有特定公共IP地址才能下载软件更新。当下载软件更新包的设备没有可公开解析的IP地址时，这种方法的不利之处就会显现出来。如果没有公开可解析的IP地址，解决方案只能在软件更新上设置时间限制。解决方案的实践者可能会或者可能不会认为这是可接受的。
 
-## Example
-### Device perspective of a software upgrade 
-An example of the logic involved for a device in an IoT solution to receive and execute an "update" command received through a [Device State Replica]({{< ref "/designs/device_state_replica" >}}). Specifically, the device will obtain new software, perform an update using that software, and acknowledge completion.
+**临时凭证** - 设备与解决方案进行交互，以获取一个仅有存储访问权限的临时凭证以便下载软件更新。使用临时凭证的好处是只有拥有该凭证的设备才能访问软件更新，即使该设备没有可公开解析的IP地址也是如此。这种方法稍微不好的地方在于设备和解决方案会变得更加复杂，因为设备需要经过一个单独的流程来获取临时凭证。
 
-#### Device prepares for update command messages
-A device subscribes a message listener function to process [command message]({{< ref "/glossary/vocabulary#command-message" >}})s coming from the `state/deviceID/update/delta` topic
+## 示例
+### 从设备端视角看软件更新
+设备在IoT解决方案中通过[设备状态副本]({{< ref "/designs/device_state_replica" >}})获取并执行“更新”命令的逻辑示例如下。具体而言，设备将获得新软件，使用该软件执行更新，并确认完成。
+
+
+#### 设备对更新命令消息进行准备
+设备通过订阅一个消息监听函数，处理来自`state/deviceID/update/delta`主题的[命令消息]({{< ref "/glossary/vocabulary#command-message" >}})
+
 ```python
 def message_listener(message):
     # ..do something with 'message'.. 
@@ -56,8 +59,8 @@ def main():
     wait_until_exit()
 ```
 
-#### Device reads download URL from message and downloads software
-After some time passes the device receives a delta message that acts as the 'software update' command message.
+#### 设备从消息中读取下载URL并下载软件更新
+过了一段时间后，设备收到一个差异消息，该消息是'软件更新'命令消息
 ```python
 def message_listener(message):
     # parse the message from raw format into something the program can use
@@ -74,8 +77,9 @@ def message_listener(message):
         apply_software(software, job_id)
 ```
 
-#### Device applies software and publishes acknowledgement message
-A device will apply the downloaded software and acknowledge the command completion with a message to `state/deviceID/update/accepted` topic
+#### 设备应用软件更新并发布确认消息
+设备会应用下载的软件更新并在`state/deviceID/update/accepted`主题上发布命令已完成的确认消息
+
 ```python
 def apply_software(software, job_id):
     # do the local, device-specific work to apply the software
