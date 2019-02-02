@@ -30,7 +30,7 @@ IoT解决方案使用"遥测"设计，通过支持成熟的通信协议来确保
 
 当实现上述设计时，请考虑如下问题：
 
-#### 在IoT解决方案中，遥测消息的所需*感测到洞察(sense-to-insight)*或*感测到行动(sense-to-action)*处理延时是多少？
+#### 在IoT解决方案中，遥测消息所需的 *感测到洞察(sense-to-insight)* 或 *感测到行动(sense-to-action)* 处理延时是多少？
 
 对于IoT解决方案中需要**微秒**或**毫秒**级别处理延时的，相应的处理应该在设备本身或是连接到设备的设备[网关]({{<ref "/designs/gateway" >}})上进行。
 
@@ -71,10 +71,8 @@ IoT解决方案使用"遥测"设计，通过支持成熟的通信协议来确保
 #### 是否需要维持入站消息的顺序
 首先，解决方案只有在绝对必要时，才应该依赖顺序  
 
-If ordering is **not required**, then the solution can process messages from the topic immediately upon arrival.  
-If ordering is **required**, this follow-on question needs an answer, "On how long of a time horizon does a component of the solution require ordered messages?"
-
 如果**不要求**顺序，那解决方案可以在消息到达后立即进行处理
+
 如果**要求**顺序，那么需要回答以下问题："在多长一段时间范围内，解决方案的组件需要有序的消息？"
 
 如果答案是"在一个主题上小于1秒钟"，那解决方案可以从主题`foo`上将消息收集到一个缓冲区，然后每1秒钟缓冲区的消息被排序并且发送到另一个主题 `foo/ordered`。
@@ -96,7 +94,7 @@ If ordering is **required**, this follow-on question needs an answer, "On how lo
 
 #### 如何在IoT解决方案中存储消息以便未来进行重放？
 
-可以通过[遥测归档]({{< ref "/designs/telemetry_archiving" >}})设计实现。
+可以通过[遥测归档]({{<ref "/designs/telemetry_archiving">}})设计实现。
 
 ## 示例
 
@@ -107,7 +105,7 @@ If ordering is **required**, this follow-on question needs an answer, "On how lo
 
 #### 设备从传感器采样并生成消息
 
-通过设备上的代码或是设备[网关]({{<ref“/ designs / gateway”>}})中运行的代码，设备以类似于以下伪代码的方式对传感器进行采样：
+通过设备上的代码或是设备[网关]({{<ref "/designs/gateway">}})中运行的代码，设备以类似于以下伪代码的方式对传感器进行采样：
 
 ```python3
 device_id = get_device_id()
