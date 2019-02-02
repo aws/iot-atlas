@@ -12,7 +12,7 @@ draft: true
 IoT解决方案需要为设备提供更新自己软件的机制。无需人工干预的软件更新的支持，对于将解决方案扩展到数百万台设备以及提供出色的客户体验都是至关重要。然而，以安全、可扩展和可靠的方式实现大量设备的全量更新需要可扩展以满足设备负载的解决方案、弹性的命令机制以及可以跟踪整个设备组状态的方法。
 
 ## 解决方案
-利用["命令"]({{< ref "/designs/command" >}})和["设备状态副本"]({{< ref "/designs/device_state_replica" >}})设计的IoT解决方案，加上一个全球可用且可扩展的存储解决方案，足以应对大量设备进行软件更新时所带来的所有挑战。
+利用["命令"]({{<ref "/designs/command">}})和["设备状态副本"]({{<ref "/designs/device_state_replica">}})设计的IoT解决方案，加上一个全球可用且可扩展的存储解决方案，足以应对大量设备进行软件更新时所带来的所有挑战。
 
 如下图所示的软件更新的模式可以提供这样的功能。
 
@@ -42,11 +42,11 @@ IoT解决方案需要为设备提供更新自己软件的机制。无需人工�
 
 ## 示例
 ### 从设备端视角看软件更新
-设备在IoT解决方案中通过[设备状态副本]({{< ref "/designs/device_state_replica" >}})获取并执行“更新”命令的逻辑示例如下。具体而言，设备将获得新软件，使用该软件执行更新，并确认完成。
+设备在IoT解决方案中通过[设备状态副本]({{<ref "/designs/device_state_replica">}})获取并执行“更新”命令的逻辑示例如下。具体而言，设备将获得新软件，使用该软件执行更新，并确认完成。
 
 
 #### 设备对更新命令消息进行准备
-设备通过订阅一个消息监听函数，处理来自`state/deviceID/update/delta`主题的[命令消息]({{< ref "/glossary/vocabulary#command-message" >}})
+设备通过订阅一个消息监听函数，处理来自`state/deviceID/update/delta`主题的[命令消息]({{<ref "/glossary/vocabulary#command-message">}})
 
 ```python
 def message_listener(message):
