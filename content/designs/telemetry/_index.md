@@ -1,5 +1,5 @@
 ---
-title: "Telemetry"
+title: "遥测"
 weight: 80
 draft: true
 personae: [foo, bar]
@@ -8,94 +8,106 @@ personae: [foo, bar]
 {{< synopsis-telemetry >}}
 <!--more-->
 
-## Challenge
-IoT solutions need to reliably and securely receive data measured in a remote environment by different devices, potentially using different protocols. Additionally, once the measured data is received, the solution needs to process and route the sensed data for use by components of the solution. 
+## 挑战
+IoT解决方案需要可靠和安全地接收不同设备在远程环境中测量的数据，并可能使用到不同的协议。另外，一旦接收到测量数据，解决方案就需要处理和路由这些数据以供解决方案的组件来使用。
 
-## Solution
-IoT solutions use the Telemetry design to ensure the delivery of sensed data across intermittent networks by supporting adept communication protocols, to provide scalable reception of data at different reporting frequencies and volumes, and to route data for use by other components.
+## 解决方案
+IoT解决方案使用"遥测"设计，通过支持成熟的通信协议来确保在间歇性中断的网络环境下能够传送测量数据，同时提供在不同测量频率和数据量的情况下可扩展的数据接收能力，以及将数据路由给其他组件使用。
 
-The Telemetry design shown in the following diagram can deliver this functionality.
+以下架构图展示的"遥测"设计可以提供这样的功能。
 
 ![Telemetry Design](telemetry.png)
 ([PPTx](atlas-telemetry.pptx))
 
-### Diagram Steps
+### 步骤说明
 
-1. The device obtains a measurement from a sensor operating in an environment remote from the IoT solution. 
-2. The device publishes a message to the topic `telemetry/deviceID` containing the measurement. This message is sent via a transport protocol to a protocol endpoint made available by the Server. 
-3. The Server may then apply one or more [rule]({{< ref "/glossary/vocabulary#rule" >}})s to messages in order to perform fine-grained routing upon some or all of the message's measurement data. The routing can send a message to another component of the solution. 
+1. 设备从在远离IoT解决方案环境中运行的传感器中获取测量值。
+2. 设备向包含测量值的主题`telemetry/deviceID`发布消息。该消息通过传输协议发送到服务器提供的协议端点。
+3. 服务器可以将一个或多个[规则]({{<ref“/词汇表/词汇表＃rule”>}})应用于消息，以便对部分或全部消息中的测量数据执行细粒度的路由。路由可以将消息发送到解决方案的另一个组件。
 
-## Considerations
-The **Telemetry** design is commonly engaged when a project has the requirement to "stream data from a device". Furthermore, when implementing an IoT solution, the word *telemetry* is often used both as a way of describing the above design diagram *and* a shorthand description for the entire collection of challenges inherent in sensing and sending data from a remote location into a larger solution. These considerations focus on topics which usually relate to implementing the above diagram. 
+## 考虑点
+当项目需要“从设备持续传输数据”时，通常会使用**遥测**设计。此外，在实施IoT解决方案时，*遥测*一词通常用作描述上述设计图的一种方式，同时用作简要描述从远程环境感测并传送数据到一个更大的解决方案时所内在的全部挑战。这些考虑集中在与实现上述设计图时相关联的主题上。
 
-When implementing this design, consider the following questions:
+当实现上述设计时，请考虑如下问题：
 
-#### What is the desired *sense-to-insight* or *sense-to-action* processing latency of telemetry messages in the IoT solution?
-IoT solutions with processing latency requirements at the level of **&micro;-seconds or milliseconds** should perform that processing on the device itself or possibly on a device [gateway]({{< ref "/designs/gateway" >}}) connected to the device.  
-IoT solutions with processing latency requirements at the level of **Seconds**, **Minutes**, or even **Hours** should perform that processing on the cloud by default.  
-In general processing of messages in "seconds" through "low minutes", should be performed by components connected directly to the protocol endpoint. Commonly a component's processing will be triggered by the arrival of messages that match certain criteria.  
-Processing telemetry from "low minutes" through "hours" should be performed in an asynchronous fashion. When messages arrive that match desired criteria events will most often be placed in a processing queue and a component will perform the necessary work. Once complete, often the component will emit a message to a "work complete" [message topic]({{< ref "/glossary/vocabulary#message-topic" >}}). 
+#### 在IoT解决方案中，遥测消息的所需*感测到洞察(sense-to-insight)*或*感测到行动(sense-to-action)*处理延时是多少？
 
-#### Are there lessons learned that make telemetry data easier to process in the IoT solution?
-**Solution Unique Device IDs** – Each device in a solution should have a *solution unique* ID. Although this ID does not need to be truly globally unique each device should have an ID that is and will forever be unique within the IoT solution. By embracing solution unique device IDs, the IoT solution will be better able to process and route the sensed data for use by components within the solution.  
-**Early Time-stamping** – The earlier sensed data obtains discrete timestamps in an IoT solution, the earlier more nuanced processing and analysis of that sensed data can occur.  
-**Closed Window Calculations** - Tracking a device's `last_reported` timestamp could determine if/when an aggregation window is able to be considered *closed*. Any closed window calculations can then be easily and confidently cached throughout an IoT solution. These cached calculations often dramatically increase performance of the *sense-to-insight* or *sense-to-action* processing latency of the IoT solution.
+对于IoT解决方案中需要**微秒**或**毫秒**级别处理延时的，相应的处理应该在设备本身或是连接到设备的设备[网关]({{<ref "/designs/gateway" >}})上进行。
 
-#### How should large messages be handled?
-Large messages are defined in this design as any message larger than the transport protocol natively supports. Large messages require an additional question to be answered, **"Can a secondary protocol be used?"**
+对于IoT解决方案中需要**秒**,**分钟**甚至是**小时**级别处理延时的，相应的处理默认应该在云端进行。通常来说，对于需要“秒”到“分钟”级别处理的消息，应该由直接连接到协议端点的组件来进行处理。在消息到达并满足一定的条件时，相应的组件会被触发并对消息进行处理。
 
-If **yes**, HTTP is recommended.  
-If **no**, then the large message must be broken into parts, each part should have a unique part identifier and each part should be small enough to be sent using the transport protocol. 
+对于从“分钟”到“小时”延时级别的遥测数据，应该以异步的方式进行处理。当消息到达并满足期望的条件时，相应的事件会被放在一个处理队列中并且有对应的组件进行必要的处理。一旦处理完成，该组件通常会发送一条消息到"处理完成"[消息主题]({{< ref "/glossary/vocabulary#message-topic" >}}).
 
-#### How should large messages be sent when using a secondary protocol?
-If large messages must be **delivered as soon as possible**, the large message can be uploaded directly to a globally available, highly durable object storage service.
+#### 是否有经验教训可以使IoT解决方案中的遥测数据更易于处理？
 
-If large messages **can be sent in batches**, each message should be saved as a part of a batch until the batch can be sent. Since storage on a device is often a constrained resource, the batch processing of messages should consider the same [algorithmic trade-offs]({{< ref "/designs/gateway#how-should-data-be-processed-when-the-internet-is-unavailable" >}}) as a device acting as a [gateway]({{< ref "/designs/gateway" >}}).   
+**解决方案唯一的设备ID** - 每个设备在解决方案中都应该有*解决方案唯一*的ID。虽然这个ID必不一定真的要全球唯一，但每个设备需要在IoT解决方案中有永远唯一的ID。通过支持解决方案唯一的设备ID，IoT解决方案可以更好的处理和路由感测的数据，供解决方案内的组件所使用。
 
-#### What are the sample vs. reporting frequencies of a device?
+**尽早打时间戳** - 越早让感测数据获得在IoT解决方案中离散的时间戳，就越容易对感测数据进行细致入微的处理和分析
 
-**Sample frequency** is the frequency at which sensed data is retrieved, or *sampled* from an attached [sensor]({{< ref "/glossary/vocabulary#sensor" >}}).  
+**闭合窗口计算** - 追踪设备的 `last_reported`(最后报告)时间戳可以确定是否/何时聚合窗口可以被视为*闭合*。然后在IoT解决方案中可以轻松且可信的缓存任何闭合窗口计算结果。这些缓存的计算结果经常可以极大的提高IoT解决方案中*感测到洞察(sense-to-insight)* 或 *感测到行动(sense-to-action)* 的处理性能。
 
-**Reporting frequency** is the frequency at which sample data stored on the device is sent into the broader IoT solution.
+#### 大消息应该如何处理
+在这个设计中，大消息被定义为任何大于传输协议原生能支持的消息。对于大消息，需要回答一个额外的问题：是否可以使用辅助协议？
+
+如果**是**，则推荐使用HTTP协议
+
+如果**不是**,则大消息需要被切片，每个分片需要有一个独立的切片ID，同时每个切片都需要足够小，以便以能够使用传输协议进行发送
+
+#### 当使用辅助协议时，应该如何发送大消息
+如果大消息必须**尽可能快的传递**，则可以直接将大消息上传至一个全球可用，且具有强数据持久性的对象存储服务
+
+如果大消息**可以被批量发送**, 那每个消息应该做为批量消息的一部分保存下来，直到批量消息可以被发送出去。由于设备上的存储资源通常是非常有限，对消息的批量处理应该考虑与设备做为[网关]({{<ref"/designs/gateway" >}})时同样的[算法权衡]({{< ref "/designs/gateway#how-should-data-be-processed-when-the-internet-is-unavailable" >}})
+
+####什么是设备的采样和报告频率？
+
+**采样频率** 是从连接的[传感器]({{< ref "/glossary/vocabulary#sensor" >}})上获取或采样感测数据的频率。
+
+**报告频率** 是存储在设备上的采样数据发送到IoT解决方案的频率
   
-Device-based code will either obtain sensed data and queue it for delivery or deliver the sensed data immediately. These two different behaviors are often discussed as the *difference between the sample frequency and the reporting frequency*. When the sample and reporting frequencies are equal and aligned, all sensed data is expected to be delivered immediately. When the two frequencies are different, choosing the correct logging algorithm for the enqueued data must be considered.
+设备上的代码会获取感测数据并将其排队以进行传递，或立即传递感测数据。这两种不同的行为通常被讨论为*采样频率和报告频率之间的差异*。当采样和报告频率相等且对齐时，所有感测数据将被立即传递。当两个频率不同时，必须考虑为入队数据选择正确的日志算法。
 
-The expected values for these two frequencies are important when determining the scale and cost of an IoT solution.
+这两个频率的预期数值对于确定IoT解决方案的规模和成本是至关重要的。
 
-#### Does the order of inbound messages need to be maintained?
-First, solutions should only depend on order when it is absolutely necessary.  
+#### 是否需要维持入站消息的顺序
+首先，解决方案只有在绝对必要时，才应该依赖顺序  
 
 If ordering is **not required**, then the solution can process messages from the topic immediately upon arrival.  
-If ordering is **required**, this follow-on question needs an answer, "On how long of a time horizon does a component of the solution require ordered messages?" 
+If ordering is **required**, this follow-on question needs an answer, "On how long of a time horizon does a component of the solution require ordered messages?"
 
-If the follow-on answer is "less than a one second horizon on a single topic", the solution can gather messages from a topic `foo` into a buffer, then after each tick of the clock, the buffer is sorted and messages are emitted in order to another topic `foo/ordered`. 
-If the answer is "greater than a one second horizon", the IoT solution should write every record to an [ordered store]({{< ref "/glossary/vocabulary#ordered-store" >}}). Any component of the solution that **requires** messages to always be in-order, can now read and get updates from the ordered store.
+如果**不要求**顺序，那解决方案可以在消息到达后立即进行处理
+如果**要求**顺序，那么需要回答以下问题："在多长一段时间范围内，解决方案的组件需要有序的消息？"
 
-#### What are some of the cost drivers of telemetry in an IoT solution?
+如果答案是"在一个主题上小于1秒钟"，那解决方案可以从主题`foo`上将消息收集到一个缓冲区，然后每1秒钟缓冲区的消息被排序并且发送到另一个主题 `foo/ordered`。
 
-Usually the most common drivers of cost in an IoT solution are the number of devices, the device sample and reporting frequencies, the necessary *sense-to-insight* or *sense-to-action* telemetry processing latency, the [device data density]({{< ref "/glossary/vocabulary#device-data-density" >}}) and finally the retention duration of [telemetry archiving]({{< ref "/designs/telemetry_archiving" >}})
+如果上述答案是“大于1秒”，那IoT解决方案应该将每个记录都写入一个[有序存储]({{< ref "/glossary/vocabulary#ordered-store" >}})中。解决方案中任何**要求**消息总是有序的组件，可以从有序存储中读取并获得更新。
 
-#### Does each device "actively un-align" its reporting interval with other devices?
+#### IoT解决方案中遥测的成本驱动因素有哪些？
 
-A common mistake that has a large impact, occurs when all devices in an IoT solution or fleet are configured with the same reporting frequencies. To avoid the [constructive interference](http://en.wikipedia.org/w/index.php?title=Constructive_interference) hidden in this simple behavior, a device should start its reporting interval only after it wakes and a random duration has passed. This start-time randomness produces a smoother stream of sensed data flowing into the solution by avoiding the constructive interference that occurs when devices recover from inevitable regional network or other solution-impacting outages.
+通常，物联网解决方案中最常见的成本驱动因素是设备数量、设备采样和报告频率、必要的*感知到洞察力*或*感知到行动*的遥测处理延迟、[设备数据密度] ({{<ref“/ glossary / vocabulary＃device-data-density”>}})以及[遥测存档]({{<ref "/ designs / telemetry_archiving" >}})的保留时间。
 
-#### What should a device do when it cannot connect to its default IoT solution endpoint?
+#### 每个设备是否与其他设备在报告频率上“主动不对齐”？
+当IoT解决方案中的所有设备都配置相同的报告频率时，则会出现一个具有重大影响的常见错误。为了避免隐藏在这个简单行为中的[相长干涉](http://en.wikipedia.org/w/index.php?title=Constructive_interference)，设备应该只在它唤醒并且在一段随机持续时间过后才开始进行报告。这种启动时间的随机性可以产生一个更为平滑的进入解决方案的感测数据流，防止因为设备在不可避免的区域网络中断或其他对解决方案有影响的中断后恢复通信时产生的相长干涉。
 
-**Expected duration** – When a device cannot connect with the default IoT solution endpoint for an expected duration, the device should have a configured behavior for *device message queuing*. This queueing might be the same answer provided when determining the difference between the devices sensing and reporting frequencies. Furthermore, any device with the ability to perform device message queueing should consider the same algorithmic trade-offs as a device acting as a device [gateway]({{< ref "/designs/gateway" >}}). These trade-offs arise when local storage is not enough to store all messages for the expected duration and will impact the sensed data. The common categories of algorithm to consider are: **[FIFO](https://en.wikipedia.org/wiki/FIFO_(computing_and_electronics))**, **Culling**, and **Aggregate**.  
+#### 当设备无法连接到其默认的IoT解决方案端点时应该做些什么？
 
-**Disaster-level duration** – When a device cannot connect with the default IoT solution endpoint for a disaster-level duration, then a *regional fail-over* is required. To achieve this, first a device must have a pre-configured fail-over endpoint. Then when a device reorients itself to the fail-over endpoint, the device is **already registered** with the new region, and it already has the proper credentials, the device simply starts sending messages as if the new endpoint is the default. Otherwise when the device is **not registered** with the new region, the device will need to complete a [device bootstrap]({{< ref "/designs/device_bootstrap" >}}) with the new regional endpoint prior to sending messages.
+**可预期的中断时长** - 当设备在可预期的时长内无法连接到默认的IoT解决方案端点，该设备应该按照配置进行*设备消息排队*。这与确定设备采样和报告频率的差异时的答案可能是一样的。此外，任何能够执行设备消息排队的设备都应该考虑与做为设备[网关]({{<ref“/ designs / gateway”>}})的设备相同的算法权衡。当本地存储不足以在预期持续时间内存储所有消息并且将影响所感测的数据时，则需要做出权衡。通常需要考虑的算法类别包括**[先进先出(FIFO)](https://en.wikipedia.org/wiki/FIFO_(computing_and_electronics))**、**剔除(Culling)**和**聚合(Aggregate)**
 
-#### How can messages be stored and available for future replay in the IoT solution?
+**灾难级别的中断时长** - 当设备在灾难级别的时长内无法连接到默认的IoT解决方案端点，那就需要进行*区域切换(regional fail-over)*。为了实现这个方案，设备必须首先有一个预配置好的切换端点。接着设备需要重定向到切换端点，设备*已经注册*在新的区域上，并具有相应的凭证，设备可以像默认端点一样开始向新端点发送消息。否则，如果设备在新区域是*未注册*的话，那设备需要先在新区域完成[设备初始化]({{< ref "/designs/device_bootstrap" >}})，然后才能发送消息。
 
-This can be accomplished with the [telemetry archiving]({{< ref "/designs/telemetry_archiving" >}}) design.
+#### 如何在IoT解决方案中存储消息以便未来进行重放？
 
-## Examples
+可以通过[遥测归档]({{< ref "/designs/telemetry_archiving" >}})设计实现。
 
-### Telemetry message creation, delivery, and routing.
-A detailed example of the logic involved to gather sensor data and send it through an IoT solution.
+## 示例
 
-#### A device samples a sensor and creates a message
-Either with code on the device or code operating in a device [gateway]({{< ref "/designs/gateway" >}}), a device samples a sensor in a fashion similar to the following pseudocode:
+### 遥测消息的生成、传送与路由
+
+这是收集传感器数据并通过IoT解决方案进行发送所涉及的逻辑的详细示例。
+
+
+#### 设备从传感器采样并生成消息
+
+通过设备上的代码或是设备[网关]({{<ref“/ designs / gateway”>}})中运行的代码，设备以类似于以下伪代码的方式对传感器进行采样：
 
 ```python3
 device_id = get_device_id()
@@ -112,10 +124,12 @@ while should_poll():  # loop until we should no longer poll sensors
     sleep(<duration>)
 ```
 
-The `create_message` pseudocode function above creates a message based upon the `device_id`, the `sensor_id`, the timestamp `ts`, and the `value` read from the sensor. 
+上面的`create_message`伪代码函数根据`device_id`、`sensor_id`
+、时间戳`ts`和从传感器读取的`value`创建一条消息。
 
-#### Device formats a message
-Many existing solutions will have a message format already implemented. However, if the message format is open for discussion, JSON is recommended. Here is an example JSON message format:
+
+#### 设备对消息进行格式化
+许多现有解决方案已经实现其消息格式。如果消息格式还在讨论中，则建议使用JSON。这是一个示例JSON消息格式：
 
 ``` json 
 {
@@ -131,10 +145,10 @@ Many existing solutions will have a message format already implemented. However,
 }
 ```
 
-#### Device delivers a message
-Once the sensed data is placed in a message, the device publishes the message to the remote protocol endpoint on a reporting frequency.
+#### 设备传递消息
+一旦将感测到的数据放入消息中，设备就以报告频率将消息发布到远程协议端点。
 
-When reporting messages using the MQTT protocol, messages are sent with topics. Messages sent by a device with the topic `telemetry/deviceID/example` would be similar to the following pseudocode.  
+当使用MQTT协议报告消息时，将使用主题发送消息。具有主题`telemetry/deviceID/example`的设备发送的消息将类似于以下伪代码。
 
 ```python
 # get device ID of the device sending message
@@ -148,7 +162,8 @@ while record in sensor_data:
     mqtt_client.publish(topic, record, quality_of_service)
 ```
 
-#### Messages sent to subscribers
-Each published messages traverses the network to the protocol endpoint. Once received, the server software makes each message available to interested parties. Parties will often register their interest by subscribing to specific message topics.
+#### 消息发送至订阅者
 
-In addition to having components in the IoT solution subscribe directly to a messaging topic, some IoT solutions have a rule engine that allows a rule engine to subscribe to inbound messages. Then, on a message-by-message basis, rules in a rule engine can process messages or direct messages to other components in the IoT solution.
+每个发布的消息都会经过网络到达协议端点。消息被接收后，服务器会将每条消息提供给感兴趣的组件。组件会订阅特定的消息主题。
+
+除了让IoT解决方案中的组件直接订阅消息主题外，一些IoT解决方案还有一个规则引擎，允许规则引擎订阅入站消息。然后，在逐个消息的基础上，规则引擎中的规则可以处理消息或将消息定向到IoT解决方案中的其他组件。
