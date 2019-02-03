@@ -1,32 +1,34 @@
 ---
-title: "Personae"
+title: "人物角色"
 ---
 Descriptions of who is commonly interested in an IoT solution.
+描述对物联网解决方案通常感兴趣的人。
+
 <!--more-->
 
-### Business Decision Maker
-> the CEO, CTO, CSIO, or manager of the Big Data team who is constantly on the lookout for solutions that will solve the company's problems
+### 商业决策者(Business Decision Maker)
+> 首席执行官，首席技术官，首席信息安全官或大数据团队的经理，他们一直在寻找可以解决公司问题的解决方案
 
-### Line of Business Application Developer
-> a cloud-knowledgeable developer who creates, owns, and maintains an entire application or service vital for the effective operation of an enterprise's critical processes
+### 业务线应用程序开发人员(Line of Business Application Developer)
+> 一个具有云计算知识的开发人员，他创建、负责并维护对于企业关键流程的有效运作至关重要的整个应用程序或服务
 
-### Data Engineer
-> a technically-savvy person who knows both how to setup the cloud data infrastructure for the company and who is responsible for making sure it works right 
+### 数据工程师(Data Engineer)
+> 技术娴熟的人员，既了解如何为公司设置云数据基础架构，又负责确保其正常工作
 
-### Device Engineer 
-> a highly specialized developer who knows how to write, test, and fix code that runs securely on physical, often resource-constrained devices
+### 设备工程师(Device Engineer)
+> 一个高度专业的开发人员，他知道如何编写，测试并修复在物理上通常是资源受限的设备上安全运行的代码
 
-### Fleet Manager
-> a cloud-knowledgeable developer in operations responsible for keeping a fleet of devices updated with current firmware and operating smoothly
+### 设备管理者(Fleet Manager)
+> 一个具有云计算知识的运维开发人员，负责让大量设备保持微码更新并顺利运行
  
-### Industrial Engineer
-> a technical specialist who builds, troubleshoots, and improves physical processes through the use of historians, SCADA systems, and PLCs to both support company operations and identify inefficiencies in those same operations
+### 工业工程师(Industrial Engineer)
+> 通过使用历史数据库、SCADA系统和PLC来建立、排除故障并改进物理过程的技术专家，以支持公司运营并识别运营中低效的地方
 
-### Operations Analyst
-> an analyst who investigates and analyzes IoT data, and develops models so the company can make good decisions about business questions and industrial engineers can take appropriate action 
+### 运营分析师(Operations Analyst)
+> 负责调查、分析IoT数据和开发模型的分析师，以便公司能够对业务问题做出正确的决策，同时工业工程师也可以采取适当的行动
 
-### Security Architect
-> a technically-savvy person who thinks like a hacker in order to anticipate the moves and tactics that intruders will use to gain access to the company's systems 
+### 安全架构师(Security Architect)
+> 技术娴熟的人员，他像黑客一样思考，以预测入侵者获取访问公司系统访问权限的行动和策略
 
-### Security Operations
-> a technically-savvy person who makes sure everything with a solutions' device security is functioning according to plan and sounding the alarm when it is not 
+### 安全运维工程师(Security Operations)
+> 技术娴熟的人员，确保解决方案设备安全的方方面面按计划运行，并在异常时发起告警
