@@ -1,54 +1,55 @@
 ---
-title: "Vocabulary"
+	title: "名词解释"
 draft: true
 ---
-Words and definitions used across the IoT Atlas.  
+IoT Atlas中出现的名词及定义
 <!--more-->
 
-### Actuator
-> an actuator is used to move or control a mechanism in the environment
+### 执行器(Actuator)
+> 执行器用来对机械进行移动或控制
 
-### Command Message
-> a [message](#message) describing an action that should be taken and that the device knows should be acknowledged on another topic once the action is complete.
+### 命令消息(Command Message)
+> 一个[消息](#message)描述了设备应该采取的动作，并且一旦动作完成，设备就知道应该在另一个主题上进行确认。
 
-### Device
-> an entity that has enough power and compute resources to be a part of an IoT solution. Most often devices have [sensor](#sensor)s or [actuator](#actuator)s attached. 
+### 设备(Device)
+> 是具有足够的供电和计算资源的实体，作为IoT解决方案的一部分。大多数情况下设备连接[传感器](#sensor)或[执行器](#actuator)。
 
-### Device Data Density
-> a device's data density is: `density = sample frequency * sample size * reporting frequency`
+### 设备数据密度（Device Data Density）
+> 一个设备的数据密度是：`密度 ＝ 采样频率 * 样本大小 * 报告频率`
 
-### Endpoint
-> an endpoint is ...tbd
+### 端点(Endpoint)
+> 待定
 
-### Limited Production
-> effort to validate customer acceptance of the project's edge and cloud software at scale, in order to meet the majority of customer use-cases with a blueprint for mass production.
+### 有限生产(Limited Production)
 
-### Message
-> a unit of communication in an IoT solution, often containing either sensed or command-related data
+> 验证在规模化场景下用户对项目的边缘和云软件的程度，通过蓝图满足在大规模生产环境下主要的用户用例
 
-### Message Broker
-> a component of an IoT solution responsible for managing message routing between authorized publishers and subscribers of topics.
+### 消息(Message)
+> IoT解决方案中的通信单元，经常包含感测或命令相关的数据
 
-### Message Topic
-> a message topic, aka. *topic*, is a subject associated with a message. Topics are often used for the routing of messages from publishers to subscribers. In this context a message topic should be thought of as a direct map to the pub/sub concept of a subject and as a similar concept to the partial URLs used to describe request/response and REST endpoints.
+### 消息代理(Message Broker)
+> IoT解决方案中负责管理授权发布者和主题订阅者之间消息路由的组件
 
-### Ordered Store
-> a data store or micro-service which fulfills the role in an IoT solution of ensuring that all records stored within it are in time-series order.
+### 消息主题(Message Topic)
+> 消息主题，即*主题(topic)*，是与消息相关联的主题(subject)。主题经常被用来从发布者路由消息到订阅者。在这个上下文环境中，消息主题应该直接对应到发布/订阅概念中的主题(subject)，并类似于用来描述请求/响应和REST端点的相对URL(partial URL)的概念。
 
-### Pilot
-> effort performed to test a small set of customer use-cases, device configurations, and/or end-user features in order to identify a business outcome, software architecture, and/or create device blueprints.
+### 有序存储(Ordered Store)
+> 是在IoT解决方案中确保所有记录都按时序进行存储的数据存储或微服务。
 
-### Production
-> effort to mass produce devices and roll-out the IoT product to the market.
+### 试点(Pilot)
+> 通过测试一小部分用户用例、设备配置和/或者最终用户功能，识别业务成果、软件架构和/或创建设备蓝图
 
-### Prototype
-> effort taken for the purpose of education in order to obtain approval by a customer’s management to start the pilot phase.
+### 生产(Production)
+> 大规模生产设备，并将IoT产品推向市场
 
-### Rule
-> a singular collection of logic and actions executed by a rules engine
+### 原型(Prototype)
+> 以教学为目的，获取客户管理层批准开始试点阶段
 
-### Rule Engine
-> see Wikipedia ([Business rules engine](https://en.wikipedia.org/wiki/Business_rules_engine))
+### 规则(Rule)
+> 由规则引擎执行的逻辑和动作的单一集合
 
-### Sensor
-> a sensor is used to measure some aspect of the environment around it
+### 规则引擎(Rule Engine)
+> 详见维基百科(([Business rules engine](https://en.wikipedia.org/wiki/Business_rules_engine))
+
+### 传感器(Sensor)
+> 传感器用于测量周围环境的某些指标
