@@ -49,7 +49,7 @@ IoT Atlas中出现的名词及定义
 > 由规则引擎执行的逻辑和动作的单一集合
 
 ### 规则引擎(Rule Engine)
-> 详见维基百科(([Business rules engine](https://en.wikipedia.org/wiki/Business_rules_engine))
+> 详见维基百科([Business rules engine](https://en.wikipedia.org/wiki/Business_rules_engine))
 
 ### 传感器(Sensor)
 > 传感器用于测量周围环境的某些指标
