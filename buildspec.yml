@@ -27,3 +27,4 @@ phases:
   post_build:
     commands:
       - echo ... post-build ...
+      - aws s3 sync public/ s3://iotatlas.net --cache-control max-age=3600 --delete
