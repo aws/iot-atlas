@@ -19,9 +19,11 @@
       "JSON"
     ]
   },
-  "DefaultContentLanguage": "en-us",
+  "DefaultContentLanguage": "en",
   "languages": {
-    "en-us": {
+    "en": {
+      "lang": "en",
+      "langCode": "en-us",
       "contentDir": "content/en-us",
       "languageName": "English",
       "weight": 1
