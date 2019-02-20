@@ -1,7 +1,7 @@
 ![](https://codebuild.us-west-2.amazonaws.com/badges?uuid=eyJlbmNyeXB0ZWREYXRhIjoiTmR3cllNQ09temo0MXVWU0JnWUswL09LeTdCRmM1QTZyTHAwVElRVHNIaDh2b3NRME1FRU85V2w3cmg2aWFJWlpPM1I5Z1JtcW0wU2FZV1U0SmxFNWNFPSIsIml2UGFyYW1ldGVyU3BlYyI6ImsrNTlZVHlMSHpCcjVFSngiLCJtYXRlcmlhbFNldFNlcmlhbCI6MX0%3D&branch=master)
 ## IoT Atlas
 
-This repository contains the content of the [IoT Atlas](http://iotatlas.net) in Chineses Simpified
+This repository contains the content of the [IoT Atlas](http://iotatlas.net) 
 
 The IoT Atlas supports your project by explaining the why, what, and who of commonly used, modern IoT designs.
 
