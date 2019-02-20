@@ -2,7 +2,7 @@ version: 0.2
 
 environment_variables:
   plaintext:
-    HUGO_VERSION: "0.49.2"
+    HUGO_VERSION: "0.53"
 
 phases:
   install:
@@ -26,4 +26,5 @@ phases:
       - hugo --buildDrafts -v
   post_build:
     commands:
-      - aws s3 sync public/ s3://iotatlas.net --cache-control max-age=3600 --delete
+      - aws s3 sync public/ s3://iotatlas.net --cache-control max-age=43200 --delete
+      - aws cloudfront create-invalidation --distribution-id $CLOUDFRONT_DISTRIBUTION_ID --paths /\*
