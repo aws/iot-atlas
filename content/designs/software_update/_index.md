@@ -30,7 +30,7 @@ IoT解决方案需要为设备提供更新自己软件的机制。无需人工�
 9. 设备状态副本向主题`state/deviceID/update/accepted`发布一条消息，确认软件更新已经完成。
 
 
-## 考虑
+## 考虑点
 当实现这个设计时，请考虑如下问题：
 
 #### 目标设备如何从给定URL获取软件升级包, 并确保只有该设备能够获取？
@@ -78,7 +78,7 @@ def message_listener(message):
 ```
 
 #### 设备应用软件更新并发布确认消息
-设备会应用下载的软件更新并在`state/deviceID/update/accepted`主题上发布命令已完成的确认消息
+设备执行更新并将执行更新的结果发布到`state/deviceID/update/accepted`主题上以完成对命令的确认
 
 ```python
 def apply_software(software, job_id):
