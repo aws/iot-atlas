@@ -12,7 +12,7 @@ IoT solutions are expected to interact with devices in such a way that the solut
 
 ## Solution
 
-IoT Solutions use the Command design to ask devices to perform an action and ensure reliable interactions by leveraging a simple concept: no requested action is deemed successful unless it is acknowledged as successful.
+IoT solutions use the Command design to ask devices to perform an action and ensure reliable interactions by leveraging a simple concept: no requested action is deemed successful unless it is acknowledged as successful.
 
 The Command design shown in the following diagram can deliver this functionality.
 
@@ -21,7 +21,7 @@ The Command design shown in the following diagram can deliver this functionality
 ### Diagram Steps
 
 1. A [device]({{< ref "/glossary/vocabulary#device" >}}) configures itself to communicate with a protocol endpoint so that Command messages can be sent and received.
-2. A component of the solution publishes a [command message]({{< ref "/glossary/vocabulary#command-message" >}}) targeted at one or more devices.
+2. A component of the solution publishes a [Command message]({{< ref "/glossary/vocabulary#command-message" >}}) targeted at one or more devices.
 3. The server uses the protocol endpoint to send the Command message to each previously configured device.
 4. Upon completion of the Command's requested action, the device publishes a command completion message to the server via the protocol endpoint.
 
