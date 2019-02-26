@@ -7,7 +7,7 @@ weight: 50
 <!--more-->
 
 ## Challenge
-[Endpoint]({{< ref "/glossary/vocabulary#endpoint" >}})s in an IoT solution are often not capable enough to connect directly to the internet nor are they operating on networks with direct access to the internet. Even with these constraints, obtaining data from and interacting with endpoints requires a mechanism of connectivity. 
+[Endpoints]({{< ref "/glossary/vocabulary#endpoint" >}}) in an IoT solution are often not capable enough to connect directly to the internet nor are they operating on networks with direct access to the internet. Even with these constraints, obtaining data from and interacting with endpoints requires a mechanism of connectivity. 
 
 ## Solution
 IoT solutions use the Gateway design to overcome the common constraints experienced by endpoints. In doing so a gateway enables reliable and secure communication with otherwise inaccessible endpoints. Additionally a gateway enables continued isolation between the local endpoints and cloud connectivity. 

@@ -15,7 +15,7 @@ Verifying state changes is a pivotal capability necessary for all command and co
 ## Solution
 IoT solutions that leverage the Device State Replica design are able to manage device-related state changes in a reliable, scalable, and straightforward fashion. 
 
-The Device State Replica design describes how to replicate a device's current state, desired future state, and the difference between current and desired states. The Device State Replica design is similar to [Command]({{< ref "/designs/command" >}}) in that both use [message]({{< ref "/glossary/vocabulary#message" >}})s as triggers for actions and acknowledgement messages when actions are complete. However, the Device State Replica design goes farther than the Command design, by taking a prescriptive approach to both the management of device-related state and how the state and changes are communicated. Using the Device State Replica design allows solutions to know and verify device states and state changes.
+The Device State Replica design describes how to replicate a device's current state, desired future state, and the difference between current and desired states. The Device State Replica design is similar to [Command]({{< ref "/designs/command" >}}) in that both use [messages]({{< ref "/glossary/vocabulary#message" >}}) as triggers for actions and acknowledgement messages when actions are complete. However, the Device State Replica design goes farther than the Command design, by taking a prescriptive approach to both the management of device-related state and how the state and changes are communicated. Using the Device State Replica design allows solutions to know and verify device states and state changes.
 
 ### Component-to-device State Replica
 

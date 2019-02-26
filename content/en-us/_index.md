@@ -41,4 +41,4 @@ Finally, each design will follow a few conventions. To convey an example of eith
 ## Team
 At this time, the core maintainers of the IoT Atlas are [Brett Francis](https://github.com/brettf), 
 [Gavin Adams](https://github.com/gadams999), and 
-[Craig Williams](https://github.com/typemismatch). We're excited to get these designs out into the world here and on [Github](https://github.com/aws/iot-atlas); so together we can accelerate IoT progress with you.   
+[Craig Williams](https://github.com/typemismatch). We're excited to get these designs out into the world here and on [GitHub](https://github.com/aws/iot-atlas); so together we can accelerate IoT progress with you.   
