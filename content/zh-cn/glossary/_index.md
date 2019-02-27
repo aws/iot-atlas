@@ -1,5 +1,5 @@
 ---
-title: "Glossary"
+title: "术语表"
 weight: 500
 draft: true
 ---

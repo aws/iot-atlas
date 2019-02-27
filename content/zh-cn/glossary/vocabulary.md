@@ -1,5 +1,5 @@
 ---
-	title: "名词解释"
+title: "名词解释"
 draft: true
 ---
 IoT Atlas中出现的名词及定义

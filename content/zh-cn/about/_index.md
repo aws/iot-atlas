@@ -1,10 +1,11 @@
 ---
-title: "About"
+title: "关于"
 weight: 1000
 ---
 
-## History
-First published in November 2018, this site and the [iotatlas.net](http://iotatlas.net) and [iotatlas.io](http://iotatlas.io) domains are currently maintained by AWS. The content is maintained and improved by IoT Atlas [community members](https://github.com/aws/iot-atlas/graphs/contributors), customers, partners, and AWS employees.
+## 历史
+本站点[iotatlas.net](http://iotatlas.net)和[iotatlas.io](http://iotatlas.io)首次发布于2018年11月，目前由AWS维护。网站内容由IoT Atlas[社区成员](https://github.com/aws/iot-atlas/graphs/contributors)、客户、合作伙伴和AWS员工维护和优化。
 
-## About Amazon Web Services
-Amazon Web Services provides a highly reliable, scalable, low-cost cloud infrastructure platform that powers hundreds of thousands of businesses in 190 countries around the world. In 2015 AWS added specific Internet of Things (IoT) capabilities and has been learning how to better help customers ever since. 
+## 关于Amazon Web Services
+	
+Amazon Web Services提供高度可靠，可扩展，低成本的云基础架构平台，为全球190个国家/地区的数十万家企业提供支持。2015年，AWS增加了特定的物联网（IoT）功能，并一直在学习如何更好地帮助客户。
