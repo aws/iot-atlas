@@ -1,7 +1,6 @@
 ---
 title: "人物角色"
 ---
-Descriptions of who is commonly interested in an IoT solution.
 描述对物联网解决方案通常感兴趣的人。
 
 <!--more-->
