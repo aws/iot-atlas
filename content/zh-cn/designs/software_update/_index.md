@@ -5,7 +5,8 @@ draft: true
 
 ---
 
-{{< synopsis-software-update >}}
+<!-- {{< synopsis-software-update >}} -->
+要求设备获取新软件，对自身进行更新并确认完成。
 <!--more-->
 
 ## 挑战

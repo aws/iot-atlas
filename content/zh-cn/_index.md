@@ -2,6 +2,7 @@
 title: "Home"
 ---
 {{< atlas-logo >}} 
+
 # 欢迎 
 
 欢迎来到IoT Atlas，成功使用物联网的旅程依赖于地图。

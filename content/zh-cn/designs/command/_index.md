@@ -3,7 +3,10 @@ title: "命令"
 weight: 11
 draft: true
 ---
-{{< synopsis-command >}}
+<!-- {{< synopsis-command >}}
+-->
+
+可靠地要求设备执行单个操作并确认状态的一个请求实体。
 <!--more-->
 
 ## 挑战

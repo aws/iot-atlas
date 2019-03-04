@@ -4,8 +4,11 @@ weight: 15
 draft: true
 ---
 
-{{% synopsis-bootstrap %}}
+
+<!-- {{% synopsis-bootstrap %}} -->
+未注册设备变为已注册状态并在IoT解决方案中具有完整的功能
 <!--more-->
+
 
 ## 挑战
 

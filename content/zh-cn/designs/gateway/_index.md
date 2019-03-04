@@ -3,7 +3,8 @@ title: "网关"
 weight: 50
 ---
 
-{{< synopsis-gateway >}}
+<!-- {{< synopsis-gateway >}} -->
+充当本地设备之间，以及设备和云之间的中介的设备。
 <!--more-->
 
 ## 挑战

@@ -5,7 +5,8 @@ draft: true
 personae: [foo, bar]
 ---
 
-{{< synopsis-telemetry >}}
+<!-- {{< synopsis-telemetry >}} -->
+从远程环境中的传感器收集数据，并将感测的测量值供IoT解决方案的其他组件使用。
 <!--more-->
 
 ## 挑战

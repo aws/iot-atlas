@@ -4,7 +4,8 @@ weight: 20
 draft: true
 ---
 
-{{< synopsis-state-replica >}}
+<!-- {{< synopsis-state-replica >}} -->
+物理设备报告状态或所需未来状态的逻辑表示。
 <!--more-->
 
 ## 挑战
