@@ -43,7 +43,7 @@ If **yes - with certificate**, the device can be manufactured in a secure manner
 #### How are customers associated with their devices?
 In almost all cases when devices are provisioned, we need to associate the device to either a customer or a device profile within an established system. This involves gathering additional information from the device to complete the device registration. Gathering this additional information can be accomplished with one or a combination of the following:
 
-* Devices are provisioned during the manufacturing process with [certificate](https://en.wikipedia.org/wiki/Public_key_certificate)s and those certificates can be pre-mapped to a device profile. This is common for solutions with large fleets of known devices.
+* Devices are provisioned during the manufacturing process with [certificates](https://en.wikipedia.org/wiki/Public_key_certificate) and those certificates can be pre-mapped to a device profile. This is common for solutions with large fleets of known devices.
 * Devices report their model and serial numbers during their communication with the Registration Authority, that information can be pre-mapped to a device profile.
 * Devices use BLE or another local form of communication to receive information about their identity, such as a customer profile. Handling this via a mobile application is the most common form of device provisioning. Using local communication can be coupled with the installation of certificates during manufacturing, enabling both the customer association and registration process to be completed in a single step.
 
