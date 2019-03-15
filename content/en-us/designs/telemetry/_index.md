@@ -43,7 +43,7 @@ Processing telemetry from "low minutes" through "hours" should be performed in a
 #### How should large messages be handled?
 Large messages are defined in this design as any message larger than the transport protocol natively supports. Large messages require an additional question to be answered, **"Can a secondary protocol be used?"**
 
-If **yes**, HTTP is recommended.  
+If **yes**, HTTPS is recommended.  
 If **no**, then the large message must be broken into parts, each part should have a unique part identifier and each part should be small enough to be sent using the transport protocol. 
 
 #### How should large messages be sent when using a secondary protocol?
