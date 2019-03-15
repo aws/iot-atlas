@@ -52,7 +52,7 @@ IoT解决方案需要与设备进行交互以执行并跟踪设备状态变化�
 
 当*设备*是状态变更的发起者，而且状态变更需要通知到IoT解决方案中的组件时，以下设计可以为IoT解决方案所用：
 
-![Device-to-component State Replication](d2c-state.png)
+![Device-to-component State Replica](d2c-state.png)
 
 ### 设备到组件的步骤说明
 

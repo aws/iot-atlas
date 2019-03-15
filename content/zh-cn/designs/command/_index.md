@@ -19,8 +19,7 @@ IoT解决方案使用"命令"设计来要求设备执行操作，并通过利用
 
 下图中显示的"命令"设计可以提供此功能：
 
-![Command Design](command.png) 
-([PPTx](atlas-command.pptx))
+![Command Design](command.png) ([PPTx](/designs/iot-atlas-patterns.pptx))
 
 ### 步骤说明
 1. [设备]({{< ref"/glossary/vocabulary#device" >}})将自身配置为与协议端点通信，以便可以发送和接收命令消息。

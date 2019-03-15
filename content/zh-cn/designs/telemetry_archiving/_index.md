@@ -15,7 +15,8 @@ IoT解决方案存储原始未处理过的传感器数据，并支持对这些�
 
 下图中显示的"遥测存档"设计可以提供此功能。
 
-![Telemetry Archiving Architecture](archiving.png) ([PPTx](atlas-archiving.pptx))
+![Telemetry Archiving Architecture](archiving.png)
+([PPTx](/designs/iot-atlas-patterns.pptx))
 
 ### 步骤说明 ####
 

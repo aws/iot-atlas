@@ -16,7 +16,7 @@ IoT解决方案使用"网关"设计来克服端点通常遇到的限制。通过
 如下图所示的"网关"设计可以提供这样的功能。图中服务器(Server)是运行在云中。网关(Gateway)则运行在设备可以访问的网络中
 
 ![Gateway Design](gateway.png)
-([PPTx](atlas-gateway.pptx))
+([PPTx](/designs/iot-atlas-patterns.pptx))
 
 上图中的两个设计均提供一个网关端点，其使用与服务器相同类型的协议端点(Protocol Endpoint)。在*上行*和*下行*网关设计图中，网关是连接到服务器的
 
@@ -61,11 +61,11 @@ IoT解决方案使用"网关"设计来克服端点通常遇到的限制。通过
 
 ![Message Processing Algorithms](algorithms.png)
 
-**先进先出(FIFO)** – 这种[方法](https://en.wikipedia.org/wiki/FIFO_(computing_and_electronics))通常实现起来比较直接，在多种场景下都很有用。在这种方法的消息处理图中可以看到，数据从左侧到达，当本地存储空间满后，数据从右侧离开。具体数据的例子包括：维护测量数据和通用的遥测数据
+**先进先出(FIFO)** – 这种[方法](https://zh.wikipedia.org/wiki/%E5%85%88%E9%80%B2%E5%85%88%E5%87%BA)通常实现起来比较直接，在多种场景下都很有用。在这种方法的消息处理图中可以看到，数据从左侧到达，当本地存储空间满后，数据从右侧离开。具体数据的例子包括：维护测量数据和通用的遥测数据
 
-**剔除(Culling)** - 这种方法对于在丢失曲线细节时保留绝对点值非常有用。在消息处理图中，此方法的数据从左侧到达。一旦本地存储中已存放超过*剔除点*的数据，则一些清除逻辑会移除出其他所有样本（或每`N`个样本）。具体数据的例子包括: [千瓦(kW)](https://en.wikipedia.org/wiki/Watt#Kilowatt), [安培(Amperage)](https://en.wikipedia.org/wiki/Amperage), [伏特(Voltage)](https://en.wikipedia.org/wiki/Voltage), etc
+**剔除(Culling)** - 这种方法对于在丢失曲线细节时保留绝对点值非常有用。在消息处理图中，此方法的数据从左侧到达。一旦本地存储中已存放超过*剔除点*的数据，则一些清除逻辑会移除出其他所有样本（或每`N`个样本）。具体数据的例子包括: [千瓦(kW)](https://zh.wikipedia.org/wiki/%E7%93%A6%E7%89%B9#%E5%8D%83%E7%93%A6), [安培(Amperage)](https://zh.wikipedia.org/wiki/%E7%94%B5%E6%B5%81), [伏特(Voltage)](https://zh.wikipedia.org/wiki/%E9%9B%BB%E5%A3%93), etc
 
-**聚合(Aggregate)** – 当曲线的详细形状不如一段时间内的最小值，最大值，平均值和总和值那么重要时，此方法很有用。在消息处理图中，此方法的数据从左侧到达。一旦本地存储存放超过*聚合点*数据时，一些清除逻辑就对存储的值执行聚合。数据的例子包括: [千瓦时(kWh)](https://en.wikipedia.org/wiki/Kilowatt_hour), [日照时间](https://en.wikipedia.org/wiki/insolation), [流](https://en.wikipedia.org/wiki/Flow_measurement), [CPU时间](https://en.wikipedia.org/wiki/CPU_time), [温度](https://en.wikipedia.org/wiki/Temperature), [风速](https://en.wikipedia.org/wiki/Wind_speed)等等.
+**聚合(Aggregate)** – 当曲线的详细形状不如一段时间内的最小值，最大值，平均值和总和值那么重要时，此方法很有用。在消息处理图中，此方法的数据从左侧到达。一旦本地存储存放超过*聚合点*数据时，一些清除逻辑就对存储的值执行聚合。数据的例子包括: [千瓦时(kWh)](https://zh.wikipedia.org/wiki/%E5%8D%83%E7%93%A6%C2%B7%E6%99%82), [日照时间](https://en.wikipedia.org/wiki/insolation), [流](https://en.wikipedia.org/wiki/Flow_measurement), [CPU时间](https://en.wikipedia.org/wiki/CPU_time), [温度](https://zh.wikipedia.org/wiki/%E6%B8%A9%E5%BA%A6), [风速](https://zh.wikipedia.org/wiki/%E9%A2%A8%E9%80%9F)等等.
 
 
 ## 示例
