@@ -1,6 +1,5 @@
 ---
 title: "Vocabulary"
-draft: true
 ---
 Words and definitions used across the IoT Atlas.  
 <!--more-->
