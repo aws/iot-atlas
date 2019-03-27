@@ -19,6 +19,9 @@ Words and definitions used across the IoT Atlas.
 ### Endpoint
 > an endpoint is another name for a device, but often describing a device as an endpoint also implies the device operates on-premises with limited connectivity to the cloud
 
+### Industry 4.0 <a name="industry40"></a>
+> trend in manufacturing and automation to use IoT technology for connecting production assets to backend IT infrastructure (or cloud services) with the goal to extract data, gain finer grained control to production processes, allow predictions on quality and reduce downtimes ([Wikipedia]({{< ref "https://en.wikipedia.org/wiki/Industry_4.0" >}}))
+
 ### Limited Production
 > effort to validate customer acceptance of the project's edge and cloud software at scale, in order to meet the majority of customer use-cases with a blueprint for mass production.
 
@@ -39,6 +42,12 @@ Words and definitions used across the IoT Atlas.
 
 ### Production
 > effort to mass produce devices and roll-out the IoT product to the market.
+
+### Programmable Logic Controller <a name="plc"></a>
+> ruggedized computing device or digital computer for industrial applications to monitor and control production/manufacturing processes ([Wikipedia]({{< ref "https://en.wikipedia.org/wiki/Programmable_logic_controller" >}})).
+
+### PLC
+> abbreviation for [Programmable Logic Controller](#plc).
 
 ### Prototype
 > effort taken for the purpose of education in order to obtain approval by a customer’s management to start the pilot phase.
