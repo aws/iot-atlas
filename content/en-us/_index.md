@@ -19,7 +19,7 @@ By starting from this perspective, we are creating an atlas that supports an und
 
 Each design attempts to cover one concept, cover it well, and, when it makes sense, describe how the current design will interoperate with other designs. When a new concept is necessary to better understand a design, the concept will be introduced just in time in the design and also referenced in the [glossary]({{< ref "/glossary" >}}). 
  
-To meet the bar for publication, a fully-formed IoT Atlas design will provide a simple one- or two-sentence description, a concise description of the addressed IoT challenge, a simple non-vendor-specific architectural diagram and process flow, the personae commonly interested in and impacted by the capabilities delivered by the design, and key implementation considerations. The key considerations of a design will be documented in the IoT Atlas itself and also through links to resouces that provide additional context, such as white-papers, blog posts, and vetted content on the Internet that best conveys what should be considered.
+To meet the bar for publication, a fully-formed IoT Atlas design will provide a simple one- or two-sentence description, a concise description of the addressed IoT challenge, a simple non-vendor-specific architectural diagram and process flow, the personae commonly interested in and impacted by the capabilities delivered by the design, and key implementation considerations. The key considerations of a design will be documented in the IoT Atlas itself and also through links to resources that provide additional context, such as white-papers, blog posts, and vetted content on the Internet that best conveys what should be considered.
 
 ## Design Considerations
   
