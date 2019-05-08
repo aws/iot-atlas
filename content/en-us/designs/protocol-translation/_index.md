@@ -10,7 +10,7 @@ weight: 50
 At the edge of an IoT solution, devices are often interconnected and have to exchange data locally, i.e., without moving data over the internet.
 As some local devices may use different protocols that are not compatible with each other, protocols have to be translated.
 For instance in industrial IoT solutions, the interfaces of machines often use different protocols and extracting the information from these machines for monitoring requires the information be translated into a common format that is able to be sent to a protocol endpoint on the cloud or for use by another local device, or even local person.
-Another example is in smart home deployments, where devices using different standards need to exchange data to control PV power generation depending on the internal power consumption of the home.
+Another example is in smart home deployments, where devices using different standards need to exchange data to control renewable power generation depending on the internal power consumption of the home.
 
 Typically, moving all data in an untranslated form to software that performs translation on the cloud is not feasible for several reasons:
 
@@ -42,15 +42,15 @@ When implementing this design, consider the following questions:
 
 #### Does the schema for the translation logic change if the connection is not IP-based?
 In general, the schema does not change.
-In the example [below](#example---industrial-iot-data-extraction), the IP connection was always defined using an IP address.
+In the example [below](#example-industrial-iot-data-extraction), the IP connection was always defined using an IP address.
 For instance, to use a serial connection with Modbus, the corresponding serial hardware path would be used instead of the IP address and a client specifically for Modbus over serial connections needs to be loaded instead of the TCP client, but the design still consistenly needs a device's address.
 
 #### Is there a way to delay/batch/aggregate messages on the gateway?
 Aggregation or batching of data is not a part of this design as it is discussed in the considerations of the Gateway design. 
-The Gateway design contains [considerations]({{ <ref "/designs/gateway/#what-approach-should-be-used-when-storing-messages-for-later-delivery" >}}) about how protocol translation logic can be extended with mechanisms that batch results or compute aggregations over them.
+The Gateway design contains [considerations]({{ <ref "/designs/gateway#what-approach-should-be-used-when-storing-messages-for-later-delivery" >}}) about how protocol translation logic can be extended with mechanisms that batch results or compute aggregations over them.
 
-#### How should protocol translation process translated data when the network to the Server is unavailable?
-The Gateway design contains some [considerations](https://iotatlas.net/designs/gateway/#how-should-the-gateway-process-data-when-the-network-to-the-server-is-unavailable) for this scenario. 
+#### How should protocol translation process translated data when the network to the server is unavailable?
+The Gateway design contains some [considerations](/designs/gateway#how-should-the-gateway-process-data-when-the-network-to-the-server-is-unavailable) for this scenario. 
 Simply put, the gateway will not be able to publish data for as long as the connection is lost. To prevent data loss, it is recommended to implement an upward message approach for any translated messages by using a local storage mechanism.
 
 #### Why do insecure protocols used in IoT solutions exist in the first place?
@@ -93,7 +93,7 @@ The following pseudo-code samples demonstrate the protocol translation logic tha
 OPC-UA is a modern, IP-based protocol that has security features like in-transit encryption and authentication using certificates or username/password combinations.
 This pseudo-code shows how to access an OPC-UA target in Python syntax: 
 
-```python2
+```python
 [... load some libraries, loggers ...]
 # ######## STEP 1: load the library ######## 
 from opcua import Client as OPCUAClient
@@ -145,7 +145,7 @@ As with the OPC-UA translation, this pseudo-code assumes that data is accessible
 Similarly to OPC-UA translation, this pseudo-code tries to access a machine with the IP address `192.168.2.2` on the local network, i.e., this example uses the TCP/IP variant of the [Modbus](https://en.wikipedia.org/wiki/Modbus) protocol.
 The code for a Modbus serial interface would require a different Modbus client, but the remainder of the logic would remain unchanged:
 
-```python2
+```python
 [... load some libraries, loggers ...]
 # ######## STEP 1: load the library ######## 
 from pymodbus.client.sync import ModbusTcpClient as ModbusClient
