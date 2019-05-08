@@ -50,7 +50,7 @@ Aggregation or batching of data is not a part of this design as it is discussed 
 The Gateway design contains [considerations]({{ <ref "/designs/gateway#what-approach-should-be-used-when-storing-messages-for-later-delivery" >}}) about how protocol translation logic can be extended with mechanisms that batch results or compute aggregations over them.
 
 #### How should protocol translation process translated data when the network to the server is unavailable?
-The Gateway design contains some [considerations](/designs/gateway#how-should-the-gateway-process-data-when-the-network-to-the-server-is-unavailable) for this scenario. 
+The Gateway design contains some [considerations]({{ <ref "/designs/gateway#how-should-the-gateway-process-data-when-the-network-to-the-server-is-unavailable" >}}) for this scenario. 
 Simply put, the gateway will not be able to publish data for as long as the connection is lost. To prevent data loss, it is recommended to implement an upward message approach for any translated messages by using a local storage mechanism.
 
 #### Why do insecure protocols used in IoT solutions exist in the first place?
