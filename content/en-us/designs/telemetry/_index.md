@@ -3,6 +3,8 @@ title: "Telemetry"
 weight: 80
 draft: true
 personae: [foo, bar]
+type: 'design'
+layout: 'single'
 ---
 
 {{< synopsis-telemetry >}}

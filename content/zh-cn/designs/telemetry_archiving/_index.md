@@ -2,6 +2,8 @@
 title: "遥测存档"
 weight: 85
 draft: true
+type: 'design'
+layout: 'single'
 ---
 <!-- {{< synopsis-archiving >}} -->
 保存设备的测量值，并以原始或处理过的形式使用。

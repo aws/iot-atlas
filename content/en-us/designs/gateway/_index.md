@@ -1,6 +1,8 @@
 ---
 title: "Gateway"
 weight: 50
+type: 'design'
+layout: 'single'
 ---
 
 {{< synopsis-gateway >}}
@@ -70,5 +72,5 @@ There are two topologies that devices most commonly take: a [mesh network](https
 
 In both a hub-and-spoke or a mesh network topology, to enable explicit routing of all messages, each device and the gateway itself should be addressable by a unique message topic. 
  
-## Example
+## Examples
     <tbd written scenario>

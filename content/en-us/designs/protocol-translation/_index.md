@@ -1,6 +1,8 @@
 ---
 title: "Protocol Translation"
 weight: 50
+type: 'design'
+layout: 'single'
 ---
 
 {{< synopsis-protocol-translation >}}
@@ -67,7 +69,9 @@ Hence, it is not recommended to connect devices using insecure protocols directl
 This highly depends on the application and the surroundings of the application.
 For instance, in the Industrial IoT example below, the gateway would commonly reside on an industrial PC or similarly ruggedized hardware. Other applications, may deploy protocol translation logic on mobile phones or other similar devices.
 
-## Example - Industrial IoT Data Extraction
+## Examples
+
+### Industrial IoT Data Extraction
 This is an example of implementing a protocol translation on a gateway in the context of Industrial IoT data extraction.
 
 > Note these examples are not production ready code. They exist for the purpose of education.

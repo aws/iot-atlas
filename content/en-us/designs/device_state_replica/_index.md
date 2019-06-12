@@ -2,6 +2,8 @@
 title: "Device State Replica"
 weight: 20
 draft: true
+type: 'design'
+layout: 'single'
 ---
 
 {{< synopsis-state-replica >}}
@@ -58,5 +60,5 @@ Using a pub/sub style of interaction a component can listen to the `state/device
 #### How does a Device know what changed while offline?
 The first action a device should take when connecting or re-establishing a connection is to obtain the current desired state and compare that to it's last known state. Ideally the server tracking the Device State Replica can calculate the delta automatically and so a connecting Device would subscribe to `state/deviceID/update/delta` and can then act on any changes that occurred while in an offline state.
 
-## Example
+## Examples
     <tbd written scenario>

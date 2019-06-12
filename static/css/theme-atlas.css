@@ -24,7 +24,7 @@ html {
 }
 
 article > aside {
-  top: 2rem;
+  top: -2rem;
   width: 15rem;
 }
 
@@ -34,9 +34,6 @@ article > aside .menu .dd-item {
   font-size: 14px;
 }
 
-article {
-  margin-top: 2.5rem;
-}
 article section.page {
   padding: 2rem 1rem;
 }
@@ -50,16 +47,16 @@ article section.page {
   height: 75px;
 }
 
-/* Table of contents */
-.toc ul { list-style: none; margin: 0; padding: 0 5px;  }
-.toc ul li { display: inline; }
-#TableOfContents > ul > li > ul > li > ul li { margin-right: 8px; }
-#TableOfContents > ul > li > ul > li > a, #TableOfContents > ul > li > a   { font-weight: bold; background-color: #eeeeee; padding: 0 10px; margin: 0 2px; }
-#TableOfContents > ul > li > ul > li > a { font-style: italic; }
-.toc.compact ul > li > ul > li > ul  { display: none; }
+#DesignTOC {
+  right: 0;
+  top: 25%;
+  float: right;
+  width: 9rem;
+  background: #f8f9fa;
+  border: 1px solid #a2a9b1;
+  padding: 7px 15px 7px 15px;
+}
 
-#toc {
-    position:fixed;
-    background-color: rgba(0, 0, 0, 0.1);
-    padding: 10px 50px 10px 20px;
+header {
+  position: absolute;
 }

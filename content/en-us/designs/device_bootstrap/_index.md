@@ -2,6 +2,8 @@
 title: "Device Bootstrap"
 weight: 15
 draft: true
+type: 'design'
+layout: 'single'
 ---
 
 {{% synopsis-bootstrap %}}

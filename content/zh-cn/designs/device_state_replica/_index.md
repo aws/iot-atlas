@@ -2,6 +2,8 @@
 title: "设备状态副本"
 weight: 20
 draft: true
+type: 'design'
+layout: 'single'
 ---
 
 <!-- {{< synopsis-state-replica >}} -->

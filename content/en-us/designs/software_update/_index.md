@@ -2,7 +2,8 @@
 title: "Software Update"
 weight: 70
 draft: true
-
+type: 'design'
+layout: 'single'
 ---
 
 {{< synopsis-software-update >}}
@@ -39,7 +40,7 @@ The solution can ensure that only the device targeted for a software update can 
 
 **Temporary Credential** - a device interacts with the solution to obtain a temporary credential associated with only the privilege of accessing the storage solution to download the update. The benefit of using a temporary credential is that only the device with that credential can access the update, even when the device does not have a publicly resolvable IP address. The slight negative of this approach is that it requires the device and solution to be more complex because the device must go through a separate process to obtain temporary credentials.
 
-## Example
+## Examples
 ### Device perspective of a software upgrade 
 An example of the logic involved for a device in an IoT solution to receive and execute an "update" command received through a [Device State Replica]({{< ref "/designs/device_state_replica" >}}). Specifically, the device will obtain new software, perform an update using that software, and acknowledge completion.
 

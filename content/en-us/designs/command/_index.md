@@ -2,6 +2,8 @@
 title: "Command"
 weight: 11
 draft: true
+type: 'design'
+layout: 'single'
 ---
 {{< synopsis-command >}}
 <!--more-->

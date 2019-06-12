@@ -1,6 +1,8 @@
 ---
 title: "网关"
 weight: 50
+type: 'design'
+layout: 'single'
 ---
 
 <!-- {{< synopsis-gateway >}} -->
