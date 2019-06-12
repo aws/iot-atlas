@@ -26,8 +26,11 @@ To contribute, send us a pull request. For small changes, such as fixing a typo 
 
 1. [Fork the repository](https://help.github.com/articles/fork-a-repo/).
 2. In your fork, make your change in a branch that's based on this repository's **master** branch.
-3. Commit the change to your fork, using a clear and descriptive commit message.
-4. [Create a pull request](https://help.github.com/articles/creating-a-pull-request-from-a-fork/), answering any questions in the pull request form.
+3. Test your change 
+    * [Install and run](https://gohugo.io/getting-started/quick-start/) Hugo in the local copy of your repository
+    * If you have issues with rendering the site, make sure you've included the template using this command: `git submodule update --init --recursive` 
+4. Commit the change to your fork, using a clear and descriptive commit message.
+5. [Create a pull request](https://help.github.com/articles/creating-a-pull-request-from-a-fork/), answering any questions in the pull request form.
 
 Before you send us a pull request, please be sure that:
 
