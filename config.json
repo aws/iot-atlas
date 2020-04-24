@@ -40,6 +40,16 @@
       "params": {
         "editURL": "https://github.com/aws/iot-atlas/tree/master/content/zh-cn/"
       }
+    },
+    "fr": {
+      "lang": "fr",
+      "langCode": "fr-fr",
+      "contentDir": "content/fr-fr",
+      "languageName": "French",
+      "weight": 3,
+      "params": {
+        "editURL": "https://github.com/aws/iot-atlas/tree/master/content/fr-fr/"
+      }
     }
   }
 }
