@@ -1,0 +1,1 @@
+Copyright (c) 2019 Amazon.com, Inc. ou ses filiales. Tous droits réservés.
