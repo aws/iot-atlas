@@ -1,7 +1,6 @@
 ---
 title: "Réplique de l'état de l'appareil"
 weight: 20
-draft: true
 ---
 
 <!-- {{< synopsis-state-replica >}} -->

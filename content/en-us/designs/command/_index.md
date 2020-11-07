@@ -1,7 +1,6 @@
 ---
 title: "Command"
 weight: 11
-draft: true
 ---
 {{< synopsis-command >}}
 <!--more-->

@@ -1,7 +1,6 @@
 ---
 title: "Telemetry Archiving"
 weight: 85
-draft: true
 ---
 {{< synopsis-archiving >}}
 <!--more-->

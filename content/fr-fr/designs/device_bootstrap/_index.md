@@ -1,7 +1,6 @@
 ---
 title: "Configuration de démarrage de l'appareil"
 weight: 15
-draft: true
 ---
 
 <!-- {{% synopsis-bootstrap %}} -->

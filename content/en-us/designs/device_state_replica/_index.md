@@ -1,7 +1,6 @@
 ---
 title: "Device State Replica"
 weight: 20
-draft: true
 ---
 
 {{< synopsis-state-replica >}}

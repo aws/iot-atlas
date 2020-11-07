@@ -1,7 +1,6 @@
 ---
 title: "设备引导"
 weight: 15
-draft: true
 ---
 
 

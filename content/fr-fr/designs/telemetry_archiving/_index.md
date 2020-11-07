@@ -1,7 +1,6 @@
 ---
 title: "Archivage de télémétrie"
 weight: 85
-draft: true
 ---
 <!-- {{< synopsis-archiving >}} -->
 Les mesures d'un appareil sont enregistrées et mises à disposition pour une utilisation dans leur forme originale ou modifiée.

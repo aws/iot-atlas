@@ -1,7 +1,6 @@
 ---
 title: "Device Bootstrap"
 weight: 15
-draft: true
 ---
 
 {{% synopsis-bootstrap %}}

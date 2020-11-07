@@ -1,7 +1,6 @@
 ---
 title: "设备状态副本"
 weight: 20
-draft: true
 ---
 
 <!-- {{< synopsis-state-replica >}} -->

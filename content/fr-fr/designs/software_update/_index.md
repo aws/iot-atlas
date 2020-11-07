@@ -1,8 +1,6 @@
 ---
 title: "Mise à jour logicielle"
 weight: 70
-draft: true
-
 ---
 
 <!-- {{< synopsis-software-update >}} -->

@@ -1,8 +1,6 @@
 ---
 title: "Telemetry"
 weight: 80
-draft: true
-personae: [foo, bar]
 ---
 
 {{< synopsis-telemetry >}}

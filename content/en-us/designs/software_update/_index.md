@@ -1,8 +1,6 @@
 ---
 title: "Software Update"
 weight: 70
-draft: true
-
 ---
 
 {{< synopsis-software-update >}}
