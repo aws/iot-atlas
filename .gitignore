@@ -1,6 +1,11 @@
+# All the temp file
+tmp/**
+
 # IDE and Editor artifacts #
 *.bbprojectd
 .idea
+.vscode/settings.json
+.vscode/launch.json
 
 # Temporary Files #
 tmp_*
@@ -11,7 +16,27 @@ cfg.tmp.json
 .DS_Store?
 
 # Hugo generated content
-public/
+/src/hugo/public/*
+!/src/hugo/public/.gitkeep
+/src/hugo/tmp/*
+/src/hugo/.asciidoctor/*
 
 # Dev files
 Pipfile*
+
+# Microsoft temp files
+*.tmp
+# Word temporary
+~$*.doc*
+# Word Auto Backup File
+Backup of *.doc*
+# Excel temporary
+~$*.xls*
+# Excel Backup File
+*.xlk
+# PowerPoint temporary
+~$*.ppt*
+# Visio autosave temporary files
+*.~vsd*
+# Misc
+config-template.yml

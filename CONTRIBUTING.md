@@ -6,17 +6,17 @@ Please read through this document before you submit any pull requests or issues.
 
 ## What to expect when you contribute
 
-When you submit a pull request, our team is notified and will respond as quickly as we can. We'll do our best to work with you to ensure that your pull request adheres to our style and standards. If we merge your pull request, we might make additional edits later for style or clarity.
+When you submit a pull request, our team is notified and will respond as quickly as we can. We'll do our best to work with you to ensure that your pull request adheres to our style and standards. If we merge your pull request, we might make, or request, additional edits later for style or clarity.
 
 The documentation in this repository are not published directly to the IoT Atlas website. If we merge your pull request, we'll publish your changes to the documentation website as soon as we can, but they won't appear immediately or automatically.
 
 We look forward to receiving your pull requests for:
 
-* New content you'd like to contribute (such as new designs, considerations, or examples)
-* Inaccuracies in the content
-* Information gaps in the content that need more detail to be complete
-* Typos or grammatical errors
-* Suggested rewrites that improve clarity and reduce confusion
+- New content you'd like to contribute (such as new patterns, considerations, or examples)
+- Inaccuracies in the content
+- Information gaps in the content that need more detail to be complete
+- Typos or grammatical errors
+- Suggested rewrites that improve clarity and reduce confusion
 
 **Note:** We all write differently, and you might not like how we've written or organized something currently. We want that feedback. But please be sure that your request for a rewrite is supported by the previous criteria. If it isn't, we might decline to merge it.
 
@@ -25,24 +25,22 @@ We look forward to receiving your pull requests for:
 To contribute, send us a pull request. For small changes, such as fixing a typo or adding a link, you can use the [GitHub Edit Button](https://blog.github.com/2011-04-26-forking-with-the-edit-button/). For larger changes:
 
 1. [Fork the repository](https://help.github.com/articles/fork-a-repo/).
-2. In your fork, make your change in a branch that's based on this repository's **master** branch.
-3. Test your change 
-    * [Install and run](https://gohugo.io/getting-started/quick-start/) Hugo in the local copy of your repository
-    * If you have issues with rendering the site, make sure you've included the template using this command: `git submodule update --init --recursive` 
+2. In your fork, make your change in a branch that's based on this repository's **main** branch.
+3. Test your change. Review the [contributor development process](https://github.com/aws/iot-atlas/blob/main/src/README.md) for instructions on testing local content.
 4. Commit the change to your fork, using a clear and descriptive commit message.
 5. [Create a pull request](https://help.github.com/articles/creating-a-pull-request-from-a-fork/), answering any questions in the pull request form.
 
 Before you send us a pull request, please be sure that:
 
-1. You're working from the latest source on the **master** branch.
-2. You check [existing open](https://github.com/awsdocs/iot-atlas/pulls), and [recently closed](https://github.com/awsdocs/iot-atlas/pulls?q=is%3Apr+is%3Aclosed), pull requests to be sure that someone else has not already addressed the problem.
-3. You [create an issue](https://github.com/awsdocs/iot-atlas/issues/new) before working on a contribution that will take a significant amount of your time.
+1. You're working from the latest source on the **main** branch.
+2. You check [existing open](https://github.com/aws/iot-atlas/pulls), and [recently closed](https://github.com/aws/iot-atlas/pulls?q=is%3Apr+is%3Aclosed), pull requests to be sure that someone else has not already addressed the problem.
+3. You [create an issue](https://github.com/aws/iot-atlas/issues/new) before working on a contribution that will take a significant amount of your time.
 
-For contributions that will take a significant amount of time, [open a new issue](https://github.com/awsdocs/iot-atlas/issues/new) to pitch your idea before you get started. Explain the problem and describe the content you want to see added. Let us know if you'll write it yourself or if you'd like us to help. We'll discuss your proposal with you and let you know whether we're likely to accept it. We don't want you to spend a lot of time on a contribution that might be outside the scope of the IoT Atlas or that is already in the works.
+For contributions that will take a significant amount of time, [open a new issue](https://github.com/aws/iot-atlas/issues/new) to pitch your idea before you get started. Explain the problem and describe the content you want to see added. Let us know if you'll write it yourself or if you'd like us to help. We'll discuss your proposal with you and let you know whether we're likely to accept it. We don't want you to spend a lot of time on a contribution that might be outside the scope of the IoT Atlas or that is already in the works.
 
 ## Finding contributions to work on
 
-If you'd like to contribute, but don't have a project in mind, look at the [open issues](https://github.com/awsdocs/iot-atlas/issues) in this repository for some ideas. Any issues with the [help wanted](https://github.com/awsdocs/iot-atlas/labels/help%20wanted) or [enhancement](https://github.com/awsdocs/iot-atlas/labels/enhancement) labels are a great place to start.
+If you'd like to contribute, but don't have a project in mind, look at the [open issues](https://github.com/aws/iot-atlas/issues) in this repository for some ideas. Any issues with the [help wanted](https://github.com/aws/iot-atlas/labels/help%20wanted) or [enhancement](https://github.com/aws/iot-atlas/labels/enhancement) labels are a great place to start.
 
 In addition to written content, we really appreciate new examples for each design, such as examples for different platforms or environments, and code samples in additional languages.
 
@@ -56,4 +54,4 @@ If you discover a potential security issue, please notify AWS Security via our [
 
 ## Licensing
 
-See the [LICENSE](https://github.com/awsdocs/iot-atlas/blob/master/LICENSE) file for this project's licensing. We will ask you to confirm the licensing of your contribution. We may ask you to sign a [Contributor License Agreement (CLA)](http://en.wikipedia.org/wiki/Contributor_License_Agreement) for larger changes.
+See the [LICENSE](https://github.com/aws/iot-atlas/blob/main/LICENSE) file for this project's licensing. We will ask you to confirm the licensing of your contribution. We may ask you to sign a [Contributor License Agreement (CLA)](http://en.wikipedia.org/wiki/Contributor_License_Agreement) for larger changes.

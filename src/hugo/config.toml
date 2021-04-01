@@ -1,0 +1,55 @@
+baseURL = "http://iotatlas.net"
+title = "IoT Atlas"
+theme = "iot-atlas"
+pygmentsCodeFences = true
+# English is the default language
+defaultContentLanguage = "en"
+# Force to have /en/my-page and /fr/my-page routes, even for default language.
+defaultContentLanguageInSubdir= true
+uglyurls = false
+
+[params]
+ordersectionsby = "weight"
+editURL = "https://github.com/aws/iot-atlas/tree/main/content/"
+themeVariant = "aws"
+disableLandingPageButton = false
+disableNextPrev = true
+
+[taxonomies]
+tag = "tags"
+category = "categories"
+persona = "personae"
+
+[outputs]
+home = [ "HTML", "RSS", "JSON" ]
+
+[languages]
+[languages.en]
+lang = "en"
+langCode = "en-us"
+contentDir = "content/en-us"
+languageName = "English"
+weight = 1
+
+  [languages.en.params]
+  editURL = "https://github.com/aws/iot-atlas/tree/main/content/en-us/"
+
+[languages.zh]
+lang = "zh"
+langCode = "zh-cn"
+contentDir = "content/zh-cn"
+languageName = "中文(简体)"
+weight = 2
+
+  [languages.zh.params]
+  editURL = "https://github.com/aws/iot-atlas/tree/main/content/zh-cn/"
+
+[languages.fr]
+lang = "fr"
+langCode = "fr-fr"
+contentDir = "content/fr-fr"
+languageName = "French"
+weight = 3
+
+  [languages.fr.params]
+  editURL = "https://github.com/aws/iot-atlas/tree/main/content/fr-fr/"
