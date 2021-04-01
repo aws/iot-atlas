@@ -1,0 +1,90 @@
+h2 {
+  border-bottom: 3px solid #f28272;
+  /*display: inline-block;*/
+  /*border-bottom: 1px solid #dedede;*/
+  margin-bottom: 15px;
+  padding-bottom: 0.2rem;
+}
+
+h3 {
+  border-bottom: 2px solid #d5d5d5;
+  border-bottom-style: dashed;
+  /*display: inline-block;*/
+  /*border-bottom: 1px solid #dedede;*/
+  margin-bottom: 15px;
+}
+
+h4 {
+  font-size: 22px;
+}
+
+html {
+  font-size: 0.95rem;
+}
+
+article > aside {
+  top: 2rem;
+  width: 15rem;
+}
+
+article > aside .menu .dd-item {
+  padding-left: 1rem;
+  list-style: none;
+  font-size: 14px;
+}
+
+article {
+  margin-top: 2.5rem;
+}
+article section.page {
+  padding: 2rem 1rem;
+}
+
+#navigation a {
+  color: #959595;
+}
+
+.iotAtlasLeftSmall {
+  float: left;
+  height: 75px;
+}
+
+/* Table of contents */
+.toc ul {
+  list-style: none;
+  margin: 0;
+  padding: 0 5px;
+}
+.toc ul li {
+  display: inline;
+}
+#TableOfContents > ul > li > ul > li > ul li {
+  margin-right: 8px;
+}
+#TableOfContents > ul > li > ul > li > a,
+#TableOfContents > ul > li > a {
+  font-weight: bold;
+  background-color: #eeeeee;
+  padding: 0 10px;
+  margin: 0 2px;
+}
+#TableOfContents > ul > li > ul > li > a {
+  font-style: italic;
+}
+.toc.compact ul > li > ul > li > ul {
+  display: none;
+}
+
+#toc {
+  position: fixed;
+  background-color: rgba(0, 0, 0, 0.1);
+  padding: 10px 50px 10px 20px;
+}
+
+/* Only exand menu 1 level */
+#sidebar ul.topics > li.active ul {
+  display: none;
+}
+#sidebar ul.topics > li.active > ul {
+  display: block;
+}
