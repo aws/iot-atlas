@@ -10,7 +10,7 @@ uglyurls = false
 
 [params]
 ordersectionsby = "weight"
-editURL = "https://github.com/aws/iot-atlas/tree/main/content/"
+editURL = "https://github.com/aws/iot-atlas/tree/main/src/hugo/content/"
 themeVariant = "aws"
 disableLandingPageButton = false
 disableNextPrev = true
@@ -32,7 +32,7 @@ languageName = "English"
 weight = 1
 
   [languages.en.params]
-  editURL = "https://github.com/aws/iot-atlas/tree/main/content/en-us/"
+  editURL = "https://github.com/aws/iot-atlas/tree/main/src/hugo/content/en-us/"
 
 [languages.zh]
 lang = "zh"
@@ -42,7 +42,7 @@ languageName = "中文(简体)"
 weight = 2
 
   [languages.zh.params]
-  editURL = "https://github.com/aws/iot-atlas/tree/main/content/zh-cn/"
+  editURL = "https://github.com/aws/iot-atlas/tree/main/src/hugo/content/zh-cn/"
 
 [languages.fr]
 lang = "fr"
@@ -52,4 +52,4 @@ languageName = "French"
 weight = 3
 
   [languages.fr.params]
-  editURL = "https://github.com/aws/iot-atlas/tree/main/content/fr-fr/"
+  editURL = "https://github.com/aws/iot-atlas/tree/main/src/hugo/content/fr-fr/"
