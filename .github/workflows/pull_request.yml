@@ -47,8 +47,10 @@ jobs:
       - name: Content has successfully PASSED validation
         if: ${{ success() }}
         uses: actions/github-script@v3
+        env:
+          PAT: ${{secrets.IOT_ATLAS_CI_PAT}}
         with:
-          github-token: ${{secrets.IOT_ATLAS_CI_PAT}}
+          github-token: ${{env.PAT}}
           script: |
             github.issues.createComment({
               issue_number: context.issue.number,
