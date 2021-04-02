@@ -38,6 +38,10 @@ To reduce installing dependencies, the main requirement is to have Docker instal
 
 Once you have completed development, run `./make_hugo.sh` without any arguments to have it fully generate and validate the content. Once successful, you can commit and perform a pull requests.
 
+## Hugo and Theme Details
+
+This sections covers structure and use of more complex pages and use of short codes.
+
 ### Bundle Resources
 
 If there are diagrams or other images related to your content, include and reference those from within the same directory as a [Page Bundle](https://gohugo.io/content-management/page-bundles/). For instance, a new _Pattern_ called _Foo_ would be structured like this:
