@@ -9,12 +9,14 @@ This section provides guidance and resources on how to contribute to the IoT Atl
 - [ ] Templates for different content types
 - [ ] Process for creating and validating content locally
 
+By following the same set of guidelines, this helps ensure the consistency of the Atlas from page to page.
+
 ## Authoring new content
 
 When creating new content, use the follow guidance:
 
 1. A customized Hugo [Learn Theme](https://themes.gohugo.io//theme/hugo-theme-learn) is the basis for this site. Unless extended or called out below, all Learn Theme design content and shortcodes can be used. Additional features are listed below and shown in the [templates]({{< ref "/contribute/templates" >}}) folder, or in the [kitchen sink]({{< ref "/contribute/kitchen_sink" >}}) example that demonstrates all features.
-1.
+1. If creating similar content that already exists, use an existing page as the basis for headings, style, and approach. You can also review the example style templates in this section.
 
 ### Bundle Resources
 
