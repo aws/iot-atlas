@@ -48,9 +48,9 @@ jobs:
         if: ${{ success() }}
         uses: actions/github-script@v3
         env:
-          PAT: ${{secrets.IOT_ATLAS_CI_PAT}}
+          PAT: ${{ secrets.IOT_ATLAS_CI_PAT }}
         with:
-          github-token: ${{env.PAT}}
+          github-token: ${{ env.PAT }}
           script: |
             github.issues.createComment({
               issue_number: context.issue.number,
@@ -62,7 +62,7 @@ jobs:
         if: ${{ failure() }}
         uses: actions/github-script@v3
         with:
-          github-token: ${{secrets.IOT_ATLAS_CI_PAT}}
+          github-token: ${{ secrets.IOT_ATLAS_CI_PAT }}
           script: |
             github.issues.createComment({
               issue_number: context.issue.number,
