@@ -1,17 +1,17 @@
-name: validate
+name: Receive PR
 
 on:
-  pull_request_target:
+  pull_request:
     types: [opened, synchronize, reopened]
 
 jobs:
-  pull_request_validate:
+  validate_hugo_content:
     runs-on: ubuntu-latest
     env:
       working-directory: ./src
     name: Hugo content processing
     steps:
-      - name: Checkout branch
+      - name: Checkout PR code
         uses: actions/checkout@v2
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
@@ -44,27 +44,15 @@ jobs:
       - name: Validate Hugo content, internal, and external web links
         run: ./make_hugo.sh -v
         working-directory: ${{env.working-directory}}
-      - name: Content has successfully PASSED validation
-        if: ${{ success() }}
-        uses: actions/github-script@v3
+      # These steps should always run
+      - name: Save PR number
+        if: success() || failure()
+        run: |
+          mkdir -p /tmp/pr
+          echo ${{ github.event.number }} > /tmp/pr/NR
+      - name: Upload pr artifact
+        if: success() || failure()
+        uses: actions/upload-artifact@v2
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            github.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: 'All content has passed validation tests and can be merged based upon reviewer approval.'
-            })
-      - name: Content has FAILED validation
-        if: ${{ failure() }}
-        uses: actions/github-script@v3
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            github.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: 'Content validation has failed. Review the details of the specific check failure. Before updating the pull request, please perform local validation. All validation check must be successfully resolved before your pull request can be reviewed for approval.'
-            })
+          name: pr
+          path: /tmp/pr
