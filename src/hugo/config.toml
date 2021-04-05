@@ -1,4 +1,4 @@
-baseURL = "http://iotatlas.net"
+baseURL = "https://iotatlas.net"
 title = "IoT Atlas"
 theme = "iot-atlas"
 pygmentsCodeFences = true
