@@ -1,11 +1,8 @@
 ---
 title: "Device Bootstrap"
 weight: 15
+summary: "An unregistered device becomes registered and fully functional in an IoT solution."
 ---
-
-An unregistered device becomes registered and fully functional in an IoT solution.
-
-<!--more-->
 
 ## Challenge
 

@@ -67,8 +67,10 @@ function uri_path_validate {
     if ! docker run --net="host" raviqqe/muffet \
             "--exclude=https://github.com/aws/" \
             http://localhost:1313/$1/; then
+        echo "********** $1: Invalid links (see above)"
         return 1   # 1 = failure
     fi
+    echo "********** $1: All links are valid"
 }
 
 function sync_s3 {
