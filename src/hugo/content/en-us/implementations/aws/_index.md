@@ -8,3 +8,5 @@ Amazon Web Services, or AWS, offers a variety of IoT-specific services to run yo
 {{% notice note %}}
 This is a placeholder section for implementations to be developed. This note will be removed and replaced with a list of implementations similar to the [Patterns]({{< ref "/patterns" >}}) section.
 {{% /notice %}}
+
+{{% children style="card" depth="1"  description="true" %}}

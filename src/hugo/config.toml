@@ -14,6 +14,7 @@ editURL = "https://github.com/aws/iot-atlas/tree/main/src/hugo/content/"
 themeVariant = "aws"
 disableLandingPageButton = false
 disableNextPrev = true
+disableInlineCopyToClipBoard = true
 
 [taxonomies]
 tag = "tags"
