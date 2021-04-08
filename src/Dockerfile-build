@@ -1,6 +1,6 @@
 FROM ubuntu:20.04
 
-ARG HUGO_VERSION=0.81.0
+ARG HUGO_VERSION=0.82.0
 
 ENV DOCUMENT_DIR=/hugo-project
 
@@ -8,12 +8,30 @@ ENV DOCUMENT_DIR=/hugo-project
 RUN apt-get update && apt-get upgrade -y \
     && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
     curl ruby ruby-dev make cmake build-essential bison flex graphviz \
-    openjdk-11-jre python \
+    openjdk-11-jre python git \
     && apt-get clean \
-    && rm -rf /var/lib/apt/lists/* \
-    && rm -rf /tmp/*
+    && rm -rf /var/lib/apt/lists/*
 
-# install plantuml
+# Install golang
+RUN cd /tmp \
+    && curl -JLO https://golang.org/dl/go1.16.3.linux-amd64.tar.gz \
+    && rm -rf /usr/local/go && tar -C /usr/local -xzf go1.16.3.linux-amd64.tar.gz \
+    && export PATH=$PATH:/usr/local/go/bin
+
+# Download Hugo source, compile, install
+RUN cd /tmp && curl -JLO https://github.com/gohugoio/hugo/archive/refs/tags/v${HUGO_VERSION}.tar.gz \
+    && tar xzf hugo-${HUGO_VERSION}.tar.gz \
+    && cd hugo-${HUGO_VERSION} \
+    && export PATH=$PATH:/usr/local/go/bin \
+    && go get github.com/OhYee/goldmark-plantuml@1b822faeff3d25d0dcfa4c1dc979ca769287c220
+# Hard-coded files for now, specific to Hugo 0.82.0
+COPY ./docker_assets/convert.go /tmp/hugo-${HUGO_VERSION}/markup/goldmark/convert.go
+COPY ./docker_assets/config.go /tmp/hugo-${HUGO_VERSION}/markup/goldmark/goldmark_config/config.go
+RUN export PATH=$PATH:/usr/local/go/bin && cd /tmp/hugo-${HUGO_VERSION} \
+    && go install --tags extended \
+    && mv $HOME/go/bin/hugo /usr/local/bin
+
+# Install plantuml
 RUN mkdir -p /opt/plantuml && cd /opt/plantuml \
     && UML=http://sourceforge.net/projects/plantuml/files/plantuml.jar/download \
     && curl -JLO ${UML}
@@ -24,10 +42,9 @@ RUN chmod a+x /usr/local/bin/plantuml
 RUN gem install --no-document asciidoctor asciidoctor-revealjs asciidoctor-html5s \
     rouge asciidoctor-confluence asciidoctor-diagram coderay pygments.rb
 
-# Use the specific Hugo version for consistency
-ADD https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_${HUGO_VERSION}_Linux-64bit.tar.gz /tmp/hugo.tgz
+# Clean up image
+RUN rm -rf /tmp/*
 
-RUN cd /usr/local/bin && tar -xzf /tmp/hugo.tgz && rm /tmp/hugo.tgz
 
 RUN mkdir ${DOCUMENT_DIR}
 WORKDIR ${DOCUMENT_DIR}

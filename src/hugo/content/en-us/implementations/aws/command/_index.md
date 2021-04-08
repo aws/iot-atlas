@@ -19,7 +19,7 @@ Command and control is the operation of sending a message to a device requesting
 
 ## Reference Architecture
 
-![Command and control via MQTT topics](test.svg)
+![Command and control via MQTT topics](architecture.svg)
 
 - _AWS IoT Core_ is the MQTT message broker processing messages on behalf of the clients
 - _Device_ is the IoT thing to be controlled
@@ -30,10 +30,33 @@ Command and control is the operation of sending a message to a device requesting
 1. To send a command, the _Application_ publishes a message on the `device1/req` topic, and the device receives the message on its subscription to that topic and take some action.
 1. (Optional) Once the command has been processed, the device then publishes the result of the action onto the `device1/resp` topic. The _Application_ receives the response message and resolves the outstanding action.
 
+{{% center %}}
+
 ```plantuml
-
-
+@startuml
+Alice -> Bob: No you?
+Bob -> Alice: because.
+Charlie -> Alice: hello
+@enduml
 ```
+
+{{% /center %}}
+
+{{< mermaid >}}
+sequenceDiagram
+participant Device
+participant Broker
+participant Application
+Note over Device,Application: Device and Application connect to broker
+Device->>Broker: CONNECT and SUB to device1/req
+Application->>Broker: CONNECT and SUB to device1/resp
+Note over Device,Application: Send command and (optional) response
+Application->>Broker: PUB: device1/req - Command message
+Broker->>Device: PUB: device1/req - Command message
+Device->>Device: Process and run action
+Device->>Broker: PUB: device1/resp - Response message
+Broker->>Application: PUB: device1/resp - Response message
+{{< /mermaid >}}
 
 ### Assumptions
 

@@ -82,7 +82,7 @@ function sync_s3 {
 function hugo_develop {
     echo "********** Starting Hugo for local development"
     if ! [[ $(docker images -q $IMAGE_NAME) ]]; then
-        docker build -t $IMAGE_NAME .
+        docker build -t $IMAGE_NAME --file Dockerfile-build .
     fi
     docker run --rm -p 1313:1313 -v $PWD/hugo:/hugo-project $IMAGE_NAME
     exit 0

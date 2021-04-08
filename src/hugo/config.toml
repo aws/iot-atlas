@@ -16,6 +16,11 @@ disableLandingPageButton = false
 disableNextPrev = true
 disableInlineCopyToClipBoard = true
 
+[markup]
+[markup.goldmark]
+[markup.goldmark.renderer]
+unsafe = true
+
 [taxonomies]
 tag = "tags"
 category = "categories"
