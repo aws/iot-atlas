@@ -1,6 +1,8 @@
 ---
 title: "Telemetry"
 weight: 80
+aliases:
+  - /designs/telemetry/
 ---
 
 {{< synopsis-telemetry >}}
