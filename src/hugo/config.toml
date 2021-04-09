@@ -17,9 +17,12 @@ disableNextPrev = true
 disableInlineCopyToClipBoard = true
 
 [markup]
-[markup.goldmark]
-[markup.goldmark.renderer]
-unsafe = true
+  defaultMarkdownHandler = "goldmark"
+  [markup.goldmark]
+    [markup.goldmark.renderer]
+      unsafe = true
+    [markup.goldmark.extensions]
+      plantuml = true
 
 [taxonomies]
 tag = "tags"
