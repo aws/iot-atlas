@@ -1,6 +1,8 @@
 ---
 title: "Telemetry Archiving"
 weight: 85
+aliases:
+  - /designs/telemetry_archiving/
 ---
 
 {{< synopsis-archiving >}}

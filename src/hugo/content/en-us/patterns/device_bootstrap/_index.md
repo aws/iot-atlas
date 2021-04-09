@@ -1,6 +1,8 @@
 ---
 title: "Device Bootstrap"
 weight: 15
+aliases:
+  - /designs/device_bootstrap/
 ---
 
 An unregistered device becomes registered and fully functional in an IoT solution.

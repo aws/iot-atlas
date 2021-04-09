@@ -1,6 +1,8 @@
 ---
 title: "Gateway"
 weight: 50
+aliases:
+  - /designs/gateway/
 ---
 
 {{< synopsis-gateway >}}

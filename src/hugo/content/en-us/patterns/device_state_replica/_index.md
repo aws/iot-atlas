@@ -1,6 +1,8 @@
 ---
 title: "Device State Replica"
 weight: 20
+aliases:
+  - /designs/device_state_replica/
 ---
 
 {{< synopsis-state-replica >}}

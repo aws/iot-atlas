@@ -1,6 +1,8 @@
 ---
 title: "Software Update"
 weight: 70
+aliases:
+  - /designs/software_update/
 ---
 
 {{< synopsis-software-update >}}
