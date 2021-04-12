@@ -1,8 +1,9 @@
-FROM ubuntu:20.04
+FROM public.ecr.aws/ubuntu/ubuntu:20.04_stable
 
 ARG HUGO_VERSION=0.82.0
 
 ENV DOCUMENT_DIR=/hugo-project
+ENV PATH="${PATH}:/usr/local/go/bin"
 
 # python-minimal for pygments support for asciidoctor
 RUN apt-get update && apt-get upgrade -y \
@@ -15,19 +16,17 @@ RUN apt-get update && apt-get upgrade -y \
 # Install golang
 RUN cd /tmp \
     && curl -JLO https://golang.org/dl/go1.16.3.linux-amd64.tar.gz \
-    && rm -rf /usr/local/go && tar -C /usr/local -xzf go1.16.3.linux-amd64.tar.gz \
-    && export PATH=$PATH:/usr/local/go/bin
+    && rm -rf /usr/local/go && tar -C /usr/local -xzf go1.16.3.linux-amd64.tar.gz
 
 # Download Hugo source, compile, install
 RUN cd /tmp && curl -JLO https://github.com/gohugoio/hugo/archive/refs/tags/v${HUGO_VERSION}.tar.gz \
     && tar xzf hugo-${HUGO_VERSION}.tar.gz \
     && cd hugo-${HUGO_VERSION} \
-    && export PATH=$PATH:/usr/local/go/bin \
-    && go get github.com/OhYee/goldmark-plantuml@1b822faeff3d25d0dcfa4c1dc979ca769287c220
+    && go get github.com/OhYee/goldmark-plantuml@v1.0.3
 # Hard-coded files for now, specific to Hugo 0.82.0
 COPY ./docker_assets/convert.go /tmp/hugo-${HUGO_VERSION}/markup/goldmark/convert.go
 COPY ./docker_assets/config.go /tmp/hugo-${HUGO_VERSION}/markup/goldmark/goldmark_config/config.go
-RUN export PATH=$PATH:/usr/local/go/bin && cd /tmp/hugo-${HUGO_VERSION} \
+RUN cd /tmp/hugo-${HUGO_VERSION} \
     && go install --tags extended \
     && mv $HOME/go/bin/hugo /usr/local/bin
 
