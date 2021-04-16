@@ -23,6 +23,11 @@ persona = "personae"
 [outputs]
 home = [ "HTML", "RSS", "JSON" ]
 
+[[menu.shortcuts]]
+name = "<i class='fas fa-tags'></i> Tags"
+url = "/tags"
+weight = 30
+
 [languages]
 [languages.en]
 lang = "en"
