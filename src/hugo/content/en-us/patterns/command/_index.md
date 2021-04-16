@@ -3,8 +3,11 @@ title: "Command"
 weight: 11
 aliases:
   - /designs/command/
-summary: "A requesting entity reliably asks a device to perform a single action, with acknowledgement of status."
 ---
+
+A requesting entity reliably asks a device to perform a single action, with acknowledgement of status.
+
+<!--more-->
 
 ## Challenge
 
