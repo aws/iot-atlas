@@ -1,9 +1,10 @@
 ---
 title: "Pattern Template File"
 weight: 10
+summary: "Template for new general patterns."
 ---
 
-Use the following text as the basis for new _patterns._ Create a new directory under `src/hugo/content/en-us/patterns`, then copy and paste the following content into a new file named `_index.html`.
+Use the following text as the basis for new _patterns._ Create a new directory for the pattern under `src/hugo/content/en-us/patterns` (replace `en-us` with other supported languages), then copy and paste the following content into a new file named `_index.html`.
 
 ```markdown
 ---

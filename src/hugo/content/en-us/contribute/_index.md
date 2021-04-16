@@ -1,15 +1,14 @@
 ---
-title: "Contribute"
+title: "Contribute to the Atlas"
 ---
 
 This section provides guidance and resources on how to contribute to the IoT Atlas. It covers:
 
-- [ ] Guidelines for content creation using Hugo
-- [ ] Style guide
-- [ ] Templates for different content types
-- [ ] Process for creating and validating content locally
+- Authoring and testing new content
+- Guidelines for content creation using Hugo
+- Templates for different content types
 
-By following the same set of guidelines, this helps ensure the consistency of the Atlas from page to page.
+Following these guidelines helps ensure the consistency of the Atlas from page to page.
 
 ## Authoring new content
 
@@ -38,9 +37,11 @@ To reduce installing dependencies, the main requirement is to have Docker instal
 
 Once you have completed development, run `./make_hugo.sh` without any arguments to have it fully generate and validate the content. Once successful, you can commit and perform a pull requests.
 
+## Guidelines for Content Creation
+
 ## Hugo and Theme Details
 
-This sections covers structure and use of more complex pages and use of short codes.
+This sections covers structure and use of more complex pages and use of short codes. This site is based off of the [Hugo Learn Theme](https://github.com/matcornic/hugo-theme-learn). All content and shortcodes for that theme are available for use here. 
 
 ### Bundle Resources
 
@@ -63,4 +64,6 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit...
 [Image One](img1.png)
 
 sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+
+
 ```
