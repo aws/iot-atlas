@@ -39,6 +39,8 @@ Once you have completed development, run `./make_hugo.sh` without any arguments 
 
 ## Guidelines for Content Creation
 
+This section covers both style and technical approaches to creating new content.
+
 ## Hugo and Theme Details
 
 This sections covers structure and use of more complex pages and use of short codes. This site is based off of the [Hugo Learn Theme](https://github.com/matcornic/hugo-theme-learn). All content and shortcodes for that theme are available for use here. 

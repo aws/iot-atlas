@@ -6,6 +6,10 @@ summary: "Command and control of a device using MQTT topics"
 
 Command and control is the operation of sending a message to a device requesting it to perform some action. Optionally, the device can acknowledge that is has succeeded or failed to complete the action.
 
+{{% notice note %}}
+This implementation focuses on the use of MQTT topics for performing request and response patterns (e.g. command and control). Please refer to the [Designing MQTT Topic for AWS IoT Core](https://docs.aws.amazon.com/whitepapers/latest/designing-mqtt-topics-aws-iot-core/designing-mqtt-topics-aws-iot-core.html), specifically the _Using the MQTT Topics for Commands_ section. This white paper provides alternative topic patterns that go beyond the scope of this implementation.
+{{% /notice %}}
+
 ## Use Cases
 
 - Near real-time action taken when command issued to a device
@@ -27,10 +31,10 @@ Command and control is the operation of sending a message to a device requesting
 - _Device_ is the IoT thing to be controlled
 - _Application_ is the remote logic that issues commands
 
-1. The _Device_ establishes an MQTT connection to the _AWS IoT Core_ endpoint, and the subscribes to the `device1/req` (request) topic. This is the topic where incoming messages will be received and processed.
-1. The _Application_ established an MQTT connection to the _AWS IoT Core_ endpoint, and subscribes to the `device1/resp` (response) topic. This is the topic where the acknowledgement messages from the device will be received.
-1. To send a command, the _Application_ publishes a message on the `device1/req` topic, and the device receives the message on its subscription to that topic and take some action.
-1. (Optional) Once the command has been processed, the device then publishes the result of the action onto the `device1/resp` topic. The _Application_ receives the response message and reconciles the outstanding action.
+1. The _Device_ establishes an MQTT connection to the _AWS IoT Core_ endpoint, and then subscribes to the `cmd/device1/req` (request) topic. This is the topic where incoming messages will be received and processed.
+1. The _Application_ establishes an MQTT connection to the _AWS IoT Core_ endpoint, and then subscribes to the `cmd/device1/resp` (response) topic. This is the topic where the acknowledgement messages from the device will be received.
+1. To send a command, the _Application_ publishes a message on the `cmd/device1/req` topic, and the device receives the message on its subscription to that topic and take some action.
+1. (Optional) Once the command has been processed, the device then publishes the result of the action onto the `cmd/device1/resp` topic. The _Application_ receives the response message and reconciles the outstanding action.
 
 {{% center %}}
 
@@ -55,16 +59,16 @@ participant "<$Client>\nApplication" as app
 
 == Connect and subscribe ==
 device -> broker : connect(iot_endpoint)
-device -> broker : subscribe("device1/req")
+device -> broker : subscribe("cmd/device1/req")
 app -> broker : connect(iot_endpoint)
-app -> broker : subscribe("device1/resp")
+app -> broker : subscribe("cmd/device1/resp")
 
 == Command operation and (optional) response ==
-app -> broker : publish("device1/req", "light: on", "id: 1111")
-broker -> device : publish("device1/req", "light: on", "id: 1111")
+app -> broker : publish("cmd/device1/req", "light: on", "id: 1111")
+broker -> device : publish("cmd/device1/req", "light: on", "id: 1111")
 device -> device : Turn on light
-device -> broker : publish("device1/resp", "success", id: "1111")
-broker -> app : publish("device1/resp", "success", id: "1111")
+device -> broker : publish("cmd/device1/resp", "success", id: "1111")
+broker -> app : publish("cmd/device1/resp", "success", id: "1111")
 app -> app : reconcile("id: 1111")
 @enduml
 ```
@@ -80,12 +84,14 @@ This implementation approach assumes the _Device_ is connected at all times, sub
 Both the _Application_ and the _Device_ use similar approaches to connecting, sending, and receiving messages. The code samples below are complete for each participant.
 
 {{% notice note %}}
-The code samples focus the _command_ design in general. Please refer to the [Getting started with AWS IoT Core](https://docs.aws.amazon.com/iot/latest/developerguide/iot-gs.html) for details on creating things, certificates, and obtaining your endpoint. The code samples below are used to demonstrate the basic capability of the _Command_ pattern.
+The code samples focus on the _command_ design in general. Please refer to the [Getting started with AWS IoT Core](https://docs.aws.amazon.com/iot/latest/developerguide/iot-gs.html) for details on creating things, certificates, and obtaining your endpoint. The code samples below are used to demonstrate the basic capability of the _Command_ pattern.
 {{% /notice %}}
 
 ### Device
 
-The _Device_ code focuses on connecting to _Broker_, subscribing to a topic to receive commands, and then publishing the outcome of each command back to the _Application_.
+The _Device_ code focuses on connecting to _Broker_ and then subscribing to a topic to receive commands. Upon receipt of a command, the _Device_ performs some local action and then publishes the outcome (success, failure) of the command back to the _Application_, which then can reconcile the command.
+
+The _Device_ will continue to receive and respond to commands until stopped.
 
 {{< tabs groupId="device-code">}}
 {{% tab name="python" %}}
@@ -119,9 +125,9 @@ root_ca = "PATH_TO_ROOT_CA_CERTIFICATE_FILE"
 
 
 # Topic to subscribe for incoming commands
-request_topic = "device1/req"
+request_topic = "cmd/device1/req"
 # Topic to send result of command
-response_topic = "device1/resp"
+response_topic = "cmd/device1/resp"
 
 
 # Callback's are the main method to asynchronously process MQTT events
@@ -270,9 +276,9 @@ root_ca = "PATH_TO_ROOT_CA_CERTIFICATE_FILE"
 # Topics for the test target device
 target_device = "device1"
 # Topic to send a command to the device
-request_topic = f"{target_device}/req"
+request_topic = f"cmd/{target_device}/req"
 # Topic to subscribe for command responses
-response_topic = f"{target_device}/resp"
+response_topic = f"cmd/{target_device}/resp"
 
 
 # Callback's are the main method to asynchronously process MQTT events
