@@ -14,6 +14,15 @@ editURL = "https://github.com/aws/iot-atlas/tree/main/src/hugo/content/"
 themeVariant = "aws"
 disableLandingPageButton = false
 disableNextPrev = true
+disableInlineCopyToClipBoard = true
+
+[markup]
+  defaultMarkdownHandler = "goldmark"
+  [markup.goldmark]
+    [markup.goldmark.renderer]
+      unsafe = true
+    [markup.goldmark.extensions]
+      plantuml = true
 
 [taxonomies]
 tag = "tags"
@@ -25,7 +34,7 @@ home = [ "HTML", "RSS", "JSON" ]
 
 [[menu.shortcuts]]
 name = "<i class='fas fa-tags'></i> Tags"
-url = "/tags"
+url = "/tags/"
 weight = 30
 
 [languages]
