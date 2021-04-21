@@ -5,8 +5,10 @@ pygmentsCodeFences = true
 # English is the default language
 defaultContentLanguage = "en"
 # Force to have /en/my-page and /fr/my-page routes, even for default language.
-defaultContentLanguageInSubdir= true
+defaultContentLanguageInSubdir = true
 uglyurls = false
+# For SEO
+enableRobotsTXT = true
 
 [params]
 ordersectionsby = "weight"
