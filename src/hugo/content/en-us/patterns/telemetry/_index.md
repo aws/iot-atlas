@@ -3,11 +3,8 @@ title: "Telemetry"
 weight: 80
 aliases:
   - /designs/telemetry/
+summary: "Collect data from sensors in a remote environment and make the sensed measurements available for use by other components of an IoT solution."
 ---
-
-{{< synopsis-telemetry >}}
-
-<!--more-->
 
 ## Challenge
 

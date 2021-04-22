@@ -3,11 +3,8 @@ title: "Device State Replica"
 weight: 20
 aliases:
   - /designs/device_state_replica/
+summary: "A logical representation of a physical device’s reported state, or desired future state."
 ---
-
-{{< synopsis-state-replica >}}
-
-<!--more-->
 
 ## Challenge
 

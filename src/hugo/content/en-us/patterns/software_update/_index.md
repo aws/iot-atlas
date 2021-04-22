@@ -3,11 +3,8 @@ title: "Software Update"
 weight: 70
 aliases:
   - /designs/software_update/
+summary: "Ask a device to obtain new software, perform an update on itself, and confirm completion."
 ---
-
-{{< synopsis-software-update >}}
-
-<!--more-->
 
 ## Challenge
 

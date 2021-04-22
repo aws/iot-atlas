@@ -3,11 +3,8 @@ title: "Telemetry Archiving"
 weight: 85
 aliases:
   - /designs/telemetry_archiving/
+summary: "A device's measurements are saved and made available for use in their original or processed form."
 ---
-
-{{< synopsis-archiving >}}
-
-<!--more-->
 
 ## Challenge
 

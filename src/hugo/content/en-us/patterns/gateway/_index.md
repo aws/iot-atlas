@@ -3,11 +3,8 @@ title: "Gateway"
 weight: 50
 aliases:
   - /designs/gateway/
+summary: "Design pattern used on IoT edge devices to translate between different protocols."
 ---
-
-{{< synopsis-gateway >}}
-
-<!--more-->
 
 ## Challenge
 

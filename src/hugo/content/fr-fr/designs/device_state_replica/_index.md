@@ -1,13 +1,8 @@
 ---
 title: "Réplique de l'état de l'appareil"
 weight: 20
+summary: "Représentation logique de l'état signalé d'un appareil physique ou de l'état futur souhaité."
 ---
-
-<!-- {{< synopsis-state-replica >}} -->
-
-Représentation logique de l'état signalé d'un appareil physique ou de l'état futur souhaité.
-
-<!--more-->
 
 ## Défi
 
