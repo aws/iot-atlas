@@ -52,7 +52,7 @@ Explain the example in greater detail
 And the second examples details.
 ```
 
-Once saved, use the [local development and testing process]({{< ref "/contribute#testing-process" >}}) to review the following:
+Once saved, use the [local development and testing process]({{< ref "/contribute#validate-content" >}}) to review the following:
 
 1. Your content appears under the _Patterns_ menu
 1. The summary appears in the [_Patterns_]({{< ref "/patterns" >}}) list
