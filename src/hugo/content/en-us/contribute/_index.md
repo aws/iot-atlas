@@ -20,7 +20,7 @@ When creating new content, use the follow guidance:
 
 Following the steps below will ensure that any content or changes you make can be tested and validated prior to submitted a pull request. If you have any questions, please review and ask questions in the [discussions](https://github.com/aws/iot-atlas/discussions) section of the GitHub repository.
 
-### Pre-requisites
+### Fork and Local Testing
 
 To minimize installing local dependencies on your system, the only requirement is to have Docker installed locally. Also, the `make_hugo.sh` script is Linux/macOS (well, bash) specific, so for Microsoft Windows the commands would need to reviewed and changed. Setup your local environment by following these steps:
 
