@@ -37,7 +37,7 @@ function hugo_validate {
     echo "********** Validating content"
     # Test HTML local and external links
     # Start hugo locally, reference //host.docker.internal for other containers to use
-    docker run -d --name hugo_checker --rm -p 1313:1313 -v "$PWD/hugo:/hugo-project temporary/hugo-ubuntu:latest" hugo server --bind 0.0.0.0 -b http://localhost:1313/ 1>/dev/null
+    docker run -d --name hugo_checker --rm -p 1313:1313 -v "$PWD/hugo:/hugo-project" temporary/hugo-ubuntu:latest hugo server --bind 0.0.0.0 -b http://localhost:1313/ 1>/dev/null
 
     # Wait until the web server is up
     while [ "`docker inspect -f {{.State.Health.Status}} hugo_checker`" != "healthy" ]; do sleep 0.5; done
