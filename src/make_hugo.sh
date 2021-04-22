@@ -30,14 +30,14 @@ function hugo_build {
     fi
 
     # Generate full content
-    docker run --rm -v $PWD/hugo:/hugo-project $IMAGE_NAME hugo
+    docker run --rm -v "$PWD/hugo:/hugo-project" $IMAGE_NAME hugo
 }
 
 function hugo_validate {
     echo "********** Validating content"
     # Test HTML local and external links
     # Start hugo locally, reference //host.docker.internal for other containers to use
-    docker run -d --name hugo_checker --rm -p 1313:1313 -v $PWD/hugo:/hugo-project temporary/hugo-ubuntu:latest hugo server --bind 0.0.0.0 -b http://localhost:1313/ 1>/dev/null
+    docker run -d --name hugo_checker --rm -p 1313:1313 -v "$PWD/hugo:/hugo-project temporary/hugo-ubuntu:latest" hugo server --bind 0.0.0.0 -b http://localhost:1313/ 1>/dev/null
 
     # Wait until the web server is up
     while [ "`docker inspect -f {{.State.Health.Status}} hugo_checker`" != "healthy" ]; do sleep 0.5; done
@@ -89,7 +89,7 @@ function hugo_develop {
     if ! [[ $(docker images -q $IMAGE_NAME) ]]; then
         DOCKER_BUILDKIT=1 docker build -t $IMAGE_NAME --file Dockerfile-build .
     fi
-    docker run --rm -p 1313:1313 -v $PWD/hugo:/hugo-project $IMAGE_NAME
+    docker run --rm -p 1313:1313 -v "$PWD/hugo:/hugo-project" $IMAGE_NAME
     exit 0
 }
 
