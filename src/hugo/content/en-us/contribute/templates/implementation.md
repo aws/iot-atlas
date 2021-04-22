@@ -4,7 +4,7 @@ weight: 20
 summary: "Template for new provider-specific implementations of a general pattern."
 ---
 
-Use the following text as the basis for new _implementations_ of provider-specific _patterns_.  Create a new directory for the implementation under `src/hugo/content/en-us/implementations/PROVIDER` (replace `en-us` with other supported languages), then copy and paste the following content into a new file named `_index.html`.
+Use the following text as the basis for new _implementations_ of provider-specific _patterns_. Create a new directory for the implementation under `src/hugo/content/en-us/implementations/PROVIDER` (replace `en-us` with other supported languages), then copy and paste the following content into a new file named `_index.html`.
 
 ```markdown
 ---
@@ -19,7 +19,7 @@ Description of the implementation.
 
 ## Use Cases
 
-List the use cases and persona-based stories for this implementation. 
+List the use cases and persona-based stories for this implementation.
 
 ## Reference Architecture
 
@@ -62,10 +62,9 @@ Lorem ipsum dolor sit amet, exercitation id sit eiusmod culpa consectetur nulla 
 ### Consideration 2
 
 Lorem ipsum dolor sit amet, proident mollit exercitation est commodo ea cillum magna anim adipisicing nulla proident duis aliquip tempor
-
 ```
 
-Once saved, use the [local development and testing process]({{< ref "/contribute#testing-process" >}}) to review the following:
+Once saved, use the [local development and testing process]({{< ref "/contribute#validate-content" >}}) to review the following:
 
 1. Your content appears under the _Implementations_ menu, under the provider section
 1. The summary appears under the provider and pattern category, for example [_Implementations/AWS_]({{< ref "/implementations/aws" >}})

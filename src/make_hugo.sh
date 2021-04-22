@@ -47,8 +47,8 @@ function hugo_validate {
     set +e
     # The validation muffet is only in Dockerhub - set credentials for CI/CD
     if ! [[ -z $DOCKERHUB_USERNAME || -z $DOCKERHUB_PASSWORD ]]; then
-        echo "log in"
-        docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD
+    echo "********** Docker credentials found, authenticating to hub.docker.com"
+        echo $DOCKERHUB_PASSWORD | docker login -u $DOCKERHUB_USERNAME --password-stdin
     fi
     # Run for every translated language
     if ! uri_path_validate "en" || 
