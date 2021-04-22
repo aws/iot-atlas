@@ -19,7 +19,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: /tmp/.buildx-cache
-          key: ${{ runner.os }}-buildx-${{ github.sha }}
+          key: ${{ runner.os }}-buildx-${{ hashFiles('Dockerfile-build') }}
           restore-keys: |
             ${{ runner.os }}-buildx-
       - name: Build Hugo container image
