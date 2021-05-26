@@ -11,7 +11,6 @@ RUN apt-get update && apt-get upgrade -y \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-
 # Build hugo executable using golang
 FROM base AS builder
 ARG HUGO_VERSION
@@ -25,6 +24,7 @@ RUN curl -JLO https://golang.org/dl/go1.16.3.linux-amd64.tar.gz \
 ### Download Hugo source, compile, install
 # Prepare source file changes
 # Hard-coded files for now, specific to Hugo 0.82.0
+RUN go env -w GOPROXY=direct
 COPY ./docker_assets/convert.go /tmp/convert.go
 COPY ./docker_assets/config.go /tmp/config.go
 RUN curl -JLO https://github.com/gohugoio/hugo/archive/refs/tags/v${HUGO_VERSION}.tar.gz \
