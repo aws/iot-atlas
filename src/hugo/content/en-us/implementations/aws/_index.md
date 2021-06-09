@@ -14,3 +14,9 @@ This page contains the complete list of implementations per-pattern. If the list
 This is list of AWS implementations for the _Command_ pattern.
 
 {{% children  page="Command"  style="div" depth="2" startdepth="1" description="true" showhidden="true" %}}
+
+## Fan-in
+
+This is list of AWS implemenations for the _Fan-in_ pattern.
+
+{{% children page="Fan-in" style="div" depth="2" startdepth="1" description="true" showhidden="true" %}}
