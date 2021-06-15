@@ -71,6 +71,7 @@ function uri_path_validate {
     echo "********** Running link checks on language: $1"
     if ! docker run --net="host" raviqqe/muffet \
             "--exclude=https://github.com/aws/" \
+            "--buffer-size=8192" \
             http://localhost:1313/$1/; then
         echo "********** $1: Invalid links (see above)"
         return 1   # 1 = failure
