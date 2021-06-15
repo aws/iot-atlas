@@ -1,21 +1,22 @@
 ---
-title: "Model-View-Controller Device Software Design"
+title: "Model-View-Controller Device Software Design Pattern"
 weight: 60
 summary: "Recommendation for the design and structure of device software"
 ---
 
 ## Challenge
 
-IoT devices have a common set of concerns: 
+IoT devices have a common set of concerns:
+
 * report the current state of the device, attached sensors and actuators
 * processing control messages (both remote and local)
-* presenting status information 
+* presenting status information
 
-The design should also be easy to test and reuse across multiple projects, hardware platforms, languages, and SDKs. Some devices are 'one-way' only reporting state or taking action, while others are 'two-way,' performing both of these actions. The design should be generally composable to support all these uses as well as accommodate a flexible variety of peripherals, command sources, and interfaces. 
+The device software should also be easy to test and reuse across multiple projects, hardware platforms, languages, and SDKs. Some devices are 'one-way' only reporting state or taking action, while others are 'two-way,' performing both of these actions. The software design pattern should be generally composable to support all these uses as well as accommodate a flexible variety of peripherals, command sources, and interfaces. 
 
 ## Solution
 
-An IoT device software design can be based on the [Model-View-Controller](https://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93controller) design pattern.
+An IoT device software design pattern based on the [Model-View-Controller](https://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93controller) design pattern.
 
 ![Model-View-Controller Pattern](MVC-UML.png) 
 
