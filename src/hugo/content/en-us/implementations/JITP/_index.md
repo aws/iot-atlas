@@ -36,8 +36,3 @@ operation has succeeded, the device will connect to AWS IoT successfully.
 
 ![JITP](JITP.png)
 
-## Command
-
-This is list of AWS implementations for the _Command_ pattern.
-
-{{% children  page="Command"  style="div" depth="2" startdepth="1" description="true" showhidden="true" %}}

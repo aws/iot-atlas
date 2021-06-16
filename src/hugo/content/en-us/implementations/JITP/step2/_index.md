@@ -10,7 +10,7 @@ title: "2. Create and register a JITP template"
 ```json
 sudo nano jitp_template.json
 ```
-3. Paste the following JSON and save the file using control + x and y
+3. Paste the following JSON and save the file using control + X and type Y
 
 `Replace <REGION>, <Account_ID> and <ROLE_ARN> with your AWS Region, Account_ID and Role ARN for JITPRole respectively`
 ```json

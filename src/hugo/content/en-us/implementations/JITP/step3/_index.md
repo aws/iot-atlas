@@ -35,7 +35,7 @@ Download and setup the python sdk
 ```json
 git clone https://github.com/aws/aws-iot-device-sdk-python.git
 cd aws-iot-device-sdk-python
-python setup.py install
+sudo python setup.py install
 ```
 
 7. Navigate to Samples folder and execute the basicPubSub.
