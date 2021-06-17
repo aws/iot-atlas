@@ -38,10 +38,10 @@ This implementation focuses on the use of an AWS IoT Rule Action to put telemetr
 
 
 1. _Devices_ establish an MQTT connection to the _AWS IoT Core endpoint_, and then publish message to the dt/plant1/dev_n/temp (data telemetry) topic. This is a location and device specific topic to deliver telemetry messages for a given device or sensor.
-1. The _IoT Rule_ subscribes to a wildcard topic dt/plant1/*/temp to consolidate messages across devices for the plant and put those messages onto a Kinesis Data Firehose Stream
-1. The Kinesis Data Firehose Stream aggregates messages into arrays of events and notifies a Lambda function passing the event array along for processing
-1. The Lambda function performs the desired action on the events returning them to the Kinesis Data Firehose Stream along with modifications to the data and a notification of successful processing for the event
-1. The Kinesis Data Firehose Stream finally delivers messages to the S3 bucket for later analysis and processing. Kinesis Data Firehose Stream can optionally convert this data from JSON into a compressed Snappy format like Apache Parquet as well as create timestamp folders for Athena partitioning.
+1. The _IoT Rule_ subscribes to a wildcard topic dt/plant1/+/temp to consolidate messages across devices for the plant and put those messages onto a Kinesis Data Firehose Stream
+1. The _Kinesis Data Firehose Stream_ buffers messages into arrays of events and notifies a Lambda function passing the event array along for processing
+1. The _Lambda_ function performs the desired action on the events returning them to the _Kinesis Data Firehose Stream_ along with modifications to the data payload a and a status of successful or unsuccesful processing of each event
+1. The _Kinesis Data Firehose Stream_ finally delivers messages to the S3 bucket for later analysis and processing. 
 
 {{% center %}}
 
@@ -246,3 +246,7 @@ From the AWS IoT Console under the Act menu choose Create a Rule.
 ### Considerations
 
 This implementation covers the basics of a device telemetry fan-in pattern. It does not cover certain aspects that may arise in production use.
+
+### Delayed Message Delivery
+
+_Devices_ may hold messages for retried delivery if connectivity to the _MQTT Broker_ in _AWS IoT Core_ is lost temporarily. The _Amazon Kinesis Data Firehose_ stream marks events with timestamps on the approximate arrival of the event to the stream. _Devices_ publishing telemetry messages should include a timestamp in the message that represents the true time the event took place. Further processing of the telemetry data stored in S3 is needed to create a folder structure based on the device event timestamp rather than the _Amazon Kinesis Data Firehose_ event timestamp. 
