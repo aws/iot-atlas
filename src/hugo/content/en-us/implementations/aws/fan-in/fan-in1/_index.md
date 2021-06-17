@@ -1,13 +1,13 @@
 ---
 title: "Fan-in - MQTT Topics"
 weight: 10
-summary: "Fan-in of Telemetry using Iot Rules"
+summary: "Fan-in of Telemetry Data using AWS Iot Rules and Amazon Kinesis Data Firehose"
 ---
 
 Fan-in is a many-to-one communication pattern for consuming data from many devices through a single data processing channel. 
 
 {{% notice note %}}
-This implementation focuses on the use of Kinesis Firehose recieving data from an IoT Rule Action from many devices, transforming that data in a Lambda function, then delivering that transformed data to an S3 bucket for inclusion in a Data Lake. Please refer to the [MQTT Communication Patterns](https://docs.aws.amazon.com/whitepapers/latest/designing-mqtt-topics-aws-iot-core/mqtt-communication-patterns.html), specifically the _Fan-in_ section. This white paper provides alternative topic patterns that go beyond the scope of this implementation. You can also refer to a customer case study for a real word example here: https://www.youtube.com/watch?v=BkinvmBRFHY
+This implementation focuses on the use of an AWS IoT Rule Action to put telemetry data onto Amazon Kinesis Data Firehose stream. The stream is a consolidation of data for multiple devices in a single plant. The stream invokes a Lambda function to transform telemetry message payloads, then delivers that transformed data to an S3 bucket for storage and future analysis. Please refer to the [MQTT Communication Patterns](https://docs.aws.amazon.com/whitepapers/latest/designing-mqtt-topics-aws-iot-core/mqtt-communication-patterns.html), specifically the _Fan-in_ section. This white paper provides alternative topic patterns that go beyond the scope of this implementation. You can also refer to a customer case study for a real word example here: https://www.youtube.com/watch?v=BkinvmBRFHY
 {{% /notice %}}
 
 
@@ -89,14 +89,14 @@ stream -> bucket: put_object(events)
 
 ### Assumptions
 
-This implementation approach assumes all _Devices_ are not connected at all times, publish to a single topic telemetry. **blah blah blah**.
+This implementation approach assumes all _Devices_ are not connected at all times, each _Device_ publishes temperature telemetry to a single topic. It also assumes that all temperature readings are emitted with a sensor name value of Temperature celcious or Temperature Fahrenheit and follow the message payload formats outlined below. 
 
 ## Implementation
 
 You can test this pattern out by publishing messages with the [MQTT test client](https://us-west-2.console.aws.amazon.com/iot/home?#/test) in the AWS IoT console or using the [IoT Device Simulator](https://aws.amazon.com/solutions/implementations/iot-device-simulator/). In a real world implementation you'll configure multiple devices as things so they can communicate with your IoT core endpoint. 
 
 {{% notice note %}}
-The code samples focus on the _fan-in_ design in general. Please refer to the [Getting started with AWS IoT Core](https://docs.aws.amazon.com/iot/latest/developerguide/iot-gs.html) for details on creating things, certificates, obtaining your endpoint, and publishing telemetry to your endpoint. The configuration and code samples below are used to demonstrate the basic capability of the _Fan-in_ pattern.
+The configuration and code samples focus on the _fan-in_ design in general. Please refer to the [Getting started with AWS IoT Core](https://docs.aws.amazon.com/iot/latest/developerguide/iot-gs.html) for details on creating things, certificates, obtaining your endpoint, and publishing telemetry to your endpoint. The configuration and code samples below are used to demonstrate the basic capability of the _Fan-in_ pattern. Refer to the [AWS Lambda](https://docs.aws.amazon.com/lambda/latest/dg/welcome.html) and [Amazon Kinesis Data Firehose](https://docs.aws.amazon.com/firehose/latest/dev/what-is-this-service.html) for more in depth configuration options for these services.
 {{% /notice %}}
 
 ### Devices
