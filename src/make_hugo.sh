@@ -69,8 +69,9 @@ function uri_path_validate {
     # Note - run the container on the host network to access Hugo running in a separate container
     #      - Exclude on github.com/aws in case of editURL changes. Will catch during automation   
     echo "********** Running link checks on language: $1"
-    if ! docker run --net="host" raviqqe/muffet \
+    if ! docker run --rm --net="host" raviqqe/muffet \
             "--exclude=https://github.com/aws/" \
+            "--buffer-size=8192" \
             http://localhost:1313/$1/; then
         echo "********** $1: Invalid links (see above)"
         return 1   # 1 = failure
