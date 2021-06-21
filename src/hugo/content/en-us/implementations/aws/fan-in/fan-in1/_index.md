@@ -7,7 +7,7 @@ summary: "Fan-in of Telemetry Data using AWS Iot Rules and Amazon Kinesis Data F
 Fan-in is a many-to-one communication pattern for consuming telemetry data from many devices through a single data processing channel. 
 
 {{% notice note %}}
-This implementation focuses on the use of an AWS IoT Rule Action to put telemetry data onto Amazon Kinesis Data Firehose stream. The stream is a consolidation of data for multiple devices in a single plant. The stream invokes a Lambda function to enrich and transform telemetry message payloads, then delivers that data to an S3 bucket for storage and future analysis. Please refer to the [MQTT Communication Patterns](https://docs.aws.amazon.com/whitepapers/latest/designing-mqtt-topics-aws-iot-core/mqtt-communication-patterns.html), specifically the _Fan-in_ section. This white paper provides alternative topic patterns that go beyond the scope of this implementation. You can also refer to a customer case study for a real word example here: https://www.youtube.com/watch?v=BkinvmBRFHY
+This implementation focuses on the use of an AWS IoT Rule Action to put telemetry data onto Amazon Kinesis Data Firehose stream. The stream is a consolidation of data for multiple devices in a single plant. The stream invokes a Lambda function to enrich and transform telemetry message payloads, then delivers that data to an S3 bucket for storage and future analysis. Please refer to the [MQTT Communication Patterns](https://docs.aws.amazon.com/whitepapers/latest/designing-mqtt-topics-aws-iot-core/mqtt-communication-patterns.html), specifically the _Fan-in_ section. This whitepaper provides alternative topic patterns that go beyond the scope of this implementation. You can also refer to a customer case study for a real word example here: https://www.youtube.com/watch?v=BkinvmBRFHY
 {{% /notice %}}
 
 
@@ -19,7 +19,7 @@ This implementation focuses on the use of an AWS IoT Rule Action to put telemetr
   - _I want to convert all Celsius temperature readings to Fahrenheit_
   - _I want to reformat sensor data into a standard format_
 - Aggregate data
-  - _I want to take aggregate values from groupings of devices before storage_
+  - _I want to calculate the sum, min, max, avg (e.g. aggregate function) from values from groupings of devices before storage_
 - Enrich device data with data from other data stores
   - _I want to add device metadata from our device model stored in a database_
 
@@ -37,9 +37,9 @@ This implementation focuses on the use of an AWS IoT Rule Action to put telemetr
 - _S3_ is the Data Lake where data will land for storage and further analysis or ETL processing
 
 
-1. _Devices_ establish an MQTT connection to the _AWS IoT Core endpoint_, and then publish message to the dt/plant1/dev_n/temp (data telemetry) topic. This is a location and device specific topic to deliver telemetry messages for a given device or sensor.
-1. The _IoT Rule_ queries a wildcard topic dt/plant1/+/temp from the _AWS IoT Core_ to consolidate messages across devices for plant1 and PUTs those messages onto a _Kinesis Data Firehose Stream_.
-1. The _Kinesis_ stream buffers messages, by time or size, into arrays of events and notifies a Lambda function passing the event array along for processing.
+1. _Devices_ establish an MQTT connection to the _AWS IoT Core_ endpoint, and then publish message to the `dt/plant1/dev_n/temp` (data telemetry) topic. This is a location and device specific topic to deliver telemetry messages for a given device or sensor.
+1. The _IoT Rule_ queries a wildcard topic `dt/plant1/+/temp` from the _AWS IoT Core_ to consolidate messages across devices for plant1 and PUTs those messages onto a _Amazon Kinesis Data Firehose_ stream.
+1. The _Kinesis_ stream buffers messages, by time or size, into arrays of events then and notifies a Lambda function passing the event array along for processing.
 1. The _Lambda_ function performs the desired action on the events returning them to _Kinesis_ along with modifications to the data payload a and a status of successful or failed processing of each event.
 1. _Kinesis_ finally delivers messages to the S3 bucket for later analysis and processing. 
 
@@ -69,7 +69,7 @@ participant "<$Kinesis>\nStream" as stream
 participant "<$Lambda>\nLambda" as lambda
 participant "<$SimpleStorageServiceS3>\nS3 Bucket" as bucket
 
-== Publish, Transform and Store ==
+== Publish, Transform, Enrich, and Store ==
 devices -> broker : connect(iot_endpoint)
 devices -> broker : publish("dt/plant1/dev_1/temp")
 devices -> broker : publish("dt/plant1/dev_2/temp")
@@ -88,11 +88,11 @@ stream -> bucket: put_objects(enriched_events)
 
 ### Assumptions
 
-This implementation approach assumes all _Devices_ are not connected at all times, each _Device_ publishes temperature telemetry to a single topic. It also assumes that all temperature readings are emitted with a sensor name value of Temperature celsius or Temperature Fahrenheit and follow the message payload formats outlined below. This implementation also assumes a very simple flow for the sake of making the example simple so alternative options are called out within each section below.
+This implementation approach assumes all _Devices_ are not connected to the internet or _AWS Iot Core_ at all times. Each _Device_ publishes temperature telemetry to a single topic. The implementations also assumes that all temperature readings are emitted with a sensor name value of Temperature celsius or Temperature Fahrenheit and follow the message payload formats outlined below. This implementation also assumes a very simple flow for the sake of making the example easy to digest. Alternative options are also called out within the sections below.
 
 ## Implementation
 
-To experiment quickly, you can test this pattern out by publishing messages with the [MQTT test client](https://us-west-2.console.aws.amazon.com/iot/home?#/test) in the AWS IoT console or using the [IoT Device Simulator](https://aws.amazon.com/solutions/implementations/iot-device-simulator/). In a real world implementation you'll configure multiple devices as AWS IoT Things that each securely communicate with your AWS IoT Core endpoint. 
+To experiment quickly, you can test this pattern out by publishing messages with the [MQTT test client](https://us-west-2.console.aws.amazon.com/iot/home?#/test) in the AWS IoT console or using the [IoT Device Simulator](https://aws.amazon.com/solutions/implementations/iot-device-simulator/). In a real world implementation you'll configure multiple devices as AWS IoT Things that each securely communicate with your _AWS IoT Core_ endpoint. 
 
 {{% notice note %}}
 The configuration and code samples focus on the _fan-in_ design in general. Please refer to the [Getting started with AWS IoT Core](https://docs.aws.amazon.com/iot/latest/developerguide/iot-gs.html) for details on creating things, certificates, obtaining your endpoint, and publishing telemetry to your endpoint. The configuration and code samples below are used to demonstrate the basic capability of the _Fan-in_ pattern. Refer to the [AWS Lambda](https://docs.aws.amazon.com/lambda/latest/dg/welcome.html) and [Amazon Kinesis Data Firehose](https://docs.aws.amazon.com/firehose/latest/dev/what-is-this-service.html) Developer Guides for more in depth discussion of these services.
@@ -100,13 +100,13 @@ The configuration and code samples focus on the _fan-in_ design in general. Plea
 
 ### Devices
 
-Once connected to _AWS IoT Core_ devices will transmit telemetry data to plant and device specific MQTT topics. The below example demonstrates MQTT topics and payloads for device 1 and 2 in plant 1. Your implementation might support hundreds, thousands, or millions of devices. In the MQTT test client use the below topic names and message payloads to simulate the device traffic we will fan-in. You can also subscribe to each topic to view the messages as you publish them or subscribe to the wildcard topic `dt/plant1/+/temp` to see the aggregate messages.
+Once connected to _AWS IoT Core_, devices will transmit telemetry data to plant and device specific MQTT topics. The below example demonstrates MQTT topics and payloads for device 1 and 2 in plant 1. Your implementation might support hundreds, thousands, or millions of devices. Copy and paste the below topic names and message payloads into the subscribe and publish inputs of the MQTT test client to simulate the device traffic we will fan-in. You can subscribe to each topic to view the messages device specific as you publish them or you can subscribe to the wildcard topic `dt/plant1/+/temp` to see messages in aggregate.
 
 {{< tabs groupId="MQTT-scenario">}}
 {{% tab name="MQTT" %}}
 
 MQTT Topic name for the temperature of Device 1 in Plant 1. 
-```text
+```yaml
 dt/plant1/dev_1/temp
 ```
 Temperature in celsius telemetry JSON payload for Device 1 in Plant 1. 
@@ -124,7 +124,7 @@ Temperature in celsius telemetry JSON payload for Device 1 in Plant 1.
 }
 ```
 MQTT Topic name for the temperature of Device 2 in Plant 1. 
-```text
+```yaml
 dt/plant1/dev_2/temp
 ```
 Temperature in Fahrenheit telemetry JSON payload for Device 2 in Plant 1. 
@@ -147,13 +147,13 @@ Temperature in Fahrenheit telemetry JSON payload for Device 2 in Plant 1.
 
 ### AWS Lambda for Transforming Telemetry Data
 
-In the AWS _Lambda_ console create a new _Lambda_ function. You can use the code below or if authoring your own function get started the Blueprint `kinesis-firehose-process-record-python`
+In the AWS _Lambda_ console create a new _Lambda_ function. To use the code below choose `Author from scratch` with a Python 3.8 runtime and paste the code below into the code editor. To create your own function choose the `Use a blueprint` option and select the Blueprint `kinesis-firehose-process-record-python` which you'll then modify per your requirements.
 
 1. Name your function `fan-in_device_temperature_converter`
 1. For Execution role choose `Create a new role with basic Lambda permissions`
 1. Click `Create Function`
-1. Switch from the `Code` view to the `Configuration` and click `Edit` on the General Configuration pane
-1. Change the timeout to 3 minutes and 0 seconds the click `Save` (Kinesis Data Firehose requires at least 1 minute for a Lambda transformer) 
+1. Switch from the `Code` view to the `Configuration` view and click `Edit` on the General Configuration pane
+1. Change the timeout to 3 minutes and 0 seconds the click `Save` (_Amazon Kinesis Data Firehose_ requires at least a 1 minute timeout for a Kinesis Lambda transformer) 
 
 {{< tabs groupId="lambda-code">}}
 {{% tab name="python" %}}
@@ -208,14 +208,14 @@ The messages will be transformed by this function to the format below which is f
 {"deviceSerial": "324l5;k;a3", "timestamp": 1601048303, "temperature": 120.3806}
 ```
 
-In addition to _Lambda_ from _Amazon Kinesis Data Firehose_ you can also leverage [AWS IoT Analytics](https://aws.amazon.com/iot-analytics/) to achieve _Fan-in_ processing of messages.
+In addition to using _Lambda_ from _Amazon Kinesis Data Firehose_, you can also leverage [AWS IoT Analytics](https://aws.amazon.com/iot-analytics/) to achieve _Fan-in_ processing of messages with transformations and enriching behaviors.
 
 ### Amazon S3 Destination Bucket
 
 Use the AWS Console or the AWS CLI to create a new S3 bucket as a destination for the Kinesis Firehose Delivery Stream to land plant1 device data in. Replace `<AccountId`> with your AWS Account Id.
 
 CLI Command
-```text
+```yaml
 aws s3 mb s3://fan-in-telemetry-<AccountId>
 ```
 
@@ -237,14 +237,14 @@ In the AWS Console for _Amazon Kinesis Data Firehose_
 1. On the Configure settings screen scroll down and click `Next`
 1. On the Review screen click `Create delivery screen`
 
-Alternatively your _AWS IoT Rule_ can achieve the Fan-in pattern with actions that send messages to [Amazon Kinesis Data Streams](https://aws.amazon.com/kinesis/data-streams/) where applications can read and act on telemetry data, [Amazon Kinesis Data Analytics](https://aws.amazon.com/kinesis/data-analytics/) to process data real time with SQL or Apache Flink, SQS message queues where you can asynchronously process messages, or another of the supported [AWS IoT Rule Actions](https://docs.aws.amazon.com/iot/latest/developerguide/iot-rule-actions.html). 
+Alternatively your _AWS IoT Rule_ can achieve the Fan-in pattern with actions that send messages to [Amazon Kinesis Data Streams](https://aws.amazon.com/kinesis/data-streams/) where other applications can read and act on buffered telemetry data, [Amazon Kinesis Data Analytics](https://aws.amazon.com/kinesis/data-analytics/) to perform analytics processing of data real time with SQL or Apache Flink, SQS message queues where you can asynchronously process messages, or any other of of the supported [AWS IoT Rule Actions](https://docs.aws.amazon.com/iot/latest/developerguide/iot-rule-actions.html). 
 
 ### IoT Rule
 
 From the AWS IoT Console under the Act menu choose Create a Rule. 
 1. Enter a name for your rule `FanIn_Device_Temperature`
-1. Provide a description like 'Processes temperature data from all devices in all plants.' 
-1. For Rule query statement leave the default SQL version of 2016-03-23 and replace the default query with `select * from 'dt/+/+/temp'`
+1. Provide a description like 'Processes temperature data from all devices in plant1.' 
+1. For Rule query statement leave the default SQL version of 2016-03-23 and replace the default query with `select * from 'dt/plant1/+/temp'`
 1. Add an action `Send a message to an Amazon Kinesis Firehose Stream`
 1. Click `Configure Action` and continue with details
 1. Select the Stream you created above `fan-in_device_temperature_stream`
@@ -260,4 +260,4 @@ This implementation covers the basics of a device telemetry fan-in pattern. It d
 
 ### Delayed Message Delivery
 
-_Devices_ may hold messages for retried delivery if connectivity to the _MQTT Broker_ in _AWS IoT Core_ is lost temporarily. The _Amazon Kinesis Data Firehose_ stream marks events with timestamps on the approximate arrival of the event to the stream. _Devices_ publishing telemetry messages should include a timestamp in the message that represents the true time the event took place. Further processing of the telemetry data stored in S3 is needed to create a folder structure based on the device event timestamp rather than the _Amazon Kinesis Data Firehose_ event timestamp. 
+_Devices_ may hold messages for delivery retries if connectivity to the _MQTT Broker_ in _AWS IoT Core_ is lost temporarily. The _Amazon Kinesis Data Firehose_ stream marks events with timestamps on the approximate arrival of the event to the stream. _Devices_ publishing telemetry messages should include a timestamp in the message that represents the true time the event took place. Further processing of the telemetry data stored in S3 is needed to create a folder structure based on the device event timestamp rather than the _Amazon Kinesis Data Firehose_ event timestamp if you plan to create partitions for ETL and analysis with [AWS Glue](https://aws.amazon.com/glue/) and [Amazon Athena](https://aws.amazon.com/athena/). 
