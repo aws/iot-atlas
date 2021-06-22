@@ -78,7 +78,3 @@ There are two topologies that devices most commonly take: a [mesh network](https
 **Mesh Network** – A gateway in a mesh network provides cloud routing capabilities to some or all of the devices on the mesh. Since devices physically close to one another communicate directly, a gateway is usually not responsible for device-to-device communication; however, the gateway may provide additional local capabilities such as time series data storage, data analysis, and machine learning inference.
 
 In both a hub-and-spoke or a mesh network topology, to enable explicit routing of all messages, each device and the gateway itself should be addressable by a unique message topic.
-
-## Example
-
-    <tbd written scenario>
