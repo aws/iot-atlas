@@ -11,6 +11,12 @@ This page contains the complete list of implementations per-pattern. If the list
 
 ## Command
 
-This is list of AWS implementations for the _Command_ pattern.
+This is a list of AWS implementations for the _Command_ pattern.
 
 {{% children  page="Command"  style="div" depth="2" startdepth="1" description="true" showhidden="true" %}}
+
+## Telemetry
+
+This is a list of AWS implementations for the _Telemetry_ pattern.
+
+{{% children page="Telemetry" style="div" depth="2" startdepth="1" description="true" showhidden="true" %}}
