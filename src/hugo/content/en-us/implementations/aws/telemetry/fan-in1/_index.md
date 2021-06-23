@@ -39,9 +39,9 @@ This implementation focuses on the use of an AWS IoT Rule Action to put telemetr
 
 1. _Devices_ establish an MQTT connection to the _AWS IoT Core_ endpoint, and then publish message to the `dt/plant1/dev_n/temp` (data telemetry) topic. This is a location and device specific topic to deliver telemetry messages for a given device or sensor.
 1. The _IoT Rule_ queries a wildcard topic `dt/plant1/+/temp` from the _AWS IoT Core_ to consolidate messages across devices for plant1 and PUTs those messages onto a _Amazon Kinesis Data Firehose_ stream.
-1. The _Kinesis_ stream buffers messages, by time or size, into arrays of events then and notifies a Lambda function passing the event array along for processing.
+1. The _Amazon Kinesis Data Firehose_ stream buffers messages, by time or size, into arrays of events then and notifies a Lambda function passing the event array along for processing.
 1. The _Lambda_ function performs the desired action on the events returning them to _Kinesis_ along with modifications to the data payload a and a status of successful or failed processing of each event.
-1. _Kinesis_ finally delivers messages to the S3 bucket for later analysis and processing. 
+1. _Amazon Kinesis Data Firehose_ finally delivers messages to the S3 bucket for later analysis and processing. 
 
 {{% center %}}
 
@@ -88,7 +88,7 @@ stream -> bucket: put_objects(enriched_events)
 
 ### Assumptions
 
-This implementation approach assumes all _Devices_ are not connected to the internet or _AWS Iot Core_ at all times. Each _Device_ publishes temperature telemetry to a single topic. The implementations also assumes that all temperature readings are emitted with a sensor name value of Temperature celsius or Temperature Fahrenheit and follow the message payload formats outlined below. This implementation also assumes a very simple flow for the sake of making the example easy to digest. Alternative options are also called out within the sections below.
+This implementation approach assumes all _Devices_ are not connected to the internet or _AWS Iot Core_ at all times. Each _Device_ publishes temperature telemetry to a single topic. The implementations also assumes that all temperature readings are emitted with a sensor name value of Temperature Celsius or Temperature Fahrenheit and follow the message payload formats outlined below. Alternative options are also called out within the sections below.
 
 ## Implementation
 
@@ -100,16 +100,16 @@ The configuration and code samples focus on the _fan-in_ design in general. Plea
 
 ### Devices
 
-Once connected to _AWS IoT Core_, devices will transmit telemetry data to plant and device specific MQTT topics. The below example demonstrates MQTT topics and payloads for device 1 and 2 in plant 1. Your implementation might support hundreds, thousands, or millions of devices. Copy and paste the below topic names and message payloads into the subscribe and publish inputs of the MQTT test client to simulate the device traffic we will fan-in. You can subscribe to each topic to view the messages device specific as you publish them or you can subscribe to the wildcard topic `dt/plant1/+/temp` to see messages in aggregate.
+Once connected to _AWS IoT Core_, devices will transmit telemetry data to plant and device specific MQTT topics. The below example demonstrates MQTT topics and payloads for device1 and device2 in plant1. Your implementation might support hundreds, thousands, or millions of devices. Copy and paste the below topic names and message payloads into the subscribe and publish inputs of the MQTT test client to simulate the device traffic we will fan-in. You can subscribe to each topic to view the messages device specific as you publish them or you can subscribe to the wildcard topic `dt/plant1/+/temp` to see messages in aggregate.
 
 {{< tabs groupId="MQTT-scenario">}}
-{{% tab name="MQTT" %}}
+{{% tab name="device1" %}}
 
-MQTT Topic name for the temperature of Device 1 in Plant 1. 
+MQTT Topic name for the temperature of device1 in plant1. 
 ```yaml
 dt/plant1/dev_1/temp
 ```
-Temperature in celsius telemetry JSON payload for Device 1 in Plant 1. 
+Temperature in Celsius telemetry JSON payload for device1 in plant1. 
 ```json 
 {
     "timestamp": 1601048303,
@@ -117,17 +117,21 @@ Temperature in celsius telemetry JSON payload for Device 1 in Plant 1.
     "deviceSerial": "sd89w7e82349",
     "sensorData": [
         {
-        "sensorName": "Temperature celsius",
+        "sensorName": "Temperature Celsius",
         "sensorValue": 34.2211224
         }
     ]
 }
 ```
-MQTT Topic name for the temperature of Device 2 in Plant 1. 
+
+{{% /tab %}}
+{{% tab name="device2" %}}
+
+MQTT Topic name for the temperature of device2 in plant1. 
 ```yaml
 dt/plant1/dev_2/temp
 ```
-Temperature in Fahrenheit telemetry JSON payload for Device 2 in Plant 1. 
+Temperature in Fahrenheit telemetry JSON payload for device2 in plant1. 
 ```json
 {
     "timestamp": 1601048303,
@@ -153,7 +157,7 @@ In the AWS _Lambda_ console create a new _Lambda_ function. To use the code belo
 1. For Execution role choose `Create a new role with basic Lambda permissions`
 1. Click `Create Function`
 1. Switch from the `Code` view to the `Configuration` view and click `Edit` on the General Configuration pane
-1. Change the timeout to 3 minutes and 0 seconds the click `Save` (_Amazon Kinesis Data Firehose_ requires at least a 1 minute timeout for a Kinesis Lambda transformer) 
+1. Change the timeout to 3 minutes and 0 seconds the click `Save` (_Amazon Kinesis Data Firehose_ requires at least a 1 minute timeout for a _Lambda_ transformer) 
 
 {{< tabs groupId="lambda-code">}}
 {{% tab name="python" %}}
@@ -178,7 +182,7 @@ def lambda_handler(event, context):
         
         for data in payload['sensorData']:
 
-            if data['sensorName'] == 'Temperature celsius':
+            if data['sensorName'] == 'Temperature Celsius':
                 transformedPayload['temperature'] = (data['sensorValue'] * 9/5) + 32  
             else:
                 transformedPayload['temperature'] = data['sensorValue']
@@ -221,7 +225,7 @@ aws s3 mb s3://fan-in-telemetry-<AccountId>
 
 _Amazon Kinesis Data Firehose_ Destinations can also include [Amazon Redshift](https://aws.amazon.com/redshift/?whats-new-cards.sort-by=item.additionalFields.postDateTime&whats-new-cards.sort-order=desc), [Amazon ElasticSearch](https://aws.amazon.com/elasticsearch-service/), HTTP Endpoints and Third-party service providers.
 
-### Kinesis Stream
+### Amazon Kinesis Data Firehose
 
 In the AWS Console for _Amazon Kinesis Data Firehose_
 
@@ -268,6 +272,6 @@ _Devices_ may hold messages for delivery retries if connectivity to the _MQTT Br
 The primary consideration around service quotas for the _Fan-in_ is outlined in the MQTT Communication Patterns section of the [Designing MQTT Topics for AWS IoT Core](https://docs.aws.amazon.com/whitepapers/latest/designing-mqtt-topics-aws-iot-core/mqtt-communication-patterns.html) whitepaper. Instead of using the _Fan-in_ pattern over-subscribing multiple devices to a single device topic, use a topic per device and then use the AWS IoT Rules Engine with a wildcard subscription pattern to route to Amazon Kinesis Data Firehose as demonstrated in this implementation. In this implementation you should also be aware of the quotas applicable to each service used your implementation. Be sure to understand if any of these are a concern for your design and if they are adjustable.
 1. The _AWS IoT Core Message Broker_ has [service quotas](https://docs.aws.amazon.com/general/latest/gr/iot-core.html#message-broker-limits) around number of connect requests per second per account (500 - adjustable), per client (1 - not adjustable) as well as maximum inbound concurrent client connections, publish requests, subscription per connection and more.  
 1. _AWS IoT Rules Engine_ has [service quotas](https://docs.aws.amazon.com/general/latest/gr/iot-core.html#rules-limits) that govern rule invocations per second (20,000 - adjustable), max actions per rule (10 - not adjustable) and more.
-1. Review the _Amazon Kinesis Data Firehose_ [service quotas](https://docs.aws.amazon.com/firehose/latest/dev/limits.html). Be aware that each delivery stream stores data records for up to 24, the _Lambda_ buffer size is between 1 MiB and 3 MiB, and the buffer interval ranges from 60 seconds to 900 seconds.
+1. Review the _Amazon Kinesis Data Firehose_ [service quotas](https://docs.aws.amazon.com/firehose/latest/dev/limits.html). Be aware that each delivery stream stores data records for up to 24 hours, the _Lambda_ buffer size is between 1 MiB and 3 MiB, and the buffer interval ranges from 60 seconds to 900 seconds.
 1. _AWS Lambda_ has [service quotas](https://docs.aws.amazon.com/lambda/latest/dg/gettingstarted-limits.html) around concurrent executions (1,000 - adjustable), storage for function and layer size, memory allocation (128 MB to 10,240 MB, in 1-MB increments), timeout (15 minutes - not adjustable), and more. 
 1. With _Amazon S3_ while there are no specific concerns with this implementation you can make yourself familiar with the _Amazon S3_ [service quotas](https://docs.aws.amazon.com/general/latest/gr/s3.html) to be aware of limits around bucket policies, replication rules, event notifications, object sizes, and more. 

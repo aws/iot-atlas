@@ -15,8 +15,8 @@ This is list of AWS implementations for the _Command_ pattern.
 
 {{% children  page="Command"  style="div" depth="2" startdepth="1" description="true" showhidden="true" %}}
 
-## Fan-in
+## Telemetry
 
-This is list of AWS implemenations for the _Fan-in_ pattern.
+This is a list of AWS implementations for the _Telemetry_ pattern.
 
-{{% children page="Fan-in" style="div" depth="2" startdepth="1" description="true" showhidden="true" %}}
+{{% children page="Telemetry" style="div" depth="2" startdepth="1" description="true" showhidden="true" %}}
