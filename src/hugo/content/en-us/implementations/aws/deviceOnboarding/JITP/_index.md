@@ -1,6 +1,7 @@
 ---
 title: Just in Time Provisioning (JITP) 
 weight: 10
+hidden: true
 ---
 
 AWS IoT provides options to provision and onboard a large number of devices based
