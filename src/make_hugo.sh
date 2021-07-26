@@ -51,7 +51,7 @@ function hugo_validate {
         echo $DOCKERHUB_PASSWORD | docker login -u $DOCKERHUB_USERNAME --password-stdin
     fi
     # Run for every translated language
-    if ! uri_path_validate "en" || 
+    if ! uri_path_validate "en" ||
        ! uri_path_validate "zh" ||
        ! uri_path_validate "fr"; then
         echo "********** Validation errors, stopping local Hugo instance"
@@ -67,7 +67,7 @@ function hugo_validate {
 function uri_path_validate {
     # Run link checker for specific URI
     # Note - run the container on the host network to access Hugo running in a separate container
-    #      - Exclude on github.com/aws in case of editURL changes. Will catch during automation   
+    #      - Exclude on github.com/aws in case of editURL changes. Will catch during automation
     echo "********** Running link checks on language: $1"
     if ! docker run --rm --net="host" raviqqe/muffet \
             "--exclude=https://github.com/aws/" \
@@ -132,6 +132,3 @@ fi
 if [[ $BUCKET ]]; then
     sync_s3
 fi
-
-
-

@@ -7,7 +7,7 @@ summary: "Command and control of a device using MQTT topics"
 Command and control is the operation of sending a message to a device requesting it to perform some action. Optionally, the device can acknowledge that is has succeeded or failed to complete the action.
 
 {{% notice note %}}
-This implementation focuses on the use of MQTT topics for performing request and response patterns (e.g. command and control). Please refer to the [Designing MQTT Topic for AWS IoT Core](https://docs.aws.amazon.com/whitepapers/latest/designing-mqtt-topics-aws-iot-core/designing-mqtt-topics-aws-iot-core.html), specifically the _Using the MQTT Topics for Commands_ section. This white paper provides alternative topic patterns that go beyond the scope of this implementation.
+This implementation focuses on the use of MQTT topics for performing request and response patterns (e.g., command and control). Please refer to the [Designing MQTT Topic for AWS IoT Core](https://docs.aws.amazon.com/whitepapers/latest/designing-mqtt-topics-aws-iot-core/designing-mqtt-topics-aws-iot-core.html), specifically the _Using the MQTT Topics for Commands_ section. This white paper provides alternative topic patterns that go beyond the scope of this implementation.
 {{% /notice %}}
 
 ## Use Cases
@@ -390,13 +390,13 @@ if __name__ == "__main__":
 
 This implementation covers the basics of a command and control pattern. It does not cover certain aspects that may arise in production use.
 
-### Duplicate, or Out-of-Order Messages
+### Duplicate or Out-of-Order Messages
 
 In normal operation, MQTT command messages may be lost between the _application_ and the _broker_, or between the _broker_ and the _device_. This can be caused by QoS settings, retransmissions or retries from the publishers or _broker_, or other internal application errors such as a blocked thread.
 
 For duplicate or out-of-order message, a command should nominally only be processed once, the inclusion of a unique transaction id (TID) [(see _Command_ pattern examples)]({{< ref "/patterns/command/#examples" >}}) in both the request and response provides the _application_ to resolve the message. For duplicate messages, the _device_ can keep a list of recently processed messages and only act on new TIDs.
 
-For out-of-order messages, the TID can encompass either an incrementing number or sequence, and the _device_ can track the order of messages received. Another approach could be to use a [timestamp](https://en.wikipedia.org/wiki/Timestamp) for a TID where the _device_ tracks the last processed message and if it receives one with a timestamp earlier, can discard or otherwise act on the message out of order.
+For out-of-order messages, the TID can encompass either an incrementing number or sequence, and the _device_ can track the order of messages received. Another approach could be to use a [timestamp](https://en.wikipedia.org/wiki/Timestamp) for a TID where the _device_ tracks the last processed message and if it receives one with a timestamp earlier, it can discard or otherwise act this message out of order.
 
 When dealing with _command_ messages that need to be processed in a certain order (e.g., **A**, then **B**, then **C**), both the _device_ and _application_ should agree on a state of commands and respond accordingly if they come out of order. For instance, if a _device_ receives command **A** (valid) and then command **C** (invalid as the next command should have been **B**), it should report back a failure and notify the calling _application_ of it's current state.
 
@@ -406,14 +406,14 @@ Another consideration is how a command message should be tracked and processed i
 
 The _application_ should have logic to track outstanding commands, such as a timer to retransmit the command if it does not receive a response in a certain period of time with [retry logic](https://aws.amazon.com/builders-library/timeouts-retries-and-backoff-with-jitter/). In the event the device does not respond within a set period of time, the _application_ can raise an error for device connectivity.
 
-From a _device_ perspective, if it is disconnected during the processing of command or series of commands, the _device_ should publish an error once it reconnects. This can give the _application_ making the request context for how to proceed.
+From a _device_ perspective, if it is disconnected during the processing of a command or series of commands, the _device_ should publish an error once it reconnects. This can give the _application_ making the request context for how to proceed.
 
 ### Fan-out to a Group of Related Devices
 
-This implementation is focused on a single _application_ and _device_ interaction. Some use cases may have a single command affecting multiple devices. For instance, an _application_ may request all warning lights to turn on a factory floor in the event of an emergency. Or, it could be requesting a fleet of devices to report back their current configuration and status.
+This implementation is focused on a single _application_ and _device_ interaction. Some use cases may have a single command affecting multiple devices. For instance, an _application_ may request all warning lights of a factory floor to turn on in the event of an emergency. Or, it could be requesting a fleet of devices to report back their current configuration and status.
 
 For a small group of _devices_, an approach could be for the _application_ to send an individual command to each device and reconcile the response.
 
 However, when the target _device_ group is large, this would require the _application_ to send 1 per-_device_. In this case, _devices_ could subscribe to a common topic for fan-out types of messages, and the application only needs to send out a single message and reconcile the individual _device_ responses.
 
-For instance, `device1`, `device2`, and `device3`, can all subscribe to the topic `device_status/request`. When the _application_ publishes a message on that topic, each device will receive a copy of the message, can act upon it, and each can the publish their response to a common `device_status/response` topic. The _application_ or [AWS IoT Rules Engine](https://docs.aws.amazon.com/iot/latest/developerguide/iot-rules.html) can then reconcile the responses. This pattern is covered in the [Designing MQTT Topics for AWS IoT Core whitepaper](https://docs.aws.amazon.com/whitepapers/latest/designing-mqtt-topics-aws-iot-core/mqtt-design-best-practices.html).
+For instance, `device1`, `device2`, and `device3`, can all subscribe to the topic `device_status/request`. When the _application_ publishes a message on that topic, each device will receive a copy of the message, can act upon it, and each can then publish their response to a common `device_status/response` topic, mentioning their device ID in the payload. The _application_ or [AWS IoT Rules Engine](https://docs.aws.amazon.com/iot/latest/developerguide/iot-rules.html) can then reconcile the responses. This pattern is covered in the [Designing MQTT Topics for AWS IoT Core whitepaper](https://docs.aws.amazon.com/whitepapers/latest/designing-mqtt-topics-aws-iot-core/mqtt-design-best-practices.html).

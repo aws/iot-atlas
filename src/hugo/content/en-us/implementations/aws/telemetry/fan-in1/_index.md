@@ -19,7 +19,7 @@ This implementation focuses on the use of an AWS IoT Rule Action to put telemetr
   - _I want to convert all Celsius temperature readings to Fahrenheit_
   - _I want to reformat sensor data into a standard format_
 - Aggregate data
-  - _I want to calculate the sum, min, max, avg (e.g. aggregate function) from values from groupings of devices before storage_
+  - _I want to calculate the sum, min, max, avg (e.g., aggregate function) from values from groupings of devices before storage_
 - Enrich device data with data from other data stores
   - _I want to add device metadata from our device model stored in a database_
 
@@ -40,7 +40,7 @@ This implementation focuses on the use of an AWS IoT Rule Action to put telemetr
 1. _Devices_ establish an MQTT connection to the _AWS IoT Core_ endpoint, and then publish message to the `dt/plant1/dev_n/temp` (data telemetry) topic. This is a location and device specific topic to deliver telemetry messages for a given device or sensor.
 1. The _IoT Rule_ queries a wildcard topic `dt/plant1/+/temp` from the _AWS IoT Core_ to consolidate messages across devices for plant1 and PUTs those messages onto a _Amazon Kinesis Data Firehose_ stream.
 1. The _Amazon Kinesis Data Firehose_ stream buffers messages, by time or size, into arrays of events then and notifies a Lambda function passing the event array along for processing.
-1. The _Lambda_ function performs the desired action on the events returning them to _Kinesis_ along with modifications to the data payload a and a status of successful or failed processing of each event.
+1. The _Lambda_ function performs the desired action on the events returning them to _Kinesis_ along with modifications to the data payload and a status of successful or failed processing of each event.
 1. _Amazon Kinesis Data Firehose_ finally delivers messages to the S3 bucket for later analysis and processing. 
 
 {{% center %}}
@@ -86,10 +86,6 @@ stream -> bucket: put_objects(enriched_events)
 
 {{% /center %}}
 
-### Assumptions
-
-This implementation approach assumes all _Devices_ are not connected to the internet or _AWS Iot Core_ at all times. Each _Device_ publishes temperature telemetry to a single topic. The implementations also assumes that all temperature readings are emitted with a sensor name value of Temperature Celsius or Temperature Fahrenheit and follow the message payload formats outlined below. Alternative options are also called out within the sections below.
-
 ## Implementation
 
 To experiment quickly, you can test this pattern out by publishing messages with the MQTT test client in the AWS IoT console or using the [IoT Device Simulator](https://aws.amazon.com/solutions/implementations/iot-device-simulator/). In a real world implementation you'll configure multiple devices as AWS IoT Things that each securely communicate with your _AWS IoT Core_ endpoint. 
@@ -97,6 +93,10 @@ To experiment quickly, you can test this pattern out by publishing messages with
 {{% notice note %}}
 The configuration and code samples focus on the _fan-in_ design in general. Please refer to the [Getting started with AWS IoT Core](https://docs.aws.amazon.com/iot/latest/developerguide/iot-gs.html) for details on creating things, certificates, obtaining your endpoint, and publishing telemetry to your endpoint. The configuration and code samples below are used to demonstrate the basic capability of the _Fan-in_ pattern. Refer to the [AWS Lambda](https://docs.aws.amazon.com/lambda/latest/dg/welcome.html) and [Amazon Kinesis Data Firehose](https://docs.aws.amazon.com/firehose/latest/dev/what-is-this-service.html) Developer Guides for more in depth discussion of these services.
 {{% /notice %}}
+
+### Assumptions
+
+This implementation approach assumes all _Devices_ are not connected to the internet or _AWS Iot Core_ at all times. Each _Device_ publishes temperature telemetry to a single topic. The implementation also assumes that all temperature readings are emitted with a sensor name value of Temperature Celsius or Temperature Fahrenheit and follow the message payload formats outlined below. Alternative options are also called out within the sections below.
 
 ### Devices
 
@@ -151,7 +151,7 @@ Temperature in Fahrenheit telemetry JSON payload for device2 in plant1.
 
 ### AWS Lambda for Transforming Telemetry Data
 
-In the AWS _Lambda_ console create a new _Lambda_ function. To use the code below choose `Author from scratch` with a Python 3.8 runtime and paste the code below into the code editor. To create your own function choose the `Use a blueprint` option and select the Blueprint `kinesis-firehose-process-record-python` which you'll then modify per your requirements.
+In the AWS _Lambda_ console create a new _Lambda_ function. To use the code below, choose `Author from scratch` with a Python 3.8 runtime and paste the code below into the code editor. To create your own function, choose the `Use a blueprint` option and select the Blueprint `kinesis-firehose-process-record-python` which you'll then modify per your requirements.
 
 1. Name your function `fan-in_device_temperature_converter`
 1. For Execution role choose `Create a new role with basic Lambda permissions`
@@ -241,7 +241,7 @@ In the AWS Console for _Amazon Kinesis Data Firehose_
 1. On the Configure settings screen scroll down and click `Next`
 1. On the Review screen click `Create delivery screen`
 
-Alternatively your _AWS IoT Rule_ can achieve the Fan-in pattern with actions that send messages to [Amazon Kinesis Data Streams](https://aws.amazon.com/kinesis/data-streams/) where other applications can read and act on buffered telemetry data, [Amazon Kinesis Data Analytics](https://aws.amazon.com/kinesis/data-analytics/) to perform analytics processing of data real time with SQL or Apache Flink, SQS message queues where you can asynchronously process messages, or any other of of the supported [AWS IoT Rule Actions](https://docs.aws.amazon.com/iot/latest/developerguide/iot-rule-actions.html). 
+Alternatively, your _AWS IoT Rule_ can achieve the Fan-in pattern with actions that send messages to [Amazon Kinesis Data Streams](https://aws.amazon.com/kinesis/data-streams/) where other applications can read and act on buffered telemetry data, [Amazon Kinesis Data Analytics](https://aws.amazon.com/kinesis/data-analytics/) to perform analytics processing of data real time with SQL or Apache Flink, SQS message queues where you can asynchronously process messages, or any other of of the supported [AWS IoT Rule Actions](https://docs.aws.amazon.com/iot/latest/developerguide/iot-rule-actions.html). 
 
 ### IoT Rule
 

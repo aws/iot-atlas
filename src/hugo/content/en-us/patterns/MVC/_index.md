@@ -8,11 +8,11 @@ summary: "Recommendation for the design and structure of device software"
 
 IoT devices have a common set of concerns:
 
-* report the current state of the device, attached sensors and actuators
+* reporting the current state of the device, attached sensors, and actuators
 * processing control messages (both remote and local)
 * presenting status information
 
-The device software should also be easy to test and reuse across multiple projects, hardware platforms, languages, and SDKs. Some devices are 'one-way' only reporting state or taking action, while others are 'two-way,' performing both of these actions. The software design pattern should be generally composable to support all these uses as well as accommodate a flexible variety of peripherals, command sources, and interfaces. 
+The device software should also be easy to test and reuse across multiple projects, hardware platforms, languages, and SDKs. Some devices are 'one-way' only reporting state or taking action, while others are 'two-way', performing both of these actions. The software design pattern should be generally composable to support all these uses as well as accommodate a flexible variety of peripherals, command sources, and interfaces. 
 
 ## Solution
 
@@ -44,25 +44,25 @@ The **model** is best implemented by a [Singleton](https://en.wikipedia.org/wiki
 
 ### Practical Model View Controller
 
-Many hardware platforms would seemingly require a violation of the **model**-**controller** read-write separation. For example, registers with bit masks for multiple GPIO lines or other registers with different read/write behavior. Multiple **view**s may also be required, such as one for local LEDs or displays and another to handle formatting data into JSON or Protobuf for remote systems. Grouping actuations (like Display, LEDs, etc) also leads to using multiple **controller**s. 
+Many hardware platforms would seemingly require a violation of the **model**-**controller** read-write separation. For example, registers with bit masks for multiple GPIO lines or other registers with different read/write behavior. Multiple **views** may also be required, such as one for local LEDs or displays and another to handle formatting data into JSON or Protobuf for remote systems. Grouping actuations (like Display, LEDs, etc) also leads to using multiple **controller**s. 
 
 ![Model-View-Controller in Practice](PracMVC.png) 
 
 1. A **Hardware Abstraction Layer (HAL)**, a [Facade](https://en.wikipedia.org/wiki/Facade_pattern) pattern, where the details of bit masks or GPIO numbers or other specifics can be abstracted and made semantic to the application at hand by creating API calls such as `#LED_On` which would wrap the functionality of setting a particular GPIO Pin high or low.
 
-2. Multiple **view**s now read the model data. 
+2. Multiple **views** now read the model data. 
 
-3. The **connection** instantiates **protocol**s as needed to communicate locally and remotely.
+3. The **connection** instantiates **protocol** as needed to communicate locally and remotely.
 
 4. Communications received from the remote systems are held in an _Observable_ implementation by the **connection**.
 
-5. Multiple **controller**s subscribe to the **connection** _Observable_ as *Observer*s. 
+5. Multiple **controllers** subscribe to the **connection** _Observable_ as *Observer*s. 
 
 ### Practical Model View Controller Considerations
 
 The **HAL** uniquely contains the mapping of hardware specifics to the application representation. This facilitates testing as a mock HAL can be used when the hardware is not available. This _Facade_ aids portability in that the implementation of `#LED_On` can be modified to active-high or active-low logic, GPIO Pin numbers changed, etc.
 
-Having multiple **views** read the _Singleton_ **model** could cause exhaustion of resources or other run-time problems. Use of the [Observer Pattern](https://en.wikipedia.org/wiki/Observer_pattern) as intermediary can break this deadlock as well as provide a convenient integration point to install additional views for debug/logging or other uses without impacting the **model**. The **model** implements the _Observable_ interface while the various **view**s implement _Observer_. The **view**s then register with the **model** at run-time avoiding the creation on any dependencies.
+Having multiple **views** read the _Singleton_ **model** could cause exhaustion of resources or other run-time problems. Use of the [Observer Pattern](https://en.wikipedia.org/wiki/Observer_pattern) as intermediary can break this deadlock as well as provide a convenient integration point to install additional views for debug/logging or other uses without impacting the **model**. The **model** implements the _Observable_ interface while the various **views** implement _Observer_. The **views** then register with the **model** at run-time avoiding the creation on any dependencies.
 
 The **connection** implements the [Strategy](https://en.wikipedia.org/wiki/Strategy_pattern) Pattern as well as the _Observable_ interface. As a _Strategy_ the **connection** instantiates **protocol** objects as needed to varying transports (like MQTT and topic name). The **protocol** will also write to a **connection** managed _Observable_. The details of topic, transport, remote system, etc. are all separated from the reporting (**view**) and processing (**controller**) facilitating testing through mocks and composability for different applications (such as some devices only having some groups of signals, etc.).
 
@@ -81,7 +81,7 @@ For any device and system, first review the components and subsystems as to how 
 When the user pushes the local button (on a GPIO input for example), how shall this be processed? We desire to have low-latency response and the sytem should function without cloud connection. But when we do have connectivity, the mobile app should show the status also with low latency.
 
 * The button state (up/down/edge/etc) should be monitored and maintained by the **model**.
-* Subscribed **view**s can monitor these signals:
+* Subscribed **views** can monitor these signals:
 
   * The first **view** would request a 'local' **protocol** from the **connection** and report state.
 

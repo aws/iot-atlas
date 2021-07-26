@@ -22,7 +22,7 @@ The Telemetry pattern shown in the following diagram can deliver this functional
 
 1. The device obtains a measurement from a sensor operating in an environment remote from the IoT solution.
 2. The device publishes a message to the [message topic]({{< ref "/glossary/vocabulary#message-topic" >}}) `telemetry/deviceID` containing the measurement. This message is sent via a transport protocol to a protocol endpoint made available by the Server.
-3. The Server may then apply one or more [rule]({{< ref "/glossary/vocabulary#rule" >}})s to messages in order to perform fine-grained routing upon some or all of the message's measurement data. The routing can send a message to another component of the solution.
+3. The Server may then apply one or more [rules]({{< ref "/glossary/vocabulary#rule" >}}) to messages in order to perform fine-grained routing upon some or all of the message's measurement data. The routing can send a message to another component of the solution.
 
 ## Considerations
 
@@ -33,7 +33,7 @@ When implementing this pattern, consider the following questions:
 #### What is the desired _sense-to-insight_ or _sense-to-action_ processing latency of telemetry messages in the IoT solution?
 
 IoT solutions with processing latency requirements at the level of **&micro;-seconds or milliseconds** should perform that processing on the device itself or possibly on a device [gateway]({{< ref "/patterns/gateway" >}}) connected to the device.  
-IoT solutions with processing latency requirements at the level of **Seconds**, **Minutes**, or even **Hours** should perform that processing on the cloud by default.  
+IoT solutions with processing latency requirements at the level of **seconds**, **minutes**, or even **hours** should perform that processing on the cloud by default.  
 In general processing of messages in "seconds" through "low minutes", should be performed by components connected directly to the protocol endpoint. Commonly a component's processing will be triggered by the arrival of messages that match certain criteria.  
 Processing telemetry from "low minutes" through "hours" should be performed in an asynchronous fashion. When messages arrive that match desired criteria events will most often be placed in a processing queue and a component will perform the necessary work. Once complete, often the component will emit a message to a "work complete" [message topic]({{< ref "/glossary/vocabulary#message-topic" >}}).
 
@@ -78,7 +78,7 @@ If the answer is "greater than a one second horizon", the IoT solution should wr
 
 #### What are some of the cost drivers of telemetry in an IoT solution?
 
-Usually the most common drivers of cost in an IoT solution are the number of devices, the device sample and reporting frequencies, the necessary _sense-to-insight_ or _sense-to-action_ telemetry processing latency, the [device data density]({{< ref "/glossary/vocabulary#device-data-density" >}}) and finally the retention duration of [telemetry archiving]({{< ref "/patterns/telemetry_archiving" >}})
+Usually the most common drivers of cost in an IoT solution are the number of devices, the device sample and reporting frequencies, the necessary _sense-to-insight_ or _sense-to-action_ telemetry processing latency, the [device data density]({{< ref "/glossary/vocabulary#device-data-density" >}}) and finally the retention duration of [telemetry archiving]({{< ref "/patterns/telemetry_archiving" >}}).
 
 #### Does each device "actively un-align" its reporting interval with other devices?
 
@@ -104,7 +104,7 @@ A detailed example of the logic involved to gather sensor data and send it throu
 
 Either with code on the device or code operating in a device [gateway]({{< ref "/patterns/gateway" >}}), a device samples a sensor in a fashion similar to the following pseudocode:
 
-```python3
+```python
 device_id = get_device_id()
 while should_poll():  # loop until we should no longer poll sensors
     for sensor in list_of_sensors:
