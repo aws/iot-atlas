@@ -16,6 +16,13 @@ function usage {
 HELP_USAGE
 }
 
+function build_docker_image {
+    if ! [[ $(docker images -q $IMAGE_NAME) ]]; then
+        echo "********** Building container image for Hugo and dependencies"
+        docker build -t $IMAGE_NAME --build-arg GOPROXY=$(go env GOPROXY) .
+    fi
+}
+
 function hugo_build {
     echo "********** Building site content"
 
@@ -24,10 +31,7 @@ function hugo_build {
     rm -rf hugo/public/*
     shopt -u dotglob
 
-    # Create local docker images for Hugo build and testing process
-    if ! [[ $(docker images -q $IMAGE_NAME) ]]; then
-        DOCKER_BUILDKIT=1 docker build -t $IMAGE_NAME --file Dockerfile-build .
-    fi
+    build_docker_image
 
     # Generate full content
     docker run --rm -v "$PWD/hugo:/hugo-project" $IMAGE_NAME hugo
@@ -86,10 +90,8 @@ function sync_s3 {
 }
 
 function hugo_develop {
+    build_docker_image
     echo "********** Starting Hugo for local development"
-    if ! [[ $(docker images -q $IMAGE_NAME) ]]; then
-        DOCKER_BUILDKIT=1 docker build -t $IMAGE_NAME --file Dockerfile-build .
-    fi
     docker run --rm -p 1313:1313 -v "$PWD/hugo:/hugo-project" $IMAGE_NAME
     exit 0
 }
