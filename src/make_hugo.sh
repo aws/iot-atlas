@@ -16,6 +16,13 @@ function usage {
 HELP_USAGE
 }
 
+function build_docker_image {
+    if ! [[ $(docker images -q $IMAGE_NAME) ]]; then
+        echo "********** Building container image for Hugo and dependencies"
+        docker build -t $IMAGE_NAME --build-arg GOPROXY=$(go env GOPROXY) .
+    fi
+}
+
 function hugo_build {
     echo "********** Building site content"
 
@@ -24,10 +31,7 @@ function hugo_build {
     rm -rf hugo/public/*
     shopt -u dotglob
 
-    # Create local docker images for Hugo build and testing process
-    if ! [[ $(docker images -q $IMAGE_NAME) ]]; then
-        DOCKER_BUILDKIT=1 docker build -t $IMAGE_NAME --file Dockerfile-build .
-    fi
+    build_docker_image
 
     # Generate full content
     docker run --rm -v "$PWD/hugo:/hugo-project" $IMAGE_NAME hugo
@@ -51,7 +55,7 @@ function hugo_validate {
         echo $DOCKERHUB_PASSWORD | docker login -u $DOCKERHUB_USERNAME --password-stdin
     fi
     # Run for every translated language
-    if ! uri_path_validate "en" || 
+    if ! uri_path_validate "en" ||
        ! uri_path_validate "zh" ||
        ! uri_path_validate "fr"; then
         echo "********** Validation errors, stopping local Hugo instance"
@@ -67,7 +71,7 @@ function hugo_validate {
 function uri_path_validate {
     # Run link checker for specific URI
     # Note - run the container on the host network to access Hugo running in a separate container
-    #      - Exclude on github.com/aws in case of editURL changes. Will catch during automation   
+    #      - Exclude on github.com/aws in case of editURL changes. Will catch during automation
     echo "********** Running link checks on language: $1"
     if ! docker run --rm --net="host" raviqqe/muffet \
             "--exclude=https://github.com/aws/" \
@@ -86,10 +90,8 @@ function sync_s3 {
 }
 
 function hugo_develop {
+    build_docker_image
     echo "********** Starting Hugo for local development"
-    if ! [[ $(docker images -q $IMAGE_NAME) ]]; then
-        DOCKER_BUILDKIT=1 docker build -t $IMAGE_NAME --file Dockerfile-build .
-    fi
     docker run --rm -p 1313:1313 -v "$PWD/hugo:/hugo-project" $IMAGE_NAME
     exit 0
 }
@@ -132,6 +134,3 @@ fi
 if [[ $BUCKET ]]; then
     sync_s3
 fi
-
-
-

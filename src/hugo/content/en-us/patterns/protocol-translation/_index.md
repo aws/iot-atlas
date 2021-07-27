@@ -25,7 +25,7 @@ The edge logic on the gateway executes the translation of the industrial protoco
 
 The Protocol Translation design shown in the following diagram can be used to solve these challenges.
 
-![Protocol Translation Design](ProtocolTranslation.png)([PPTx](/patterns/iot-atlas-patterns.pptx))
+![Protocol Translation Design](ProtocolTranslation.png)
 
 - The left portion of this diagram represents the devices at the edge of the IoT solution that are connected with at least one [Gateway]({{< ref "/patterns/gateway" >}}).
 - The gateway is the only component connected to the internet and the red arrow indicates that this connection should be encrypted/protected accordingly.

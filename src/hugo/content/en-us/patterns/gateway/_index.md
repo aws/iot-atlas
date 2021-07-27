@@ -24,19 +24,19 @@ Both designs in the above diagram expose a gateway endpoint using the same type 
 
 1. the "up" gateway design is configured to mirror "upward" messages; in the diagram, messages arriving from the device with the `telemetry/deviceID` [topic]({{< ref "/glossary/vocabulary#message-topic" >}}) will be mirrored up to the server using the same topic.
 2. The device publishes a message containing the measurement via a transport protocol to the local protocol endpoint exposed by the gateway.
-3. The gateway receives the message
+3. The gateway receives the message.
 4. The gateway publishes the message to the server on the same topic as the received message.
    - if the gateway is unsuccessful sending the message to the server, the message is processed using an upward message [approach](#what-approach-should-be-used-when-storing-messages-for-later-delivery)
-5. The server receives the message
+5. The server receives the message.
 
 #### Down gateway (aka "South")
 
 1. the "down" gateway is configured to listen to the server and mirror "downward" messages; in the diagram, messages arriving from the server with the `commands/deviceID` topic will be mirrored down to the device listening for messages with the same topic.
-2. The server publishes a message to the gateway via the transport protocol's endpoint
-3. The gateway receives the message
+2. The server publishes a message to the gateway via the transport protocol's endpoint.
+3. The gateway receives the message.
 4. The gateway publishes the message to the device listening on the gateway endpoint on the same topic as the received message
-   - if the gateway is unsuccessful sending the message to the device, the message is processed using a downward message [approach](#what-approach-should-be-used-when-storing-messages-for-later-delivery)
-5. The device receives the message
+   - if the gateway is unsuccessful sending the message to the device, the message is processed using a downward message [approach](#what-approach-should-be-used-when-storing-messages-for-later-delivery).
+5. The device receives the message.
 
 ## Considerations
 
