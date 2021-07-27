@@ -31,7 +31,7 @@ RUN curl -JLO https://golang.org/dl/go${GO_VERSION}.linux-amd64.tar.gz \
 
 # Configure GOPROXY if passed in as build argument
 ARG GOPROXY
-RUN test -n "$GOPROXY" && go env -w GOPROXY=${GOPROXY}
+RUN (test -n "$GOPROXY" && go env -w GOPROXY="${GOPROXY}") || true
 
 # Download Hugo source
 RUN curl -JLO https://github.com/gohugoio/hugo/archive/refs/tags/v${HUGO_VERSION}.tar.gz \
