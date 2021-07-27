@@ -42,9 +42,10 @@ RUN curl -JLO https://github.com/gohugoio/hugo/archive/refs/tags/v${HUGO_VERSION
 COPY ./docker_assets/convert.go /tmp/hugo-${HUGO_VERSION}/markup/goldmark/convert.go
 COPY ./docker_assets/config.go /tmp/hugo-${HUGO_VERSION}/markup/goldmark/goldmark_config/config.go
 
-# Download dependencies and compile Hugo
+# Download dependencies (with a single retry to catch timeouts) and compile Hugo
+ARG GOLDMARK_PLANTUML="github.com/OhYee/goldmark-plantuml@v1.0.3"
 RUN cd hugo-${HUGO_VERSION} \
-    && go get github.com/OhYee/goldmark-plantuml@v1.0.3 \
+    && (go get ${GOLDMARK_PLANTUML} || go get ${GOLDMARK_PLANTUML}) \
     && go install --tags extended \
     && mv $HOME/go/bin/hugo /hugo
 
