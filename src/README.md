@@ -1,6 +1,6 @@
 ## IoT Atlas Local Development
 
-The IoT Atlas uses the [Hugo](https://gohugo.io/) framework for rendering the website. To ensure that all new or updated content is valid, there are a series of checks performed on URL links, internal references, and spell-checking (for U.S. English at present) for common errors.
+The IoT Atlas uses the [Hugo](https://gohugo.io/) framework for rendering the website. To ensure that all new or updated content is valid, a series of checks are performed on URL links, internal references, and spell-checking (for U.S. English at present) for common errors.
 
 All of this is automated when a GitHub pull request is accepted. Failures will result in the updates _not_ being applied and corrections required on the pull request.
 
