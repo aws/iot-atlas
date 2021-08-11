@@ -30,7 +30,7 @@ Once you have completed development, run `./make_hugo.sh` without any arguments 
 
 This is by design by including the `/src/hugo/public/*` statement in the main `.gitignore` file.
 
-As the website is statically generated through build process and the synched to an Amazon S3 bucket, there is no need to keep the content locally in the repository. It is only used for local validation of content.
+As the website is statically generated through a build process and synched to an Amazon S3 bucket, there is no need to keep the content locally in the repository. It is only used for local validation of content.
 
 **When adding or changing the weight of an article, the left-side menu is not updating even with a browser refresh. How can I see the new structure?**
 
