@@ -12,7 +12,6 @@ To reduce installing dependencies, the main requirement is to have Docker instal
 
 ### Testing Process
 
-1.
 1. Once you are ready to start creating content, open a terminal window and change into the `src/` directory, then start in developer mode which will run Hugo locally in fast render mode.
 
    ```bash
