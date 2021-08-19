@@ -20,3 +20,9 @@ This is a list of AWS implementations for the _Command_ pattern.
 This is a list of AWS implementations for the _Telemetry_ pattern.
 
 {{% children page="Telemetry" style="div" depth="2" startdepth="1" description="true" showhidden="true" %}}
+
+## Device Bootstrap
+
+This is a list of AWS implementations for the _Device Bootstrap_ pattern.
+
+{{% children page="Device Bootstrap" style="div" depth="2" startdepth="1" description="true" showhidden="true" %}}
