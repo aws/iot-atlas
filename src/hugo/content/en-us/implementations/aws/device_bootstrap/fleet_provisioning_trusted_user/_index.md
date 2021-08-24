@@ -21,8 +21,17 @@ Devices must have the ability to accept temporary credentials over a secure conn
 Fleet Provisioning by Trusted User is the recommended approach when a high degree of security is needed, when the manufacturing chain is not trusted, or it is not possible to provision devices in the manufacturing chain due to technical limitations, cost, or application specific limitations. Using this approach, the credentials are never exposed to the manufacturing supply chain.
 
 ## Reference Architecture
+![Trusted user](iot-cognito.svg)
 
-### Basic flow
+The details of this flow are as follows:
+1. Client authenticates against a user pool.
+2. The user pool assigns 3 JWT tokens (Id, Access, and Refresh) to the client.
+3. The Id JWT is passed to the identity pool and a role is chosen via the JWT claims. The user then receives IAM temporary credentials with privileges that are based on the IAM role that was mapped to the group that user belongs to.
+4. The user can then make CreateProvisioningClaim call to AWS IoT Core for a specific provisioning template
+5. AWS IoT Core response with temporary certificate and key pair
+6. The user provisions the temporary certificate and key pair to the device, and initiate fleet provisioning with bootstrap certificate
+
+At this point, the device have valid certificate to authenticate with AWS IoT MQTT gatwaye.
 
 
 ## Implementation
