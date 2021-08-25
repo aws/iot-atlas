@@ -107,3 +107,7 @@ function App() {
 
 export default withAuthenticator(App);
 ```
+
+## Considerations
+
+This implementation covers the basics of Amplify and React code. It does not cover certain aspects that may arise in production use.
