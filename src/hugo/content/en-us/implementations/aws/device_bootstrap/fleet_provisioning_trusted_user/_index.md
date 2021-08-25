@@ -35,3 +35,75 @@ At this point, the device have valid certificate to authenticate with AWS IoT MQ
 
 
 ## Implementation
+
+To experiment quickly, you can test this pattern out by using AWS Amplify and Amazon Cognito.
+AWS Amplify is a set of tools and services that can be used together or on their own, to help front-end web and mobile developers build scalable full stack applications, powered by AWS.
+Amazon Cognito lets you add user sign-up, sign-in, and access control to your web and mobile apps quickly and easily. Amazon Cognito scales to millions of users and supports sign-in with social identity providers, such as Apple, Facebook, Google, and Amazon, and enterprise identity providers via SAML 2.0 and OpenID Connect. 
+
+```javascript
+import logo from './logo.svg';
+import './App.css';
+import { withAuthenticator, AmplifySignOut } from '@aws-amplify/ui-react'
+import { Auth } from 'aws-amplify';
+
+var AWS = require('aws-sdk');
+AWS.config.update({region: 'us-east-1'});
+
+// This function is called when user clicks Create Provisioning Claim button
+async function CreateProvisioningClaim() {
+  try {
+    // Call AWS IoT Core with the user current credentials
+    // Cognito identity pool authRole should be added appropriate permissions to access AWS IoT API
+    Auth.currentCredentials()
+      .then(credentials => {
+        const iot = new AWS.Iot({
+          apiVersion: '2015-05-28',
+          credentials: Auth.essentialCredentials(credentials)
+        });
+
+        // Set the name of Fleet provisioning template
+        var params = {
+          templateName: 'TrustedUserProvisioningTemplate'
+        };
+        
+        // Call AWS IoT API
+        iot.createProvisioningClaim(params, function(err, data) {
+          if (err) console.log(err, err.stack); // an error occurred
+          else     console.log(data);           // successful response
+        });
+      });
+  } catch (error) {
+    // error handling.
+    alert(error);
+  }
+}
+
+function App() {
+  return (
+    <div className="App">
+      <header className="App-header">
+        <img src={logo} className="App-logo" alt="logo" />
+        <div>
+          <input type="button" value="Create Provisioning Claim" onClick={CreateProvisioningClaim} />
+        </div>
+        <p>
+          Edit <code>src/App.js</code> and save to reload.
+        </p>
+        <p>
+          <AmplifySignOut />
+        </p>
+        <a
+          className="App-link"
+          href="https://reactjs.org"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Learn React
+        </a>
+      </header>
+    </div>
+  );
+}
+
+export default withAuthenticator(App);
+```
