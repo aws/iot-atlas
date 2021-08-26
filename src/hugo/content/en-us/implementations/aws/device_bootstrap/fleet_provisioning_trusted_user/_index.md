@@ -1,7 +1,7 @@
 ---
 title: "Fleet Provisioning - Trusted User"
 weight: 10
-summary: "Bootstraping device provisioning using Cognito authenticated user and Provisioning template"
+summary: "Bootstrapping  device provisioning using Amazon Cognito authenticated user and Provisioning template"
 ---
 
 AWS IoT provides an application programming interface (API) that allows mobile/web applications to generate temporary certificates and private keys. The device leaves the manufacturing facility with no unique credentials, and only [Trusted Users]({{< ref "/glossary/vocabulary#trusted-user" >}}) are able to provision the device with its unique credentials.
@@ -20,6 +20,12 @@ Devices must have the ability to accept temporary credentials over a secure conn
 
 Fleet Provisioning by Trusted User is the recommended approach when a high degree of security is needed, when the manufacturing chain is not trusted, or it is not possible to provision devices in the manufacturing chain due to technical limitations, cost, or application specific limitations. Using this approach, the credentials are never exposed to the manufacturing supply chain.
 
+Example use cases where Fleet Provisioning by Trusted User should be used are:
+1. When device originates from an original device manufacturer and you don’t have the ability to include unique key material.
+2. When the cost of maintaining [public key infrastructure (PKI)](https://en.wikipedia.org/wiki/Public_key_infrastructure) is too high.
+3. There is no trust channel between your PKI and the manufacturing facility, or using the manufacturer PKI is not an option.
+4. Devices that enter insecure channels such as a third-party distributor.
+
 ## Reference Architecture
 ![Trusted user](iot-cognito.svg)
 
@@ -31,8 +37,10 @@ The details of this flow are as follows:
 5. AWS IoT Core response with temporary certificate and key pair
 6. The user provisions the temporary certificate and key pair to the device, and initiate fleet provisioning with bootstrap certificate
 
-At this point, the device have valid certificate to authenticate with AWS IoT MQTT gatwaye.
+At this point, the device have valid certificate to authenticate with AWS IoT MQTT gateway.
 
+Below diagram describes end-to-end fleet provisioning by trusted user flow:
+![flow](fp_by_trasted_user_flow.png)
 
 ## Implementation
 
