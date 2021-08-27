@@ -1,5 +1,5 @@
 ---
-title: "Fleet Provisioning - Trusted User"
+title: "Device Bootstrap - Trusted User"
 weight: 10
 summary: "Bootstrapping  device provisioning using Amazon Cognito authenticated user and Provisioning template"
 ---
@@ -207,3 +207,9 @@ Below is a simple template example. When the device triggers the provisioning pr
 ## Considerations
 
 This implementation covers the basics of Amplify and React code. It does not cover certain aspects that may arise in production use.
+
+### Approach for Other User Authentication or Languages
+
+While the example above utilizes AWS services, the Trusted User for fleet provisioning can be accomplished with other user authentication approaches.
+As long as an authenticated user can invoke the [```createProvisioningClaim()```](https://docs.aws.amazon.com/iot/latest/apireference/API_CreateProvisioningClaim.html) API,
+this meets the requirement for obtaining the temporary credentials to pass to the device. AWS SDK's for other languages have support for the ```createProvisioningClaim()``` using the standard SigV4 auth.
