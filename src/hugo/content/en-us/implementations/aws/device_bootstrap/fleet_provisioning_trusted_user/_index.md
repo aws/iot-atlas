@@ -212,4 +212,4 @@ This implementation covers the basics of Amplify and React code. It does not cov
 
 While the example above utilizes AWS services, the Trusted User for fleet provisioning can be accomplished with other user authentication approaches.
 As long as an authenticated user can invoke the [```createProvisioningClaim()```](https://docs.aws.amazon.com/iot/latest/apireference/API_CreateProvisioningClaim.html) API,
-this meets the requirement for obtaining the temporary credentials to pass to the device. AWS SDK's for other languages have support for the ```createProvisioningClaim()``` using the standard SigV4 auth.
+this meets the requirement for obtaining the temporary credentials to pass to the device. AWS SDK's for other languages have support for the ```createProvisioningClaim()``` using the AWS standard [Signature Version 4 signing process](https://docs.aws.amazon.com/general/latest/gr/signature-version-4.html).
