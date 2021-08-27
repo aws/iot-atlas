@@ -60,3 +60,6 @@ Words and definitions used across the IoT Atlas.
 
 ### Sensor
 > a sensor is used to measure some aspect of the environment around it
+
+### Trusted User
+> Authenticated and authorized end user or installation technician, using a mobile/web app to configure the device in its deployed location.
