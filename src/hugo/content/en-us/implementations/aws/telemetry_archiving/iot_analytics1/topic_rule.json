@@ -1,0 +1,19 @@
+{
+    "sql": "SELECT * FROM 'dt/+/aggregate'",
+    "ruleDisabled": false,
+    "awsIotSqlVersion": "2016-03-23",
+    "actions": [
+        {
+            "iotAnalytics": {
+                "channelName": "etl_device_data",
+                "roleArn": "arn:aws:iam::652635199121:role/EtlAnalyticsRole"
+            }
+        }
+    ],
+    "errorAction": {
+        "cloudwatchLogs": {
+            "roleArn": "arn:aws:iam::652635199121:role/EtlAnalyticsRole",
+            "logGroupName": "/aws/iot-rules/etl_data"
+        }
+    }
+}

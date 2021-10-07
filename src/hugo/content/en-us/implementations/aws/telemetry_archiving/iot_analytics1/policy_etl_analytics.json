@@ -1,0 +1,23 @@
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": "iotanalytics:BatchPutMessage",
+            "Resource": [
+                "arn:aws:iotanalytics:us-east-1:652635199121:channel/etl_device_data"
+            ]
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "logs:CreateLogStream",
+                "logs:DescribeLogStreams",
+                "logs:PutLogEvents"
+            ],
+            "Resource": [
+                "arn:aws:logs:us-east-1:652635199121:log-group:/aws/iotanalytics/pipeline:*"
+            ]
+        }
+    ]
+}

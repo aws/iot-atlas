@@ -1,0 +1,11 @@
+{
+    "datasetName": "etl_aggregate_data",
+    "actions": [
+        {
+            "actionName": "onetime_action",
+            "queryAction": {
+                "sqlQuery": "select * from etl_aggregate_store"
+            }
+        }
+    ]
+}

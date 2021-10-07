@@ -1,0 +1,47 @@
+{
+    "datastoreName": "etl_aggregate_store",
+    "datastoreStorage": {
+        "serviceManagedS3": {}
+    },
+    "retentionPeriod": {
+        "unlimited": true
+    },
+    "fileFormatConfiguration": {
+        "parquetConfiguration": {
+            "schemaDefinition": {
+                "columns": [
+                    {
+                        "name": "device_id",
+                        "type": "string"
+                    },
+                    {
+                        "name": "temperature",
+                        "type": "int"
+                    },
+                    {
+                        "name": "temperature_fahrenheit",
+                        "type": "int"
+                    },
+                    {
+                        "name": "humidity",
+                        "type": "int"
+                    },
+                    {
+                        "name": "timestamp",
+                        "type": "string"
+                    }
+                ]
+            }
+        }
+    },
+    "datastorePartitions": {
+        "partitions": [
+            {
+                "timestampPartition": {
+                    "attributeName": "timestamp",
+                    "timestampFormat": "yyyy-MM-dd HH:mm:ss"
+                }
+            }
+        ]
+    }
+}
