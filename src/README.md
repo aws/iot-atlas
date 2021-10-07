@@ -1,6 +1,6 @@
 ## IoT Atlas Local Development
 
-The IoT Atlas uses the [Hugo](https://gohugo.io/) framework for rendering the website. To ensure that all new or updated content is valid, there a series of checks performed on URL links, internal references, and spell-checking (for U.S. English at present) for common errors.
+The IoT Atlas uses the [Hugo](https://gohugo.io/) framework for rendering the website. To ensure that all new or updated content is valid, a series of checks are performed on URL links, internal references, and spell-checking (for U.S. English at present) for common errors.
 
 All of this is automated when a GitHub pull request is accepted. Failures will result in the updates _not_ being applied and corrections required on the pull request.
 
@@ -12,7 +12,6 @@ To reduce installing dependencies, the main requirement is to have Docker instal
 
 ### Testing Process
 
-1.
 1. Once you are ready to start creating content, open a terminal window and change into the `src/` directory, then start in developer mode which will run Hugo locally in fast render mode.
 
    ```bash
@@ -31,7 +30,7 @@ Once you have completed development, run `./make_hugo.sh` without any arguments 
 
 This is by design by including the `/src/hugo/public/*` statement in the main `.gitignore` file.
 
-As the website is statically generated through build process and the synched to an Amazon S3 bucket, there is no need to keep the content locally in the repository. It is only used for local validation of content.
+As the website is statically generated through a build process and synched to an Amazon S3 bucket, there is no need to keep the content locally in the repository. It is only used for local validation of content.
 
 **When adding or changing the weight of an article, the left-side menu is not updating even with a browser refresh. How can I see the new structure?**
 

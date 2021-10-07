@@ -26,7 +26,7 @@ To minimize installing local dependencies on your system, the only requirement i
 
 1. [Fork](https://github.com/aws/iot-atlas/fork) the repository in your GitHub account.
 1. Optionally create a branch for your changes
-1. From the `iot-atlas/src` directory, run `./make-hugo.sh -d` to start in local development mode.
+1. From the `iot-atlas/src` directory, run `./make_hugo.sh -d` to start in local development mode.
 
 {{%  notice note %}}
 The first time doing this will locally build the docker container which will take 5-15 minutes. After that, the local `temporary/hugo-ubuntu` will be used to run hugo in a container
@@ -38,7 +38,7 @@ This final step starts a local server on port 1313 serving the rendered content.
 
 ### Validate Content
 
-Once you are happy with the new content, run `./make-hugo.sh -v`, which will _validate_ all the content is properly formatted, and that if you included any hyperlinks that they are valid. If errors are returned, correct and re-run.
+Once you are happy with the new content, run `./make_hugo.sh -v`, which will _validate_ all the content is properly formatted, and that if you included any hyperlinks that they are valid. If errors are returned, correct and re-run.
 
 When the message _\***\*\*\*\*\*** Validation completed successfully,_ is returned, validation is complete.
 
