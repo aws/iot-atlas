@@ -211,7 +211,10 @@ Save the below JSON to a file named policy_assume_role.json before executing the
         {
             "Effect": "Allow",
             "Principal": {
-                "Service": "iot.amazonaws.com"
+                "Service": [
+                    "iot.amazonaws.com",
+                    "iotanalytics.amazonaws.com"
+                ]
             },
             "Action": "sts:AssumeRole"
         }
@@ -243,16 +246,16 @@ Save the below JSON to a file named policy_etl_analytics.json. Be sure to replac
                 "logs:PutLogEvents"
             ],
             "Resource": [
-                "arn:aws:logs:<REGION>:<ACCOUNT-ID>:log-group:/aws/iotanalytics/pipeline:*"
+                "arn:aws:logs:<REGION>:<ACCOUNT-ID>:log-group:/iotanalytics/pipeline:*"
             ]
         }
     ]
 }
 ```
 
-To enable logging for IoT Core execute the following command, be sure to replace `<ACCOUNT-ID>` with your account id before you execute the command. This step is optional.
+To enable logging for IoT Analytics execute the following command, be sure to replace `<ACCOUNT-ID>` with your account id before you execute the command. This step is optional.
 ```yaml
-aws iot set-logging-options --logging-options-payload roleArn=arn:aws:iam::<ACCOUNT-ID>:role/EtlAnalyticsRole,logLevel=INFO
+aws iotanalytics put-logging-options --logging-options roleArn=arn:aws:iam::<ACCOUNT-ID>:role/EtlAnalyticsRole,level=ERROR,enabled=true
 ```
 
 Now you can create the topic rule.  
@@ -386,7 +389,7 @@ aws iot describe-endpoint
 ```
 Ensure you have python 3 installed on your machine. Then execute the command below.
 ```yaml
-python data_generator.py
+python3 data_generator.py
 ```
 
 Before running the command above, save the python code below to a file named data_generator.py
@@ -402,7 +405,7 @@ from datetime import datetime
 
 
 iot_client = boto3.client(
-    "iot-data", endpoint_url="<IOT-CORE-ENDPOINT>"
+    "iot-data", endpoint_url="https://<IOT-CORE-ENDPOINT>"
 )
 
 
@@ -420,8 +423,8 @@ def read(sensor):
 
 if __name__ == "__main__":
     sensor_count = 10  # maps to physical threads on your machine
-    seconds_between_publishing = 10
-    publishes = 50
+    seconds_between_publishing = 2
+    publishes = 100
 
     with Pool(sensor_count) as p:
         for _ in range(publishes):
@@ -430,15 +433,15 @@ if __name__ == "__main__":
 
 ```
 
-## IoT Analytics Dataset
+## IoT Analytics Datasets
 
 ```yaml
-aws iotanalytics create-dataset --cli-input-json file://dataset.json
+aws iotanalytics create-dataset --cli-input-json file://dataset_raw.json
 ```
 
 ```JSON
 {
-    "datasetName": "etl_aggregate_data",
+    "datasetName": "raw_data",
     "actions": [
         {
             "actionName": "onetime_action",
@@ -450,25 +453,72 @@ aws iotanalytics create-dataset --cli-input-json file://dataset.json
 }
 ```
 
+```yaml
+aws iotanalytics create-dataset --cli-input-json file://dataset_group_by.json
+```
+
+```JSON
+{
+    "datasetName": "group_by_data",
+    "actions": [
+        {
+            "actionName": "onetime_action",
+            "queryAction": {
+                "sqlQuery": "SELECT device_id, avg(temperature) AVG_TEMP, max(temperature) MAX_TEMP, min(temperature) MIN_TEMP, avg(humidity) AVG_HUMIDTY FROM etl_aggregate_store group by (device_id) order by device_id"
+            }
+        }
+    ]
+}
+```
+
+## QuickSight Visualization
+
+Your datasets have been created, but to populate them we need to run them. We didn't set a schedule so we will run them now. Execute the command, or run your dataset from the console.
+
+```yaml
+aws iotanalytics create-dataset-content --dataset-name raw_data
+```
+
+Navigate to QuickSight from the AWS Console. Choose "Sign up for QuickSight" if you haven't already. Standard edition is adequate for this exercise. Choose Enterprise if you wish to use advanced features or Enterprise Q if you want advanced features and AI/ML Insights.
+
+For Standard setup, leave "Authentication Method" as the default value of "Use IAM federated identities & QuickSight-managed users"
+Leave your region set to the region you've built your IoT Analytics assets in.
+Provide a universally unique QuickSight Account Name
+enter a Notification email address
+Under "QuickSight access to AWS services" make sure you check the box next to IoT Analytics
+
+Once your account is created choose Datasets on the left menu, then click the New dataset button.
+From the list of services find AWS IoT Analytics and choose it, then select raw_data and leave the dataset name as raw_data
+
+choose Clustered Combo Bar Chart
+In Field Wells set X axis to device ID
+add humidity to the bars and aggregate function of median
+add temperature to the bars and aggregate function of median
+add humidity average to lines
+
+![Sensor Data Analysis](raw_sensor_data_analysis.png)
+
 ### Considerations
 
 pipelines noisy data - blank values, varying schema. can filter messages
 
-data from sitewise as a source to the channel
+you might create another pipeline that reads in device settings from the device shadow or device attributes from the device registry such as software version to compare how the state of the device affects the device readings. try adding another pipeline of your own to enhance data in your datastore.
 
-enriching data from the shadow or device registry
+data from SiteWise as a source to the channel
 
 using customer managed vs aws managed buckets
+
+
 
 
 ### Cleanup
 
 ```yaml
 aws iam delete-role-policy --role-name EtlAnalyticsRole --policy-name EtlAnalyticsPolicy
-aws iam delete-role --role-name EtlAnalyticsRole
 aws iot delete-topic-rule --rule-name onetime_analytics
 
 aws iotanalytics delete-channel --channel-name etl_device_data
 
-aws iotanalytics delete-dataset --dataset-name etl_aggregate_data
+aws iotanalytics delete-dataset --dataset-name raw_data
+aws iotanalytics delete-dataset --dataset-name group_by_data
 ```
