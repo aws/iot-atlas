@@ -8,16 +8,6 @@ ETL of IoT telemetry data is the process that transforms and prepares telemetry 
 
 ## Use Cases
 
-<!--
-#TODO come up with use case for both ETL and cold storage, divvy up the below references as applicable
-
-https://docs.aws.amazon.com/wellarchitected/latest/iot-lens/databases.html
-https://docs.aws.amazon.com/wellarchitected/latest/iot-lens/failure-management.html
-https://docs.aws.amazon.com/wellarchitected/latest/iot-lens/review.html
-https://docs.aws.amazon.com/wellarchitected/latest/iot-lens/cost-effective-resources.html
-https://docs.aws.amazon.com/wellarchitected/latest/iot-lens/analytics.html
--->
-
 - Archive
     - _I need to near real time archive sensor transmitted to AWS IoT Core with SQL queries over the MQTT broker_
     - _I need to bulk archive sensor data from a SCADA historian or other data store_
@@ -52,8 +42,8 @@ https://docs.aws.amazon.com/wellarchitected/latest/iot-lens/analytics.html
 {{< tabs groupId="analytics" align="center" >}}
 {{% tab name="1a. MQTT Real Time" %}}
 
-1. _Devices_ establish an MQTT connection to the _AWS IoT Core_ endpoint, and then publish message to the `dt/plant1/dev_n/temp` (data telemetry) topic. This is a location and device specific topic to deliver telemetry messages for a given device or sensor.
-1. A Topic Rules publishes the results of a wildcard SQL `dt/plant1/+/temp` from the MQTT Broker then puts messages onto the _IoT Channel_ which stores that data in an S3 bucket for a set period of time.
+1. _Devices_ establish an MQTT connection to the _AWS IoT Core_ endpoint, and then publish message to the `dt/plant1/device/aggregate` (data telemetry) topic. This is a location and device specific topic to deliver telemetry messages for a given device or sensor.
+1. A Topic Rules publishes the results of a wildcard SQL `dt/plant1/+/aggregate` from the MQTT Broker then puts messages onto the _IoT Channel_ which stores that data in an S3 bucket for a set period of time.
 1. The _IoT Analytics Pipeline_ executes a workflow of activities including reading from the Channel, performing filtering and transformations, and writing to the Datastore.
 1. The _IoT Analytics Datastore_ makes transformed data available to source Datasets.
 1. The _IoT Analytics Dataset_ is a materialized view defined in SQL over a Datastore, multiple Datasets can be created over a single Datastore. 
@@ -88,10 +78,10 @@ participant "<$SimpleStorageServiceS3>\nS3 Bucket" as bucket
 
 == Publish, Archive, Transform, and Store ==
 devices -> broker : connect(iot_endpoint)
-devices -> broker : publish("dt/d_1/aggregate")
-devices -> broker : publish("dt/d_2/aggregate")
-devices -> broker : publish("dt/d_n/aggregate")
-broker <- rule : select * from \n'dt/+/aggregate'
+devices -> broker : publish("d1/topic")
+devices -> broker : publish("d2/topic")
+devices -> broker : publish("d3/topic")
+broker <- rule : select * from \n'+/topic'
 rule -> channel : batchPutMessage(\n\tmessages)'
 
 channel <- pipeline : p1.read(raw_data)
@@ -111,7 +101,7 @@ pipeline -> bucket: put(xformed_data)
 {{% tab name="1b. SCADA Historian"  %}}
 
 1. _DMS_ reads data from a historian database and puts it onto an _Amazon Kinesis Data Stream_. A _Lambda_ function then reads data from Kinesis using the SDK and uses IoT Analytics Channel batchPutMessage to put data onto the _IoT Analytics Channel_. This pattern demonstrates how IoT Analytics makes the same ETL and analysis flows available for near real time and batch. 
-1. A Topic Rules publishes the results of a wildcard SQL `dt/plant1/+/temp` from the MQTT Broker then puts messages onto the _IoT Channel_ which stores that data in an S3 bucket for a set period of time.
+1. A Topic Rules publishes the results of a wildcard SQL `dt/plant1/+/aggregate` from the MQTT Broker then puts messages onto the _IoT Channel_ which stores that data in an S3 bucket for a set period of time.
 1. The _IoT Analytics Pipeline_ executes a workflow of activities including reading from the Channel, performing filtering and transformations, and writing to the Datastore.
 1. The _IoT Analytics Datastore_ makes transformed data available to source Datasets.
 1. The _IoT Analytics Dataset_ is a materialized view defined in SQL over a Datastore, multiple Datasets can be created over a single Datastore. 
@@ -169,19 +159,11 @@ pipeline -> bucket: put(xformed_data)
 
 ## Implementation
 
-In this implementation you'll setup an IoT Analytics implementation and then use a python script to simulate devices publishing messages to your AWS IoT Core endpoint. Upon deployment into production you’ll configure multiple devices as AWS IoT Things that each securely communicate with a Gateway and or your AWS IoT Core endpoint.
+In this implementation you'll setup an IoT Analytics archival and ETL processing flow and then use a python script to simulate devices publishing messages to your AWS IoT Core endpoint to test you setup. Upon deployment into production you’ll configure multiple devices as AWS IoT Things that each securely communicate with a Gateway and or your AWS IoT Core endpoint.
 
 {{% notice note %}}
 The processing flow for path **1a** is covered in the implementation below. Flow **1b** has the same processing flow as **1a** for step 2 and beyond once data is put  onto the Channel. In flow **1b** bulk data is sourced from a SCADA historian database and is pushed into the _IoT Analytics Channel_ using [BatchPutMessage](https://docs.aws.amazon.com/iotanalytics/latest/APIReference/API_BatchPutMessage.html) by a Lambda function after DMS replicates data to Kinesis. Refer to the aws blog titled [Injecting data into AWS IoT Analytics from a Kinesis Data Stream](https://aws.amazon.com/blogs/iot/injecting-data-into-aws-iot-analytics-from-amazon-kinesis-data-streams/) to consume Kinesis data with a Lambda. Refer to  [AWS DMS with a Kinesis target](https://docs.aws.amazon.com/dms/latest/userguide/CHAP_Target.Kinesis.html) to read data from a historian database and write to Kinesis. 
 {{% /notice %}}
-
-<!--
-#ToDO good reference for IOT analytics CLI commands -> https://aws.amazon.com/blogs/iot/collecting-organizing-monitoring-and-analyzing-industrial-data-at-scale-using-aws-iot-sitewise-part-3/
-
-https://aws.amazon.com/blogs/iot/data-ingestion-using-aws-step-functions-aws-iot-events-and-aws-iot-analytics/
-
-https://aws.amazon.com/blogs/iot/injecting-data-into-aws-iot-analytics-from-amazon-kinesis-data-streams/ 
--->
 
 ### Assumptions
 
@@ -189,15 +171,15 @@ This implementation assumes that you are comfortable using the AWS CLI. If you'v
 
 ## IoT Analytics Channel
 
-First establish a Channel for Analytics Data. The Channel can be stored in an AWS or customer managed bucket, in this case we'll default to AWS managed. The storage retention can be indefinite or based on time in years and days, in this case we'll default to indefinite. 
+First establish a Channel for Analytics Data. The Channel data can be stored in an AWS or customer managed S3 bucket; in this case we'll default to AWS managed. The storage retention can be indefinite or based on time in years and days; in this case we'll default to indefinite. 
 
 ```yaml
-aws iotanalytics create-channel --channel-name etl_device_data
+aws iotanalytics create-channel --channel-name etl_archive_telemetry
 ```
 
 ## Iot Core Topic Rule
 
-An IoT Core Topic Rule will batch put messages into a channel as they are published to the MQTT Broker. You'll need to create an IAM role with a trust relationship for iot.amazon.com and permission to BatchPutMessage(s) to IoT Analytics and optionally to write logs to CloudWatch if logging is enabled in your IoT Core settings. 
+An IoT Core Topic Rule will batch put messages into a channel as they are published to the MQTT Broker. You'll need to create an IAM role with a trust relationship for iot.amazon.com and permission to BatchPutMessage(s) to IoT Analytics and for convenience we'll also use this policy to allow IoT Analytics and IoT Core to write logs to CloudWatch. 
 
 First create a policy allowing IoT Core to assume the EtlAnalyticsRole so that it can write to your Channel. 
 ```yaml
@@ -235,7 +217,7 @@ Save the below JSON to a file named policy_etl_analytics.json. Be sure to replac
             "Effect": "Allow",
             "Action": "iotanalytics:BatchPutMessage",
             "Resource": [
-               "arn:aws:iotanalytics:<REGION>:<ACCOUNT-ID>:channel/etl_device_data"
+               "arn:aws:iotanalytics:<REGION>:<ACCOUNT-ID>:channel/etl_archive_telemetry"
             ]
         },
         {
@@ -253,25 +235,26 @@ Save the below JSON to a file named policy_etl_analytics.json. Be sure to replac
 }
 ```
 
-To enable logging for IoT Analytics execute the following command, be sure to replace `<ACCOUNT-ID>` with your account id before you execute the command. This step is optional.
+To enable logging for IoT Analytics and IoT core execute the following commands and be sure to replace `<ACCOUNT-ID>` with your account id. This step is optional.
 ```yaml
 aws iotanalytics put-logging-options --logging-options roleArn=arn:aws:iam::<ACCOUNT-ID>:role/EtlAnalyticsRole,level=ERROR,enabled=true
+aws iot set-v2-logging-options --role-arn arn:aws:iam::<ACCOUNT-ID>:role/EtlAnalyticsRole --default-log-level DEBUG
 ```
 
 Now you can create the topic rule.  
 ```yaml
-aws iot create-topic-rule --rule-name etl_analytics --topic-rule-payload file://topic_rule.json
+aws iot create-topic-rule --rule-name etl_archival --topic-rule-payload file://topic_rule.json
 ```
 Save the JSON below to a file named topic_rule.json. Be sure to `<ACCOUNT-ID>` with your account id before executing the command above. 
 ```json
 {
-    "sql": "SELECT * FROM 'dt/+/aggregate'",
+    "sql": "SELECT * FROM 'dt/plant1/+/aggregate'",
     "ruleDisabled": false,
     "awsIotSqlVersion": "2016-03-23",
     "actions": [
         {
             "iotAnalytics": {
-                "channelName": "etl_device_data",
+                "channelName": "etl_archive_telemetry",
                 "roleArn": "arn:aws:iam::<ACCOUNT-ID>:role/EtlAnalyticsRole"
             }
         }
@@ -287,7 +270,7 @@ Save the JSON below to a file named topic_rule.json. Be sure to `<ACCOUNT-ID>` w
 
 ## IoT Analytics Datastore
 
-The IoT Analytics Datastore is a storage location for transformed data after the Pipeline workflow performs ETL. The Datastore stores data in S3 either in an AWS or customer managed bucket, for simplicity this implementation uses an AWS managed bucket. Like a Channel storage is indefinite or time based in years and days, we will use the default of indefinite in this case. A Datastore also must choose a data format of JSON or Parquet with a schema definition, this cannot be changed after creation. In this case we'll use Parquet with a defined schema. Execute the command below to create your Datastore.
+The IoT Analytics Datastore is a storage location for output after an IoT Analytics Pipeline workflow performs ETL. The Datastore is backed by S3 either in an AWS or customer managed bucket, for simplicity this implementation uses an AWS managed bucket. Like a Channel storage is indefinite or time based in years and days, we will use the default of indefinite in this case. A Datastore also must choose a data format of JSON or Parquet with a schema definition, this cannot be changed after creation. In this case we'll use Parquet with a defined schema. Note that a new field 'temperature_fahrenheit' is defined which we'll populate later with our Pipeline, if you create new fields in a another activity later, you'll have to recreate your Datastore with an updated Parquet schema. You don't need to define a schema for JSON but Parquet provides compression and speed. Execute the command below to create a Datastore.
 
 ```yaml
 aws iotanalytics create-datastore --cli-input-json file://datastore.json
@@ -295,7 +278,7 @@ aws iotanalytics create-datastore --cli-input-json file://datastore.json
 Save the JSON below to a file name datastore.json before executing the command above.
 ```JSON
 {
-    "datastoreName": "etl_aggregate_store",
+    "datastoreName": "etl_archival_store",
     "datastoreStorage": {
         "serviceManagedS3": {}
     },
@@ -357,23 +340,23 @@ Save the JSON below to a file named pipeline.json before executing the command a
     "pipelineActivities": [
         {
             "channel": {
-                "name": "2",
-                "channelName": "etl_device_data",
-                "next": "calculate_fahrenheit_activity"
+                "name": "read_channel",
+                "channelName": "etl_archive_telemetry",
+                "next": "calculate_fahrenheit"
             }
         },
         {
             "math": {
-                "name": "calculate_fahrenheit_activity",
+                "name": "calculate_fahrenheit",
                 "attribute": "temperature_fahrenheit",
                 "math": "(temperature * 9/5) + 32 ",
-                "next": "3"
+                "next": "write_datastore"
             }
         },
         {
             "datastore": {
-                "name": "3",
-                "datastoreName": "etl_aggregate_store"
+                "name": "write_datastore",
+                "datastoreName": "etl_archival_store"
             }
         }
     ]
@@ -387,7 +370,7 @@ Our IoT Analytics environment is setup and our Pipeline is ready to perform ETL 
 ```yaml
 aws iot describe-endpoint
 ```
-Ensure you have python 3 installed on your machine. Then execute the command below.
+Ensure you have python 3 installed on your machine. Then execute the command below. 
 ```yaml
 python3 data_generator.py
 ```
@@ -413,11 +396,11 @@ def read(sensor):
     message = {}
     message["device_id"] = f"sensor{sensor}"
     message["temperature"] = random.randrange(45, 92, 2)
-    message["humidity"] = random.randrange(0, 100, 2)
+    message["humidity"] = random.randrange(0, 99, 2)
     message["timestamp"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     print(message)
 
-    topic = f"dt/{message['device_id']}/aggregate"
+    topic = f"dt/plant1/{message['device_id']}/aggregate"
     iot_client.publish(topic=topic, payload=json.dumps(message))
 
 
@@ -435,9 +418,15 @@ if __name__ == "__main__":
 
 ## IoT Analytics Datasets
 
+An IoT Analytics Dataset is a materialized view of the data in a Datastore. You can create many Datasets from a single Datastore. When you perform analytics in QuickSight or with a Jupyter notebook you'll read in the Dataset as your data source. We will create two Datasets below, one with the raw data which we'll build a QuickSight visualization from later and another with some aggregate statistical values as an example of a second Dataset. If you'd like to preview the data you can take the SQL Queries from the JSON below and use the AWS Console for IoT Analytics Datastore and execute a test query in the create Dataset flow.
+
+Execute the command below to create a Dataset. 
+
 ```yaml
 aws iotanalytics create-dataset --cli-input-json file://dataset_raw.json
 ```
+
+Copy the JSON below to a file name dataset_raw.json before executing the command above.
 
 ```JSON
 {
@@ -446,16 +435,19 @@ aws iotanalytics create-dataset --cli-input-json file://dataset_raw.json
         {
             "actionName": "onetime_action",
             "queryAction": {
-                "sqlQuery": "select * from etl_aggregate_store"
+                "sqlQuery": "select * from etl_archival_store"
             }
         }
     ]
 }
 ```
 
+Execute the command below to create a Dataset. 
+
 ```yaml
 aws iotanalytics create-dataset --cli-input-json file://dataset_group_by.json
 ```
+Copy the JSON below to a file name dataset_group_by.json before executing the command above.
 
 ```JSON
 {
@@ -464,7 +456,7 @@ aws iotanalytics create-dataset --cli-input-json file://dataset_group_by.json
         {
             "actionName": "onetime_action",
             "queryAction": {
-                "sqlQuery": "SELECT device_id, avg(temperature) AVG_TEMP, max(temperature) MAX_TEMP, min(temperature) MIN_TEMP, avg(humidity) AVG_HUMIDTY FROM etl_aggregate_store group by (device_id) order by device_id"
+                "sqlQuery": "SELECT device_id, avg(temperature) AVG_TEMP, max(temperature) MAX_TEMP, min(temperature) MIN_TEMP, avg(humidity) AVG_HUMIDTY FROM etl_archival_store group by (device_id) order by device_id"
             }
         }
     ]
@@ -473,7 +465,7 @@ aws iotanalytics create-dataset --cli-input-json file://dataset_group_by.json
 
 ## QuickSight Visualization
 
-Your datasets have been created, but to populate them we need to run them. We didn't set a schedule so we will run them now. Execute the command, or run your dataset from the console.
+Your datasets have been created, but they are empty. To populate them we need to run them. We didn't set a schedule so we will run them manually now. Execute the command below, or choose to run your dataset from the console.
 
 ```yaml
 aws iotanalytics create-dataset-content --dataset-name raw_data
@@ -481,44 +473,105 @@ aws iotanalytics create-dataset-content --dataset-name raw_data
 
 Navigate to QuickSight from the AWS Console. Choose "Sign up for QuickSight" if you haven't already. Standard edition is adequate for this exercise. Choose Enterprise if you wish to use advanced features or Enterprise Q if you want advanced features and AI/ML Insights.
 
-For Standard setup, leave "Authentication Method" as the default value of "Use IAM federated identities & QuickSight-managed users"
-Leave your region set to the region you've built your IoT Analytics assets in.
-Provide a universally unique QuickSight Account Name
-enter a Notification email address
-Under "QuickSight access to AWS services" make sure you check the box next to IoT Analytics
+- For Standard setup, leave "Authentication Method" as the default value of "Use IAM federated identities & QuickSight-managed users"
+- Leave your region set to the region you've built your IoT Analytics assets in.
+- Provide a universally unique QuickSight Account Name
+- Enter a Notification email address
+- Under "QuickSight access to AWS services" make sure you check the box next to IoT Analytics
 
 Once your account is created choose Datasets on the left menu, then click the New dataset button.
 From the list of services find AWS IoT Analytics and choose it, then select raw_data and leave the dataset name as raw_data
 
-choose Clustered Combo Bar Chart
-In Field Wells set X axis to device ID
-add humidity to the bars and aggregate function of median
-add temperature to the bars and aggregate function of median
-add humidity average to lines
+- Choose Clustered Combo Bar Chart
+- In Field Wells set X axis to device ID
+- Add humidity to the bars and aggregate function of median
+- Add temperature to the bars and aggregate function of median
+- Add humidity average to lines
 
 ![Sensor Data Analysis](raw_sensor_data_analysis.png)
 
+### Pipeline Reprocessing
+
+An Engineer identified that the humidity sensors are reporting data in a range of 0-99 but your end users require to see these reports with values from 1-100. To correct this we will update pipeline to add 1 to each Humidity value. 
+
+```yaml
+aws iotanalytics update-pipeline --cli-input-json file://pipeline.json
+```
+Save the JSON below to your existing file named pipeline.json before executing the command above.
+```JSON
+{
+    "pipelineName": "calculate_fahrenheit",
+    "pipelineActivities": [
+        {
+            "channel": {
+                "name": "read_channel",
+                "channelName": "etl_archive_telemetry",
+                "next": "calculate_fahrenheit"
+            }
+        },
+        {
+            "math": {
+                "name": "calculate_fahrenheit",
+                "attribute": "temperature_fahrenheit",
+                "math": "(temperature * 9/5) + 32 ",
+                "next": "update_humidity"
+            }
+        },
+        {
+            "math": {
+                "name": "update_humidity",
+                "attribute": "humidity",
+                "math": "humidity + 1",
+                "next": "write_datastore"
+            }
+        },
+        {
+            "datastore": {
+                "name": "write_datastore",
+                "datastoreName": "etl_archival_store"
+            }
+        }
+    ]
+}
+```
+
+Now that we've updated our pipeline, we'll need to reprocess it so that the corrected humidity values are available for analysis. After reprocessing is complete we'll need to update our Datasets as well. You can both view the updated rule and the reprocessing status in the AWS Console.
+
+```yaml
+aws iotanalytics start-pipeline-reprocessing --pipeline-name calculate_fahrenheit
+```
+
+After a moment you can create updated your Dataset content. 
+
+```yaml
+aws iotanalytics create-dataset-content --dataset-name raw_data
+```
+
+If you'd like to refresh SPICE in QuickSight navigate to QuickSight, choose Datasets, select raw_data and choose refresh now.  
+
 ### Considerations
 
-pipelines noisy data - blank values, varying schema. can filter messages
+Pipeline activities can be more robust than the sample we created, and can contain more steps than we included. Reference the [User Guide](https://docs.aws.amazon.com/iotanalytics/latest/userguide/pipeline-activities.html) for an overview of all the activities.
 
-you might create another pipeline that reads in device settings from the device shadow or device attributes from the device registry such as software version to compare how the state of the device affects the device readings. try adding another pipeline of your own to enhance data in your datastore.
+In Addition you might create another pipeline that reads in device settings from the device shadow or device attributes from the device registry such as software version to compare how the state of the device affects the device readings. Try adding another pipeline of your own to enhance data in your datastore.
 
-data from SiteWise as a source to the channel
+We covered sourcing out data from the MQTT Broker and from a Historian. AWS SiteWise is also a viable source of data for IoT Analytics as well as is S3. 
 
-using customer managed vs aws managed buckets
+In this implementation we covered using AWS managed buckets, you can also use your own buckets to store Channel, DataStore and DataSet data. A customer managed bucket is especially useful as the destination of a Dataset for inclusion with other data in a DataLake. You have the option to send Dataset output to an S3 bucket, AWS IoT Events, QuickSight, or a Jupyter Notebook.
 
-
-
+The datasets we created were based on SQL. More complex Analyses can be created with an automated workflow using a Docker Container and this approach allows for containerizing a Jupyter Notebook. See the [User Guide](https://docs.aws.amazon.com/iotanalytics/latest/userguide/automate.html) for details on how this works. If you take this approach you can even embed visualizations from your container dataset in the IoT Analytics console. 
 
 ### Cleanup
 
 ```yaml
+aws iotanalytics put-logging-options --logging-options roleArn=arn:aws:iam::652635199121:role/EtlAnalyticsRole,level=ERROR,enabled=false
+aws iot set-v2-logging-options --role-arn arn:aws:iam::652635199121:role/EtlAnalyticsRole --default-log-level DISABLED
+aws iot delete-topic-rule --rule-name etl_archival
 aws iam delete-role-policy --role-name EtlAnalyticsRole --policy-name EtlAnalyticsPolicy
-aws iot delete-topic-rule --rule-name onetime_analytics
-
-aws iotanalytics delete-channel --channel-name etl_device_data
-
+aws iam delete-role --role-name EtlAnalyticsRole
+aws iotanalytics delete-pipeline --pipeline-name calculate_fahrenheit
+aws iotanalytics delete-channel --channel-name etl_archive_telemetry
+aws iotanalytics delete-datastore --datastore-name etl_archival_store
 aws iotanalytics delete-dataset --dataset-name raw_data
 aws iotanalytics delete-dataset --dataset-name group_by_data
 ```
