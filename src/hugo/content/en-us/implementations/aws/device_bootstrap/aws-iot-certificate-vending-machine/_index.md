@@ -50,7 +50,7 @@ The basic representation of this flow can be represented as follows:
 
 Devices will use the public API endpoint to trigger its registration process. This request will contain it's unique identifier and registration token. The unique identifier will be used to build the thing's name. Registration token is a calculated hash value to be stored on the DynamoDB table. The token will be calculated by the device using the same hashing algorithm. Thus, CVM API compares the registration token which the device is provided with the one calculated previously and stored on the DynamoDB table. Since all devices share the same firmware, this token can be calculated by a combination of a "salt" and the device's unique identifier. We can summarise the process as follows:
 
-1. Device manufacturer inserts a record to the DynamoDB table as: `device_uid=DEVICE001, device_token=SHA256("YOURSECRETSALTHERE//DEVICE001")` _You can calculate this SHA256 hash with your favorite programming language, or using online SHA256 calculators._
+1. Device manufacturer inserts a record to the DynamoDB table as: `device_uid=DEVICE001, device_token=SHA256("YOUR_SECRET_SALT//DEVICE001")` _You can calculate this SHA256 hash with your favorite programming language, or using online SHA256 calculators._
 2. Device manufacturer places the salt string into the firmware for hashing.
 3. During runtime, firmware combines salt string and device's unique identifier to calculate the hash.
 4. Then, firmware sends a request with it's unique identifier and calculated registration token to initiate the registration process.
