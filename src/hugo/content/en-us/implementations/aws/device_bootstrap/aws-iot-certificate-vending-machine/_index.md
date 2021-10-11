@@ -499,6 +499,9 @@ Device is registered to AWS IoT Core using certificate vending machine method. Y
 
 This implementation covers the basics of an IoT certificate vending machine method. It does not cover certain aspects that may arise in production use.
 
+### Security and Authentication
+This implementation depends on a single unique identifier of a device. If your device unique identifiers are sequential or easy-to-estimate, you need to consider the leakage of your device token calculation formula and hash string. Thus, you may need to implement secondary unique identifier to mitigate the replay or increment attacks. In this situation, device should claim it's first unique ID, matching second unique ID, and matching calculated hash as example `device_token=SHA256("YOUR_SECRET_SALT//DEVICE_UID_1+DEVICE_UID_2")` to be registered.
+
 ### Service Quotas
 This implementation uses an AWS Lambda function to make AWS IoT Core API calls. You need to identify possible batch registration events and estimated throughput of IoT API calls to avoid hitting service limits and quotas.
 
