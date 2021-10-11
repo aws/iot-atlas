@@ -48,13 +48,16 @@ The basic representation of this flow can be represented as follows:
 
 ## Authentication
 
-Devices will use the public API endpoint to trigger its registration process. This request will contain it's unique identifier and registration token. The unique identifier will be used to build the thing's name. Registration token is a calculated hash value to be stored on the DynamoDB table. The token will be calculated by the device using the same hashing algorithm. Thus, CVM API compares the registration token which the device is provided with the one calculated previously and stored on the DynamoDB table. Since all devices share the same firmware, this token can be calculated by a combination of a "salt" and the device's unique identifier. We can summarise the process as follows:
+Devices will use the public API endpoint to trigger its registration process. This request will contain it's unique identifier and registration token. The unique identifier will be used to build the thing's name. Registration token is a calculated hash value to be stored on the DynamoDB table. The token will be calculated by the device using the same hashing algorithm. Thus, CVM API compares the registration token which the device is provided with the one calculated previously and stored on the DynamoDB table. Since all devices share the same firmware, this token can be calculated by a combination of a "salt" and the device's unique identifier. This salt is a secret string which makes `SHA256()` less predictible by the making input string longer. This secret salt string will be placed into your firmware. Since it's a sensitive material of your device connectivity flow, you need to take care of the security of it. Read more on **Considerations** section below.
+
+We can summarise the process as follows:
 
 1. Device manufacturer inserts a record to the DynamoDB table as: `device_uid=DEVICE001, device_token=SHA256("YOUR_SECRET_SALT//DEVICE001")` _You can calculate this SHA256 hash with your favorite programming language, or using online SHA256 calculators._
 2. Device manufacturer places the salt string into the firmware for hashing.
 3. During runtime, firmware combines salt string and device's unique identifier to calculate the hash.
 4. Then, firmware sends a request with it's unique identifier and calculated registration token to initiate the registration process.
 5. Device will receive an HTTP response to the request. The response contains the thing name which will be used as client ID, certificates, and AWS IoT Core MQTT endpoint. Device should save this information in it's non-volatile memory.
+
 
 ## Implementation
 
@@ -500,7 +503,14 @@ Device is registered to AWS IoT Core using certificate vending machine method. Y
 This implementation covers the basics of an IoT certificate vending machine method. It does not cover certain aspects that may arise in production use.
 
 ### Security and Authentication
+If your IoT devices exposed to the internet instead of an intranet, your API should be deployed as a public API endpoint. This will allow any internet-connected network to connect your API but also it exposes your API endpoint to possible attacks. To protect your API Gateway endpoint, use [Security in Amazon API Gateway
+](https://docs.aws.amazon.com/apigateway/latest/developerguide/security.html) documentation to enable features like API rate limiting or IP address based restrictions with AWS WAF.
+
 This implementation depends on a single unique identifier of a device. If your device unique identifiers are sequential or easy-to-estimate, you need to consider the leakage of your device token calculation formula and hash string. Thus, you may need to implement secondary unique identifier to mitigate the replay or increment attacks. In this situation, device should claim it's first unique ID, matching second unique ID, and matching calculated hash as example `device_token=SHA256("YOUR_SECRET_SALT//DEVICE_UID_1+DEVICE_UID_2")` to be registered.
+
+Your `device_token` is calculated by hashing functions using your secret salt string. You need to implement some extra layers to increase the protection of registration logic and protect your sensitive material. 
+- If your device's computing environment provides hardware based encryption blocks, or read protected memory blocks, you can leverage these features to reduce the possible attack surface. Almost all of modern MCU's provide these feature sets out of the box, otherwise you may need to include a TPM (Trusted Platform Module) component to your harware design.
+- You can use different secrets salts for different batches/series of devices. Thus, only one batch/series of devices use the same secret. This reduces the blast radius of a possible attack.
 
 ### Service Quotas
 This implementation uses an AWS Lambda function to make AWS IoT Core API calls. You need to identify possible batch registration events and estimated throughput of IoT API calls to avoid hitting service limits and quotas.
