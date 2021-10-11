@@ -4,13 +4,13 @@ weight: 10
 summary: "Archival and ETL of Telemetry Data using AWS IoT Analytics"
 ---
 
-ETL of IoT telemetry data is the process that transforms and prepares telemetry data for analytics, reporting, and archival. An _AWS IoT Analytics Pipeline_ can filter, select attributes, remove attributes, apply math functions, enrich device data or state and apply custom Lambda logic to data. 
+Extract, Transform and Load (ETL) of IoT telemetry data is the process that transforms and prepares telemetry data for analytics, reporting, and archival. An _AWS IoT Analytics Pipeline_ can filter, select attributes, remove attributes, apply math functions, enrich device data or state and apply custom AWS Lambda logic to data. 
 
 ## Use Cases
 
 - Archive
-    - _I need to near real time archive sensor transmitted to AWS IoT Core with SQL queries over the MQTT broker_
-    - _I need to bulk archive sensor data from a SCADA historian or other data store_
+    - _I need a near real time archive sensor transmitted to AWS IoT Core with SQL queries over the MQTT broker_
+    - _I need to bulk archive sensor data from a Supervisory and Control Data Acquisition (SCADA) historian or other data store_
 - Transform Data
     - _I need to transform sensor data, but I don't have specialized ETL developer skills or an ETL tool_ 
     - _I need to rapidly iterate on ETL transformations on sensor data_
@@ -18,14 +18,14 @@ ETL of IoT telemetry data is the process that transforms and prepares telemetry 
     - _I need to reprocess data sets I've already ingested and processed with new or updated transformations_
 - Analyze 
     - _I need to easily perform analysis on sensor data without setting up a BI tool or a DataLake_
-    - _I need to make transformed sensor data readily available for analysis in a BI tool or to an AI/ML notebook_
+    - _I need to make transformed sensor data readily available for analysis in a Business Intelligenc (BI) tool or to an AI/ML notebook_
 
 
 ## Reference Architecture
 
 - _Devices_ are the IoT things transmitting telemetry
 - _AWS IoT Core_ is the MQTT message broker processing messages on behalf of the clients and uses a Rule Action to put messages onto a Channel. 
-- _SCADA Historian_ is an on premises data storage of device data.
+- _SCADA Historian_ is an on-premises data storage of device data.
 - _Amazon Kinesis_ is a streaming target for historian data migration.
 - _Amazon Lambda_ runs a serverless function to process stream data from Kinesis and batch put it onto a Channel.
 - _AWS IoT Analytics_ comprises of 
@@ -100,14 +100,14 @@ pipeline -> bucket: put(xformed_data)
 {{% /tab %}}
 {{% tab name="1b. SCADA Historian"  %}}
 
-1. _DMS_ reads data from a historian database and puts it onto an _Amazon Kinesis Data Stream_. A _Lambda_ function then reads data from Kinesis using the SDK and uses IoT Analytics Channel batchPutMessage to put data onto the _IoT Analytics Channel_. This pattern demonstrates how IoT Analytics makes the same ETL and analysis flows available for near real time and batch. 
+1. _AWS Database Migration Service (DMS)_ reads data from a historian database and puts it onto an _Amazon Kinesis Data Stream_. A _Lambda_ function then reads data from Kinesis using the SDK and uses IoT Analytics Channel batchPutMessage to put data onto the _IoT Analytics Channel_. This pattern demonstrates how AWS IoT Analytics makes the same ETL and analysis flows available for near real time and batch. 
 1. A Topic Rules publishes the results of a wildcard SQL `dt/plant1/+/aggregate` from the MQTT Broker then puts messages onto the _IoT Channel_ which stores that data in an S3 bucket for a set period of time.
 1. The _IoT Analytics Pipeline_ executes a workflow of activities including reading from the Channel, performing filtering and transformations, and writing to the Datastore.
 1. The _IoT Analytics Datastore_ makes transformed data available to source Datasets.
 1. The _IoT Analytics Dataset_ is a materialized view defined in SQL over a Datastore, multiple Datasets can be created over a single Datastore. 
 1. _Amazon QuickSight_ reads from a Dataset and displays visualizations and dashboards.
 1. _Jupyter_ notebooks .
-1. _S3 DataLake_ stores Channel, Datastore and optionally Dataset data.
+1. _Amazon S3 DataLake_ stores Channel, Datastore and optionally Dataset data.
 
 ```plantuml
 @startuml
@@ -167,7 +167,7 @@ The processing flow for path **1a** is covered in the implementation below. Flow
 
 ### Assumptions
 
-This implementation assumes that you are comfortable using the AWS CLI. If you've not installed the AWS CLI, follow the  [installation of the AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2.html) instructions. The implementation also assumes you  using the default AWS CLI profile or you've set the corresponding session based shell variables [AWS_PROFILE](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-envvars.html) and [AWS_DEFAULT_REGION](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-envvars.html). Otherwise, if you are using a named profile be sure to either the `---profile <profile-name> and --region <aws-region>` arguments to your CLI commands.
+This implementation assumes that you are comfortable using the AWS Command Line Interface (CLI). If you've not installed the AWS CLI, follow the  [installation of the AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2.html) instructions. The implementation also assumes you  using the default AWS CLI profile or you've set the corresponding session based shell variables [AWS_PROFILE](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-envvars.html) and [AWS_DEFAULT_REGION](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-envvars.html). Otherwise, if you are using a named profile be sure to either the `---profile <profile-name> and --region <aws-region>` arguments to your CLI commands.
 
 ## IoT Analytics Channel
 
@@ -541,7 +541,7 @@ Now that we've updated our pipeline, we'll need to reprocess it so that the corr
 aws iotanalytics start-pipeline-reprocessing --pipeline-name calculate_fahrenheit
 ```
 
-After a moment you can create updated your Dataset content. 
+After a moment you can create your updated Dataset content. 
 
 ```yaml
 aws iotanalytics create-dataset-content --dataset-name raw_data
@@ -563,9 +563,11 @@ The datasets we created were based on SQL. More complex Analyses can be created 
 
 ### Cleanup
 
+The below CLI commands will clean up the IoT Core, IoT Analytics and IAM resources you created in this guide, in the correct order. Execute these to ensure you don't accrue AWS billing costs. Once the below commands are completed, you will also need to navigate to the CloudWatch console or use the CLI to set a retention period on the logs or delete them per your needs.
+
 ```yaml
-aws iotanalytics put-logging-options --logging-options roleArn=arn:aws:iam::652635199121:role/EtlAnalyticsRole,level=ERROR,enabled=false
-aws iot set-v2-logging-options --role-arn arn:aws:iam::652635199121:role/EtlAnalyticsRole --default-log-level DISABLED
+aws iotanalytics put-logging-options --logging-options roleArn=arn:aws:iam::<ACCOUNT-ID>:role/EtlAnalyticsRole,level=ERROR,enabled=false
+aws iot set-v2-logging-options --role-arn arn:aws:iam::<ACCOUNT-ID>:role/EtlAnalyticsRole --default-log-level DISABLED
 aws iot delete-topic-rule --rule-name etl_archival
 aws iam delete-role-policy --role-name EtlAnalyticsRole --policy-name EtlAnalyticsPolicy
 aws iam delete-role --role-name EtlAnalyticsRole
