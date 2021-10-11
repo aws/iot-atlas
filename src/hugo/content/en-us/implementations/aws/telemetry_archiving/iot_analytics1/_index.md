@@ -10,15 +10,15 @@ Extract, Transform and Load (ETL) of IoT telemetry data is the process that tran
 
 - Archive
     - _I need a near real time archive sensor transmitted to AWS IoT Core with SQL queries over the MQTT broker_
-    - _I need to bulk archive sensor data from a Supervisory and Control Data Acquisition (SCADA) historian or other data store_
+    - _I need to bulk archive sensor data from a Supervisory Control and Data Acquisition (SCADA) historian or other data store_
 - Transform Data
     - _I need to transform sensor data, but I don't have specialized ETL developer skills or an ETL tool_ 
     - _I need to rapidly iterate on ETL transformations on sensor data_
     - _I need to experiment and compare different ETL transformation on the same sensor data_
     - _I need to reprocess data sets I've already ingested and processed with new or updated transformations_
 - Analyze 
-    - _I need to easily perform analysis on sensor data without setting up a BI tool or a DataLake_
-    - _I need to make transformed sensor data readily available for analysis in a Business Intelligenc (BI) tool or to an AI/ML notebook_
+    - _I need to easily perform analysis on sensor data without setting up a Business Intelligence (BI) tool or a DataLake_
+    - _I need to make transformed sensor data readily available for analysis in a BI tool or to an AI/ML notebook_
 
 
 ## Reference Architecture
