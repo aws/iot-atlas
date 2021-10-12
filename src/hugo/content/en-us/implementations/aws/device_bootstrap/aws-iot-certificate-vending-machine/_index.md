@@ -61,11 +61,11 @@ We can summarise the process as follows:
 
 ## Implementation
 
-This implementation guide shows step-by-step instructions of the architecture shown above. You need to have AWS CLI installed on your workstation.
+This section provides implementation guidance for the architecture shown above. You need to have AWS CLI installed on your workstation.
 
 ### 1. Create an IoT Policy
 
-This IoT policy will be attached to every device provisioned by certificate vending machine. Following reference policy can be used as an example to restrict each device to its own topic.
+You can assign one generic template to each device provisioned by certificate vending machine. This policy can contain policy variable to act as dynamic. Following reference policy can be used as an example to restrict each device to its own topic.
 
 Save following file as `iot-policy.json`.
 
@@ -123,6 +123,20 @@ aws iot create-policy \
 
 ### 2\. Create the DynamoDB table to store device information.
 
+Amazon DynamoDB stores the device provisioning info not only before but also after the registration process. In this implementation, following JSON schema is designed to store device information. You can extend the schema with your requirements and application logic.
+
+| Attribute Name | Type | Description |
+| ----------- | ----------- |----- |
+| device_uid | String, Partition Key | Device's unique identifier |
+| device_token | String | Device's calculated hash |
+| is_enabled | Number | Allow/deny device to register. Values: `0` - `1`. |
+| is_registered | Number | Device's registration status. This value is written as `1` after the registration. Values: `0` - `1`. |
+| iot_core_thing_name | String | Device's thing name registered on IoT Core service. Available only after registration. |
+| iot_core_registered_on | String | Device's registration time stamp on IoT Core service. Available only after registration. |
+
+
+Navigate to Amazon DynamoDB console to create a table. Give the table name as `DeviceProvisioningInfoDB`, configure partition key field `device_uid` as `String`. Thus, DynamoDB records are accessed using device's unique identifier. Or you can simply run the following command to create the DynamoDB table in your default region.
+
 ```
 aws dynamodb create-table \
     --table-name DeviceProvisioningInfoDB \
@@ -134,7 +148,9 @@ aws dynamodb create-table \
 
 ### 3\. Deploy a Lambda Function which performs the registration logic.
 
-Save the following file as `lambda_function.py`
+AWS Lambda runs your application logic to perform registration logic on the cloud. The function interacts with Amazon DynamoDB and AWS IoT Core services to perform validations and create device's identity on IoT Core service. Finally, it prepares response in JSON format to return to the device over API Gateway.
+
+You can use following implementation as CVM Lambda function. Navigate Amazon Lambda console and create a new `python3.9` lambda function.
 
 ```python
 import json
@@ -282,47 +298,8 @@ def prepare_result(event, result_type, status_code=200, payload=None):
 
 ```
 
-Run following command to prepare lambda function deployment package.
+Make sure that you've created an IAM role to allow Lambda function accesses to AWS IoT Core and DynamoDB services to run required API calls. You can use following file as an example policy to be attached to the role. This reference IAM policy will allow lambda function to perform following restricted IoT and DynamoDB actions.
 
-```bash
-zip function.zip lambda_handler.py
-```
-
-
-Save the following file as `trust-policy.json`. This trust policy allows the Lambda function to assume role to perform allowed operations. 
-```json
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Effect": "Allow",
-      "Principal": {
-        "Service": "lambda.amazonaws.com"
-      },
-      "Action": "sts:AssumeRole"
-    }
-  ]
-}
-```
-
-Run following command to create a role named `IoTCVMLambdaInvokeRole` with `trust-policy.json` file.
-```bash
-aws iam create-role --role-name IoTCVMLambdaInvokeRole --assume-role-policy-document file://trust-policy.json
-```
-
-Take a note of `"Arn"` value which is the ARN of newly created role in the response.
-
-```
-"Arn": "arn:aws:iam::...",
-```
-
-Run following command to assign `AWSLambdaBasicExecutionRole` role to the newly created role.
-
-```bash
-aws iam attach-role-policy --role-name IoTCVMLambdaInvokeRole --policy-arn arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
-```
-
-Save following file as `lambda-policy.json`. This IAM policy will allow lambda function to perform following restricted IoT and DynamoDB actions.
 ```json
 {
     "Version": "2012-10-17",
@@ -354,79 +331,24 @@ Save following file as `lambda-policy.json`. This IAM policy will allow lambda f
 }
 ```
 
-Run following command to assign `lambda-policy.json` policy to the role.
+This Amazon Lambda function implementation uses some environment variables to store various configuration parameters. After deployment of the Lambda function. navigate to **Configuration > Environment Variables** to define these following variables.
 
-```bash
-aws iam put-role-policy --role-name IoTCVMLambdaInvokeRole --policy-name IoTCVMLambdaAccess --policy-document file://lambda-policy.json
-```
 
-After setting required permissions to the lambda function, deploy the `IoTCertificateVendingMachineFn` lambda function by running following command. Replace `<REGION>` with your region, e.g. `us-west-2`.
-This call also sets environment varilables to the lambda function. You can change them before running command or you can see and modify them on AWS Lambda console.
-
-```bash
-aws lambda create-function --function-name IoTCertificateVendingMachineFn \
---zip-file fileb://function.zip \
---handler lambda_function.lambda_handler \
---runtime python3.9 \
---role <ARN_OF_IoTCVMLambdaInvokeRole> \
---environment Variables="{ \
-    device_dynamodb_table=DeviceProvisioningInfoDB, \
-    iot_root_ca_url=https://www.amazontrust.com/repository/AmazonRootCA1.pem, \
-    region=<REGION>, \
-    thing_name_format=thing_%DEVICE_UID% \
-    iot_policy_name=SingleDevicePolicy \
-}"
-```
+| Variable | Default Value | Description |
+| ----------- | ----------- |----- |
+| device_dynamodb_table | `DeviceProvisioningInfoDB` | Name of the DynamoDB table used as device store. |
+| iot_root_ca_url | `https://www.amazontrust.com/repository/AmazonRootCA1.pem` | IoT Root CA certificate URL, this certificate will be included in the API reponse. |
+| region | _Your Default Region_ , e.g., `eu-west-1` | Region of DynamoDB and IoT Core resources. |
+| thing_name_format | `thing_%DEVICE_UID%` | Device name template for AWS IoT Core things, use `%DEVICE_UID%` variable to build dynamic thing names. |
+| iot_policy_name | `SingleDevicePolicy` | Default IoT policy to be assigned to devices after registration. |
 
 After deployment of the lambda function, configure it to be triggered by Amazon API Gateway.
 
 ### 4\. Configure API Gateway to trigger Lambda function
 
 
-In this section, you create an API Gateway REST API (`IoTCVMApi`) with one resource (`Registration`) and one method (`POST`). You associate the POST method with your Lambda function. Then, you deploy the API.
-
-When your API method receives an HTTP request, API Gateway invokes your Lambda function.
-
-**To create the API**
-
-1.  Open the  [API Gateway console](https://console.aws.amazon.com/apigateway).
-2.  Choose  **Create API**.
-3.  In the  **REST API**  box, choose  **Build**.
-4.  Under  **Create new API**, choose  **New API**.
-5.  Under  **Settings**, do the following:
-    1.  For  **API name**, enter  `IoTCVMApi`.
-    2.  For  **Endpoint Type**, choose  **Regional**.
-6.  Choose  **Create API**.
-
-
-**Create the resource**
-
-1.  In the  **Resources**  tree of your API, make sure that the root (`/`) level is highlighted. Then, choose  **Actions**,  **Create Resource**.
-2.  Under  **New child resource**, do the following:
-    1.  For  **Resource Name**, enter  `Registration`.
-    2.  Keep  **Resource Path**  set to  `/registration`.
-3.  Choose  **Create Resource**.
-
-**Create the POST method on the resource**
-
-1.  In the  **Resources**  tree of your API, make sure that  `/registration`  is highlighted. Then, choose  **Actions**,  **Create Method**.
-2.  In the small dropdown menu that appears under  `/registration`, choose  `POST`, and then choose the check mark icon.
-3.  In the method's  **Setup**  pane, do the following:
-    1.  For  **Integration type**, choose  **Lambda Function**.
-    2.  For  **Lambda Region**, choose the same AWS Region as your Lambda function.
-    3.  For  **Lambda Function**, enter the name of your function (`IoTCertificateVendingMachineFn`).
-    4.  Select  **Use Default Timeout**.
-    5.  Choose  **Save**.
-4.  In the  **Add Permission to Lambda Function**  dialog box, choose  **OK**.
-
-**Deploy the API**
-
-1.  In the  **Resources**  navigation pane, choose  **Actions**.
-2.  From the  **Actions**  drop-down menu, choose  **Deploy API**.
-3.  In the  **Deploy API**  dialog, choose an entry from the  **Deployment stage**  dropdown list.
-4.  Choose  **\[New Stage\]**, enter a name in  **Stage name** as `prod`.
-5.  Choose  **Deploy**  to deploy the API to the specified stage with default stage settings.
-6.  Copy and save the API invoke URL. This URL is the IoT CVM API endpoint.
+You need to create and configure an AWS API Gateway to make your Lambda function triggered by a HTTP POST call from the device. 
+Navigate to [API Gateway console](https://console.aws.amazon.com/apigateway), create an API Gateway REST API (`IoTCVMApi`) with one resource (`Registration`) as enpoint `/registration` and one method (`POST`). You associate the POST method with your Lambda function. Then, you deploy the API. Copy and save the API invoke URL. This URL is the IoT CVM API endpoint.
 
 ## Testing and simulation of a device behaviour
 
@@ -438,47 +360,18 @@ python3 <<< 'import hashlib; print(hashlib.sha256(b"DEVICE001//YOURSECRETSALTHER
 $ d20085ec140486cc01d0cade40e71a9f056fa2cadb2c4f78c883a3db5b5ec72e
 ```
 
-Add the record to DynamoDB table. As initial state, set `is_enabled=0` to demonstrate the error behaviour. Place your calculated device token to `<DEVICE_TOKEN>`.
+Navigate to DynamoDB console and add a record to DynamoDB table. As initial state, set `is_enabled=0` to demonstrate the error behaviour. Place your calculated device token to `<DEVICE_TOKEN>`. You can use following JSON as a reference:
 
-```bash
-aws dynamodb put-item \
-    --table-name DeviceProvisioningInfoDB  \
-    --item \
-        '{"device_uid": {"S": "DEVICE001"}, "device_token": {"S": "<DEVICE_TOKEN>"}, "is_enabled": {"N": "0"}, "is_registered": {"N": "0"}}'
-
-```
-
-Get the record to check if the record is created. On this step, you can also start using [DynamoDB Console](https://console.aws.amazon.com/dynamodb/home) to see and modify the data.
-
-```bash
-aws dynamodb get-item \
-    --table-name DeviceProvisioningInfoDB  \
-   --key '{"device_uid": {"S": "DEVICE001"}}'
+```json
+{
+    "device_uid": "DEVICE001",
+    "device_token": "<DEVICE_TOKEN>",
+    "is_enabled": "1",
+    "is_registered": "0"
+}
 ```
 
 Replace `API_ENDPOINT` with your API Gateway endpoint and perform a device registration API call as acting like your device's firmware.
-
-```bash
-curl -d '{"device_uid":"DEVICE001", "device_token":"<DEVICE_TOKEN>"}' -H "Content-Type: application/json" -X POST https://<API_ENDPOINT>/registration
-
-{"statusCode": 500, "status": "ERROR", "payload": {"message": "Device isn't enabled"}}%
-```
-
-You'll see the response that device is not enabled to register.
-
-If you encounter any other error, you can navigate to [Amazon CloudWatch Logs console](https://console.aws.amazon.com/cloudwatch/home#logsV2:log-groups) to see executation logs of the lambda function.
-
-After seeing the error reponse, change the DynamoDB record as `is_enabled=1` to allow registration.
-
-```bash
-aws dynamodb update-item \
-    --table-name DeviceProvisioningInfoDB  \
-   --key '{"device_uid": {"S": "DEVICE001"}}' \
-   --attribute-updates '{"is_enabled": {"Action":"PUT", "Value": {"N": "1"}}}' \
-   --return-values UPDATED_NEW
-```
-
-Run the same registration query again.
 
 ```bash
 curl -d '{"device_uid":"DEVICE001", "device_token":"d2008..."}' -H "Content-Type: application/json" -X POST https://API_ENDPOINT/registration
@@ -488,13 +381,7 @@ curl -d '{"device_uid":"DEVICE001", "device_token":"d2008..."}' -H "Content-Type
 
 You registered the device. The response contains the connection info and certificates. This response is only available once so make sure that you saved the HTTP reponse. Later requests will reponded as _device is already registered._
 
-Check the DynamoDB to see device's updated info.
-
-```bash
-aws dynamodb get-item \
-    --table-name DeviceProvisioningInfoDB  \
-   --key '{"device_uid": {"S": "DEVICE001"}}'
-```
+Check the DynamoDB record to see device's updated info.
 
 Device is registered to AWS IoT Core using certificate vending machine method. You can navigate to [AWS IoT Core Console](https://console.aws.amazon.com/iot/home) to see the newly created IoT thing and its attached resources.
 
