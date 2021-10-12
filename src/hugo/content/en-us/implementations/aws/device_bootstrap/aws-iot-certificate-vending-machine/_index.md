@@ -532,3 +532,6 @@ Your IoT device's registration implementation should be aware of the CVM API res
 CVM API response time depends on possible Lambda cold starts, IoT Core API calls run in the lambda function and your other custom logic in the function.
 
 Some possible application-level error catches are implemented in the lambda function as examples. But they may differ according to your use case.
+
+# Multi Region Strategy
+This implementation shows to provision IoT resources on a single defined region. Also, the device database on Amazon DynamoDB and Amazon API Gateway endpoint are deployed on a single region. If your use-case requires creation of IoT resources in different regions, you can implement additional logic in the Lambda function and call API's in different regions to create resources. If your use-case requires complete isolation of resources in different regions or a multi-region fault tolerancy, you can deploy CVM solution to multiple resources. You can leverage multi-region features of services used, e.g. **global tables** feature of Amazon DynamoDB which provides fully managed, multi-region, and multi-active database, replicates automatically across your choice of AWS Regions.
