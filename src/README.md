@@ -38,15 +38,4 @@ Certain changes to content are not reflected with the _fast render_ process. To 
 
 **When i run `make_hugo.sh`, it fails to build the docker image completely due to issues with newer versions of Golang always connecting to upstream `proxy.gloang.org` to fetch modules when `go get` command is issued. How to work arround this issue?***
 
-To workaround the problem that Golang after version 1.13 will always try to fetch modules via upstream proxy `proxy.golang.org` and this domain is not accessible in your ogranization due to corporate security mandates, you can edit the Dockerfile located at `src\Dockerfile`. Change the RUN command in line 47 to also include `go env -w GOPROXY=direct`. The revised RUN cmd will look as follows:
-
-```
-
-RUN cd hugo-${HUGO_VERSION} \
-    && go env -w GOPROXY=direct \
-    && (go get ${GOLDMARK_PLANTUML} || go get ${GOLDMARK_PLANTUML}) \
-    && go install --tags extended \
-    && mv $HOME/go/bin/hugo /hugo
-
-```
-
+Golang after version 1.13 will always try to fetch modules via upstream proxy `proxy.golang.org`. In some organizations, this domain is not accessible  due to corporate security mandates. To bypass this, you can explicitly set the environment variable `GOPROXY` to value `direct`. Execute the command to run the local development environment as follows: `GOPROXY=direct ./make_hugo.sh -d`.
