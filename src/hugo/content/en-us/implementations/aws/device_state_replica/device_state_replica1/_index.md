@@ -28,15 +28,16 @@ _Device Shadow_ is a service of AWS IoT Core. Shadows can make a device's state 
 - _Device Shadow_ is the IoT service that de-conflicts, stores, and processes state
 - _Application_ is the remote logic that updates the desired state
 
-1. The _Device_ establishes an MQTT connection to the _AWS IoT Core_ endpoint, and then publishes its initial state to the `deviceID/shadow/update` (update) topic. This is the topic where current and desired state updates are received.
-1. The _Device Shadow_ writes the device state to a persisten store.
-1. The _Device_ subscribes to the `deviceId/shadow/update/delta` (update delta) topic. This is the topic where device state change messages will arrive.
-1. The _Application_ establishes an MQTT connection to the _AWS IoT Core_ endpoint, and then publishes the desired state to the `deviceID/shadow/update` (update) topic.
-1. The _Device Shadow_ publishes the delta state message to the `deviceId/shadow/update/delta` (update delta) topic, and the Message Broker sends the message to the device.
-1. The _Device_ receives the delta message and performs the desired state changes.
-1. The _Device_ publishes to the `deviceId/shadow/update` (update) topic an acknowledgment message reflecting the new state.
-1. The _Device Shadow_ publishes an acknowledgment message to the `deviceId/shadow/update/accepted` (update accepted) topic.
-1. The _Application_ can now request the updated state from the _Device Shadow_.
+1. The _Device_ establishes an MQTT connection to the _AWS IoT Core_ endpoint, and then subscribes to the `deviceId/shadow/update/delta`, `deviceId/shadow/update/accepted`, and `deviceId/shadow/update/rejected` topics to receive shadow state change updates.
+1. The _Device_ publishes its initial state to the `deviceID/shadow/update` topic. This is the topic where current and desired state updates are received.
+1. The _AWS IoT Core_ broker writes the device state to the _Device Shadow_ persistent store.
+1. The _Application_ establishes an MQTT connection to the _AWS IoT Core_ endpoint, and then subscribes to the `deviceId/shadow/update/documents`, `deviceId/shadow/update/accepted`, and `deviceId/shadow/update/rejected` topics to receive shadow state change updates.
+1. The _Application_ publishes the desired state to the `deviceID/shadow/update` topic.
+1. The _AWS IoT Core_ broker  updates the _Device Shadow_ persistent state.
+1. The _AWS IoT Core_ broker publishes an acknowledgment message to the `deviceId/shadow/update/accepted` topic, delta state message to the `deviceId/shadow/update/delta` topic, and document message to the `deviceId/shadow/update/documents` topic.
+1. The _Device_ receives the delta message, performs the desired state changes, and publishes to the `deviceId/shadow/update` topic an acknowledgment message reflecting the new state.
+1. The _AWS IoT Core_ broker  updates the _Device Shadow_ persistent state.
+1. The _AWS IoT Core_ broker publishes an acknowledgment message to the `deviceId/shadow/update/accepted` topic and document message to the `deviceId/shadow/update/documents` topic.
 {{% center %}}
 
 ```plantuml
@@ -61,36 +62,38 @@ participant "<$Client>\nApplication" as app
 
 == Device Shadow Connection ==
 device -> broker : connect(iot_endpoint)
-device -> broker : subscribe("deviceID/shadow/update")
-device -> broker : publish("deviceID/shadow/update", state:{reported:{lights:on,doors:locked}})
-broker -> shadow : publish("deviceID/shadow/update", state:{reported:{lights:on,doors:locked}})
-shadow -> shadow : persist({lights:on,doors:locked})
+device -> broker : subscribe("deviceID/shadow/update/accepted")
+device -> broker : subscribe("deviceID/shadow/update/rejected")
 device -> broker : subscribe("deviceID/shadow/update/delta")
+device -> broker : publish("deviceID/shadow/update", state:{reported:{lights:on,doors:locked}})
+broker -> shadow : update_shadow(state:{reported:{lights:on,doors:locked}})
+rnote over shadow #FFFFFF: reported:{lights:on,doors:locked}
 app -> broker : connect(iot_endpoint)
-app -> broker : subscribe("deviceID/shadow/update")
+app -> broker : subscribe("deviceID/shadow/update/accepted")
+app -> broker : subscribe("deviceID/shadow/update/rejected")
+app -> broker : subscribe("deviceID/shadow/update/documents")
 
 == App to Device Updates ==
-app -> broker : publish("deviceID/shadow/update", state:{desired:{{lights:off}})
-broker -> shadow : publish("deviceID/shadow/update", state:{desired:{{lights:off}})
-shadow -> shadow : persist({lights:off})
-shadow -> broker : publish("deviceID/shadow/update/accepted", state:{desired:{{lights:off}})
-broker -> app : publish("deviceID/shadow/update/accepted", state:{desired:{{lights:off}})
-shadow -> broker : publish("deviceID/shadow/update/delta", state:{lights:off})
+app -> broker : publish("deviceID/shadow/update", state:{desired:{lights:off}})
+broker -> shadow : update_shadow(state:{desired:{lights:off}})
+rnote over shadow #FFFFFF: desired:{lights:off}, reported:{lights:on,doors:locked}
+broker -> app : publish("deviceID/shadow/update/accepted", state:{desired:{lights:off}})
+broker -> app : publish("deviceID/shadow/update/documents", state:{desired:{lights:off}, reported:{lights:on,doors:locked}})
 broker -> device : publish("deviceID/shadow/update/delta", state:{lights:off})
 device -> device : Turn off lights
 device -> broker : publish("deviceID/shadow/update", state:{reported:{lights:off,doors:locked}})
-broker -> shadow : publish("deviceID/shadow/update", state:{reported:{lights:off,doors:locked}})
-shadow -> shadow : persist({lights:off,doors:locked})
-shadow -> broker : publish("deviceID/shadow/update/accepted", state:{reported:{lights:off,doors:locked}})
+broker -> shadow : update_shadow(state:{reported:{lights:off,doors:locked}})
+rnote over shadow #FFFFFF: desired:{lights:off}, reported:{lights:off,doors:locked}
 broker -> device : publish("deviceID/shadow/update/accepted", state:{reported:{lights:off,doors:locked}})
+broker -> app : publish("deviceID/shadow/update/documents", state:{desired:{lights:off}, reported:{lights:off,doors:locked}})
 
 == Device to App Updates ==
+device -> device : Turn on lights
 device -> broker : publish("deviceID/shadow/update", state:{desired:{lights:on},reported:{lights:on}})
-broker -> shadow : publish("deviceID/shadow/update", state:{desired:{lights:on},reported:{lights:on}})
-shadow -> shadow : persist({lights:on})
-shadow -> broker : publish("deviceID/shadow/update/accepted", state:{desired:{lights:on},reported:{lights:on}})
+broker -> shadow : update_shadow(state:{desired:{lights:on},reported:{lights:on}})
+rnote over shadow #FFFFFF: desired:{lights:on}, reported:{lights:on,doors:locked}
 broker -> device : publish("deviceID/shadow/update/accepted", state:{desired:{lights:on},reported:{lights:on}})
-broker -> app : publish("deviceID/shadow/update/accepted", state:{desired:{lights:on},reported:{lights:on}})
+broker -> app : publish("deviceID/shadow/update/documents", state:{desired:{lights:on}, reported:{lights:on,doors:locked}})
 @enduml
 ```
 
@@ -340,8 +343,8 @@ def change_shadow_value(value, update_desired=True):
             request = iotshadow.UpdateShadowRequest(
                 thing_name=thing_name,
                 state=iotshadow.ShadowState(
-                    reported=locked_data.shadow_value,
-                    desired=locked_data.shadow_value
+                    reported=value,
+                    desired=value
                 ),
                 client_token=token,
             )
@@ -349,7 +352,7 @@ def change_shadow_value(value, update_desired=True):
             request = iotshadow.UpdateShadowRequest(
                 thing_name=thing_name,
                 state=iotshadow.ShadowState(
-                    reported=locked_data.shadow_value
+                    reported=value
                 ),
                 client_token=token,
             )
@@ -646,13 +649,12 @@ def on_update_shadow_accepted(response):
             try:
                 locked_data.request_tokens.remove(response.client_token)
             except KeyError:
-                print("Ignoring update_shadow_accepted message due to unexpected token. Requesting shadow.")
-                request_shadow_value()
+                print("Ignoring update_shadow_accepted message due to unexpected token.")
+                print("""Enter desired value ex:{"light":"off"}: """) 
                 return
 
         try:
             print("Finished updating desired shadow value to '{}'.".format(response.state.desired))
-            print("""Enter desired value ex:{"light":"off"}: """) 
         except:
             exit("Updated shadow is missing the target property.")
 
@@ -672,6 +674,16 @@ def on_update_shadow_rejected(error):
 
         exit("Update request was rejected. code:{} message:'{}'".format(
             error.code, error.message))
+
+    except Exception as e:
+        exit(e)
+        
+# Callback for if the shadow updated
+def on_update_shadow_documents(response):
+    try:
+        print("Received shadow document update")
+        set_local_shadow_value(response.current.state.reported)
+        return
 
     except Exception as e:
         exit(e)
@@ -803,6 +815,11 @@ if __name__ == '__main__':
             request=iotshadow.UpdateShadowSubscriptionRequest(thing_name=thing_name),
             qos=mqtt.QoS.AT_LEAST_ONCE,
             callback=on_update_shadow_rejected)
+            
+        update_rejected_subscribed_future, _ = shadow_client.subscribe_to_shadow_updated_events(
+            request=iotshadow.UpdateShadowSubscriptionRequest(thing_name=thing_name),
+            qos=mqtt.QoS.AT_LEAST_ONCE,
+            callback=on_update_shadow_documents)
 
         # Wait for subscriptions to succeed
         update_accepted_subscribed_future.result()
@@ -866,4 +883,10 @@ There is no guarantee that messages from the AWS IoT service are received in ord
 
 Many IoT devices have limited bandwidth available to them which requires communication to be optimized. One way to mitigate the issue is to trim down MQTT messages and publish them to another topic for consumption by the device. For example, a rule can be setup to take messages from the shadow/update topic, trim them, and publish to shadow/trimmed/update topic for the device to subscribe to. See [Rules for AWS IoT](https://docs.aws.amazon.com/iot/latest/developerguide/iot-rules.html) for more detail.
 
-Another consideration with size is AWS IoT Device Shadow size limit of 8KB. This size limit applies to the overall message document, which includes both the desired and actual state. So, if there enough changes to the desired state and can effectivel reduce the supported shadow size down to 4KB.
+Another consideration with size is AWS IoT Device Shadow size limit of 8KB. This size limit applies to the overall message document, which includes both the desired and actual state. So, if there enough changes to the desired state and can effectively reduce the supported shadow size down to 4KB.
+
+### Application Integration
+
+This example demonstrated how a device and application can interact with the AWS IoT Device Shadow service. However, the service also supports a REST API which may integrate better with certain applications. For example, a mobile application that already interacts with other REST APIs would be a good candidate for using the Device Shadow REST API. See [Device Shadow REST API](https://docs.aws.amazon.com/iot/latest/developerguide/device-shadow-rest-api.html) for more detail.
+
+Also consider how Rules for AWS IoT could be leveraged for your application. For example, you could leverage rules to push a notification to an application or run some custom logic before delivering the data to the mobile application. Using rules can make integrating with your application easier or bring additional features to your users. See [Rules for AWS IoT](https://docs.aws.amazon.com/iot/latest/developerguide/iot-rules.html) for more detail.
