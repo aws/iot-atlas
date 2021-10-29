@@ -4,25 +4,29 @@ weight: 10
 summary: "Command and control of a device using device shadow leveraging MQTT topics."
 ---
 
-IOT Applications need a stable network to communicate with IoT devices in real time. However, in many IOT solutions where devices are deployed in far flung remote areas, remain disconnected to central application until required like when post of telemetry data is required or to get some updates from central solution. This can lead to synchronization and status issues that can impair IoT solution data collection and usage. Device shadow is a mechanism to address these connectivity and synchronization challenges by acting as a communication link between applications and IoT devices. Device Shadows provide a reliable data store for devices, apps, and other cloud services to share data. They enable devices, apps, and other cloud services to connect and disconnect without losing a device's state.
-
+Command and control are the operation of sending a message to a device requesting it to perform some action or to control the device configurations. However, when interaction happen with devices over intermittent networks or when devices deployed in far flung areas or when using devices with limited resources then IoT solution can't expect devices to be always remain connected to central IoT solution to receive commands or configuration updates. Using device shadow IoT applications or services can simulate and control edge devices configuration and actions based on last reported & desired state.
 
 {{% notice note %}}
-This implementation is designed using [AWS IOT device shadow service](https://docs.aws.amazon.com/iot/latest/developerguide/iot-device-shadows.html) via reserved MQTT shadow topics and focuses on two comparative use case implementation using device shadows.Please refer to the [Designing MQTT Topic for AWS IoT Core](https://docs.aws.amazon.com/whitepapers/latest/designing-mqtt-topics-aws-iot-core/designing-mqtt-topics-aws-iot-core.html), specifically the _Applications on AWS_ section. This white paper provides additional alternative patterns that go beyond the scope of this implementation.
+This implementation is designed using [AWS IoT device shadow service](https://docs.aws.amazon.com/iot/latest/developerguide/iot-device-shadows.html) via reserved MQTT shadow topics and focuses on two comparative use case implementation using device shadows.Please refer to the [Designing MQTT Topic for AWS IoT Core](https://docs.aws.amazon.com/whitepapers/latest/designing-mqtt-topics-aws-iot-core/designing-mqtt-topics-aws-iot-core.html), specifically the _Applications on AWS_ section. This white paper provides additional alternative patterns that go beyond the scope of this implementation.
 {{% /notice %}}
 
 ## Use Cases
 
 - Request or update device state configurations
-  - _I want to track & control smart bulb from my mobile application_
-  - _I want to remotely control household heater by turning them on/off or set to desired temperature_ 
+  - _I want to track & control smart home devices from my mobile application_
+  - _I want to remotely control household heater by turning them on/off or by setting up desired temperature_ 
 - Request device actions based on some commands
   - _I want to remotely unlock door for a family visitor_ 
   - _I want to remotely instruct device to do some action on basis of a command_
 
 ## Reference Architecture
 
-##### 1. Request or update device state configurations (using classic or unnamed shadow)
+Following section talks about architecture considerations for command & control using IoT Core device shadow
+ - When requesting update to device state configuration
+ - When requesting device actions based on some commands  
+
+{{< tabs groupId="MQTT-arch">}}
+{{% tab name="State Control" %}}
 
 # ![Track and control device state configuration using shadow ](architecture1.svg)
 
@@ -31,15 +35,18 @@ This implementation is designed using [AWS IOT device shadow service](https://do
 - _Device_ is the IoT thing to be controlled
 - _Application_ is the remote logic that issues commands, update device state configurations and consumes device telemetry data
 - _Device Shadow_ is the replica which makes device's state available to applications and other services
-- _ShadowTopicPrefix_ is an abbreviated form of the topic which can refer to either a named or an unnamed shadow, referred below for `$aws/things/device1/shadow` (classic shadow) used in above diagram.
+- _ShadowTopicPrefix_ is an abbreviated form of the topic which can refer to either a named or an unnamed shadow, referred for `$aws/things/device1/shadow` (classic shadow) in explanation below.
 
-1. The _Device_ establishes an MQTT connection to the _AWS IoT Core_ endpoint, and then subscribes to the reserved [MQTT shadow topics](https://docs.aws.amazon.com/iot/latest/developerguide/reserved-topics.html#reserved-topics-shadow)( e,g, `ShadowTopicPrefix/get/accepted`,`ShadowTopicPrefix/get/rejected`,  `ShadowTopicPrefix/update/accepted`,`ShadowTopicPrefix/update/rejected`,`ShadowTopicPrefix/update/delta`,  `ShadowTopicPrefix/update/documents`) (response) for device shadow it supports. These are the topics where shadow event messages will be received and processed. However, by using [ AWS IOT Device SDK ](https://docs.aws.amazon.com/iot/latest/developerguide/iot-sdks.html) to call the Device Shadow service APIs, these topic subscriptions is automatically managed in background. The _Device_ publishes messages to `ShadowTopicPrefix/update`(request) topic. 
-2. On successfull connect with _AWS IOT Core_ endpoint, the _Device_ publish request to  `ShadowTopicPrefix/get` topic and process latest shadow file received on `ShadowTopicPrefix/get/accepted` subscribed topic. After processing _desired_ state or configuration changes from shadow file, _Device_ makes publish request to `ShadowTopicPrefix/update` topic with device curent state as _reported_ data on shadow file.     
-3. (Optional) Once the attributes are processed, and if device is persistently connected then it can subscribe to delta changes on shadow file to get further updates.  
-4. The _Application_ establishes an MQTT connection to the _AWS IoT Core_ endpoint, and then publish _desired_ state changes on `ShadowTopicPrefix/update`(request) topic, also subscribed to the `ShadowTopicPrefix/update/accepted`,  `ShadowTopicPrefix/update/rejected` (response) topic to process telemetry data from device or sensors. 
-
-
-{{% center %}}
+1. The _Device_ establishes an MQTT connection to the _AWS IoT Core_ endpoint, and then subscribes to the reserved [MQTT shadow topics](https://docs.aws.amazon.com/iot/latest/developerguide/reserved-topics.html#reserved-topics-shadow) for get & update shadow event operations-
+- `ShadowTopicPrefix/get/accepted`
+- `ShadowTopicPrefix/get/rejected`
+- `ShadowTopicPrefix/update/accepted`
+- `ShadowTopicPrefix/update/rejected`
+- `ShadowTopicPrefix/update/delta`
+2. On successfull connect with _AWS IoT Core_ endpoint & on successfull subscription to reserved shadow topics, the _Device_ publish request to  `ShadowTopicPrefix/get` topic and process latest shadow file received on `ShadowTopicPrefix/get/accepted` subscribed topic. After processing _desired_ state or configuration changes from the shadow file, _Device_ makes publish request to `ShadowTopicPrefix/update` topic with device curent state as _reported_ data on shadow file.     
+3. (Optional) Once the delta attributes are processed from shadow get request on device inital connect/reconnect , and if device is continued to remain connected then it can further receive delta changes on shadow file from the _Application_  
+4. The _Application_ establishes an MQTT connection to the _AWS IoT Core_ endpoint, and then subscribe to the `ShadowTopicPrefix/update/accepted`,  `ShadowTopicPrefix/update/rejected` (response) shadow topics to process shadow update data from device end. 
+5. For updating device state/configurations, the _Application_ publish message as _desired_ state on `ShadowTopicPrefix/update` reserved topic. 
 
 ```plantuml
 @startuml
@@ -61,28 +68,48 @@ participant "<$IoTShadow>\nShadow" as shadow
 participant "<$IoTCore>\nMQTT Broker" as broker
 participant "<$Client>\nApplication" as app
 
-== Connect and subscribe ==
+== Device connect and subscribe ==
 device -> broker : connect(iot_endpoint)
-broker -> shadow : reads current shadow file & delta 
 device -> broker : subscribe("$aws/things/device1/shadow/get/accepted")
+device -> broker : subscribe("$aws/things/device1/shadow/get/rejected")
+device -> broker : subscribe("$aws/things/device1/shadow/update/accepted")
+device -> broker : subscribe("$aws/things/device1/shadow/update/rejected")
 device -> broker : subscribe("$aws/things/device1/shadow/update/delta")
+
+== Application connect and subscribe ==
 app -> broker : connect(iot_endpoint)
 app -> broker : subscribe("$aws/things/device1/shadow/update/accepted")
+app -> broker : subscribe("$aws/things/device1/shadow/update/rejected")
 
-== Command operation and (optional) response ==
+== App to Device state control & update ==
 app -> broker : publish("$aws/things/device1/shadow/update", "desired : {motorStatus: on}")
-broker -> shadow : updates desired state on shadow file
+broker -> shadow : updates shadow for desired state changes from app
+device -> broker : On initial connect/reconnect, publish("$aws/things/device1/shadow/get")
+broker -> device : Send persisted shadow state, publish("$aws/things/device1/shadow/get/accepted") 
+device -> device : Turn motor on
 device -> broker : publish("$aws/things/device1/shadow/update", "reported : {motorStatus: on}")
 broker -> shadow : updates reported state on shadow file
 broker -> app : publish("$aws/things/device1/shadow/update/accepted", "success")
 app -> app : reconcile("device1")
+rnote over device #FFFFFF: If device persistently connected
+app -> broker : publish("$aws/things/device1/shadow/update", "desired : {motorStatus: off}")
+broker -> shadow : updates shadow for desired state changes from app
+broker -> device : publish("$aws/things/device1/shadow/update/delta", "desired : {motorStatus: off}")
+device -> device : Turn motor off
+device -> broker : publish("$aws/things/device1/shadow/update", "reported : {motorStatus: off}")
+broker -> shadow : updates reported state on shadow file
+broker -> app : publish("$aws/things/device1/shadow/update/accepted", "success")
+app -> app : reconcile("device1")
+
+
 @enduml
 ```
 
-{{% /center %}}
 
 
-##### 2. Request device actions based on some commands
+{{% /tab %}}
+{{% tab name="Command Action" %}}
+
 
 ![Command and control device action using shadow](architecture2.svg)
 
@@ -90,15 +117,21 @@ app -> app : reconcile("device1")
 - _Device_ is the IoT thing to be controlled
 - _Application_ is the remote logic that issues commands, update device state configurations and consumes device telemetry data
 - _Device Shadow_ is the replica which makes device's state available to applications and other services
-- _ShadowTopicPrefix_ is an abbreviated form of the topic which can refer to either a named or an unnamed shadow, referred below for `$aws/things/device1/shadow` (classic shadow) used in above diagram.
+- _ShadowTopicPrefix_ is an abbreviated form of the topic which can refer to either a named or an unnamed shadow, referred for `$aws/things/device1/shadow` (classic shadow) in explanation below.
 
-1. The _Device_ establishes an MQTT connection to the _AWS IoT Core_ endpoint, and then subscribes to the reserved [MQTT shadow topics](https://docs.aws.amazon.com/iot/latest/developerguide/reserved-topics.html#reserved-topics-shadow) for device shadow it supports. These are the topics where shadow event messages will be received and processed. The _Device_ publishes messages to `ShadowTopicPrefix/update`(request) topic.
-2. On successfull connect with _AWS IOT Core_ endpoint, the _Device_ publish request to  `ShadowTopicPrefix/get` topic and process latest shadow file received on `ShadowTopicPrefix/get/accepted` subscribed topic. After processing _command_ from shadow file, _Device_ makes publish request to `cmd/device1/resp` (command action result) topic and also update command execution status on _reported_ state data on shadow file.     
-3. (Optional) Once the command is processed, and if device is persistently connected then it can subscribe to delta changes on shadow file to get further command updates.  
-4. The _Application_ establishes an MQTT connection to the _AWS IoT Core_ endpoint, and then publish command for device to act upon via _desired_ state changes on `ShadowTopicPrefix/update`(request) topic, also subscribed to the `ShadowTopicPrefix/update/accepted`,`ShadowTopicPrefix/update/rejected` and `cmd/device1/resp` (response) topic to process command action acknowledgement and  command action response respectively.
-5. To send a command, the _Application_ publishes a message on the `ShadowTopicPrefix/update` topic by adding command request under desired state data for device. The _Application_ receives the command action response on 'cmd/device1/resp' topic and take appropriate action.
-6. (Optional) Once the command has been processed, the device then publishes the result of the action onto the `cmd/device1/resp` topic. 
-{{% center %}}
+1. The _Device_ establishes an MQTT connection to the _AWS IoT Core_ endpoint, and then subscribes to the reserved [MQTT shadow topics](https://docs.aws.amazon.com/iot/latest/developerguide/reserved-topics.html#reserved-topics-shadow) for device shadow it supports. Below are the topics from where shadow event messages will be received and processed
+- `ShadowTopicPrefix/get/accepted`
+- `ShadowTopicPrefix/get/rejected`
+- `ShadowTopicPrefix/update/accepted`
+- `ShadowTopicPrefix/update/rejected`
+- `ShadowTopicPrefix/update/delta`
+2. On successfull connect with _AWS IOT Core_ endpoint & on successfull subscription to reserved shadow topics, the _Device_ publish request to  `ShadowTopicPrefix/get` topic and process latest shadow file received on `ShadowTopicPrefix/get/accepted` subscribed topic.
+3. After processing _command_ from shadow file, _Device_ makes publish request to `cmd/device1/response` (command action result) topic. Once _command_ action completed, _Device_ makes another publish request to `ShadowTopicPrefix/update` topic with command action completion status under _reported_ state on shadow file.     
+4. (Optional) Once the delta changes are processed from shadow get request on device inital connect/reconnect, and if device is continued to remain connected then it can further receive delta changes on shadow file from the _Application_  
+5. The _Application_ establishes an MQTT connection to the _AWS IoT Core_ endpoint, and then subscribe to the `ShadowTopicPrefix/update/accepted`,  `ShadowTopicPrefix/update/rejected` (response) shadow topics to process shadow update data from the device end. _Application_ also subscribe to `cmd/device1/response` (response) topic to process command action response.
+6. To send a command, the _Application_ publishes a message on the `ShadowTopicPrefix/update` topic by adding command request under _desired_ state data for device. 
+
+
 
 ```plantuml
 @startuml
@@ -120,36 +153,51 @@ participant "<$IoTShadow>\nShadow" as shadow
 participant "<$IoTCore>\nMQTT Broker" as broker
 participant "<$Client>\nApplication" as app
 
-== Connect and subscribe ==
+== Device connect and subscribe ==
 device -> broker : connect(iot_endpoint)
-broker -> shadow : reads current shadow file & delta 
 device -> broker : subscribe("$aws/things/device1/shadow/get/accepted")
+device -> broker : subscribe("$aws/things/device1/shadow/get/rejected")
+device -> broker : subscribe("$aws/things/device1/shadow/update/accepted")
+device -> broker : subscribe("$aws/things/device1/shadow/update/rejected")
 device -> broker : subscribe("$aws/things/device1/shadow/update/delta")
+
+== Application connect and subscribe ==
 app -> broker : connect(iot_endpoint)
 app -> broker : subscribe("$aws/things/device1/shadow/update/accepted")
+app -> broker : subscribe("$aws/things/device1/shadow/update/rejected")
 app -> broker : subscribe("cmd/device1/response")
 
-== Command operation and (optional) response ==
-app -> broker : publish("$aws/things/device1/shadow/update", "desired : {cmd: { action: start-motor, topic: cmd/device1/resp, ttl:3600 }")
-broker -> shadow : updates desired state on shadow file
+== App to Device command control & response ==
+app -> broker : publish("$aws/things/device1/shadow/update", "desired : {cmd: { action: do-something, topic: cmd/device1/response, ttl:3600 }")
+broker -> shadow : updates shadow for desired commmand message from app
+device -> broker : on initial connect/reconnect, publish("$aws/things/device1/shadow/get")
+broker -> device : send persisted shadow state, publish("$aws/things/device1/shadow/get/accepted") 
+device -> device : do-something as per command
 device -> broker : publish("$aws/things/device1/shadow/update", "reported : {cmd: {response: complete }")
 broker -> shadow : updates reported state on shadow file
 broker -> app : publish("$aws/things/device1/shadow/update/accepted", "success")
-device -> broker : publish("cmd/device1/resp")
+app -> app : reconcile("device1")
+rnote over device #FFFFFF: If device persistently connected
+app -> broker : publish("$aws/things/device1/shadow/update", "desired : {cmd: { action: do-something-else, topic: cmd/device1/response, ttl:3600 }")
+broker -> shadow : updates shadow for desired command message from app
+broker -> device : publish("$aws/things/device1/shadow/update/delta", "desired : {cmd: { action: do-something-else, topic: cmd/device1/response, ttl:3600 }")
+device -> device : do-something-else as per command
+device -> broker : publish("$aws/things/device1/shadow/update", "reported : {cmd: {response: complete }")
+broker -> shadow : updates reported state on shadow file
+broker -> app : publish("$aws/things/device1/shadow/update/accepted", "success")
 app -> app : reconcile("device1")
 
 @enduml
 ```
-
-{{% /center %}}
+{{% /tab %}}
+{{< /tabs >}}
 
 ### Assumptions
 
-This implementation approach has taken following assumptions-  
-- The _Device_ is connected at all times, subscribed to a topic for incoming commands, and can receive and process the command. 
-- The _Device_ can notify the sending _Application_ that the command was received and processed if needed.- All participants successfully receive, forward, and act up the message flows in either direction.
 - Used classic shadow instead of named shadow.
 - The _Device_ shadow is pre-created before device performs the get request on connect, otherwise shadow should be created first by publishing update with device current state.
+- The _Device_ continued to remain connected after initial connect, device waits for updates to the desired state/command, process them, and update local state as reported on device shadow.
+- The _Device_ can notify the sending _Application_ that the command was received and processed if needed. All participants successfully receive, forward, and act up the message flows in either direction.
 
 
 ## Implementation
@@ -162,12 +210,10 @@ The code samples focus on the _command_ design in general. Please refer to the [
 
 ### Device
 
-The _Device_ code focuses on connecting to _Broker_ and then subscribing to reserved shadow topics to receive commands & configuration changes. Upon receipt of a command, the _Device_ performs some local action and then publishes the outcome (success, failure) of the command back to the _Application_, which then can reconcile the command.
-
-The _Device_ will continue to receive and respond to commands until stopped.
+The _Device_ code focuses on connecting to _Broker_ and then subscribing to reserved shadow topics to receive commands & configuration changes. Upon receipt of a command, the _Device_ performs some local action and then publishes the outcome (success, failure) of the command back to the _Application_, which then can reconcile the command.The _Device_ will continue to receive and respond to configuration updates or commands or both until stopped.
 
 {{< tabs groupId="device-code">}}
-{{% tab name="python" %}}
+{{% tab name="device1" %}}
 
 Please refer to this [shadow sample](https://github.com/aws/aws-iot-device-sdk-python-v2/blob/main/samples/shadow.py) for more details.
 
@@ -466,6 +512,7 @@ try:
 except KeyboardInterrupt:
     print("disconnecting")
     mqttShadowClient.disconnect()
+
 ```
 
 - Update shadow request document 
