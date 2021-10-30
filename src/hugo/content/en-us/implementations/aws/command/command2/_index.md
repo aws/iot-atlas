@@ -43,9 +43,9 @@ Following section talks about architecture considerations for command & control 
 - `ShadowTopicPrefix/update/accepted`
 - `ShadowTopicPrefix/update/rejected`
 - `ShadowTopicPrefix/update/delta`
-2. On successfull connect with _AWS IoT Core_ endpoint & on successfull subscription to reserved shadow topics, the _Device_ publish request to  `ShadowTopicPrefix/get` topic and process latest shadow file received on `ShadowTopicPrefix/get/accepted` subscribed topic. After processing _desired_ state or configuration changes from the shadow file, _Device_ makes publish request to `ShadowTopicPrefix/update` topic with device curent state as _reported_ data on shadow file.     
-3. (Optional) Once the delta attributes are processed from shadow get request on device inital connect/reconnect , and if device is continued to remain connected then it can further receive delta changes on shadow file from the _Application_  
-4. The _Application_ establishes an MQTT connection to the _AWS IoT Core_ endpoint, and then subscribe to the `ShadowTopicPrefix/update/accepted`,  `ShadowTopicPrefix/update/rejected` (response) shadow topics to process shadow update data from device end. 
+2. On successful connect with _AWS IoT Core_ endpoint & on successful subscription to reserved shadow topics, the _Device_ publish request to `ShadowTopicPrefix/get` topic and process latest shadow file received on `ShadowTopicPrefix/get/accepted` subscribed topic. After processing _desired_ state or configuration changes from the shadow file, _Device_ makes publish request to `ShadowTopicPrefix/update` topic with device current state as _reported_ data on shadow file.     
+3. (Optional) Once the delta attributes are processed from shadow get request on device initial connect/reconnect, and if device is continued to remain connected then it can further receive delta changes on shadow file from the _Application_  
+4. The _Application_ establishes an MQTT connection to the _AWS IoT Core_ endpoint, and then subscribe to the `ShadowTopicPrefix/update/accepted`, `ShadowTopicPrefix/update/rejected` (response) shadow topics to process shadow update data from device end. 
 5. For updating device state/configurations, the _Application_ publish message as _desired_ state on `ShadowTopicPrefix/update` reserved topic. 
 
 ```plantuml
@@ -125,9 +125,9 @@ app -> app : reconcile("device1")
 - `ShadowTopicPrefix/update/accepted`
 - `ShadowTopicPrefix/update/rejected`
 - `ShadowTopicPrefix/update/delta`
-2. On successfull connect with _AWS IOT Core_ endpoint & on successfull subscription to reserved shadow topics, the _Device_ publish request to  `ShadowTopicPrefix/get` topic and process latest shadow file received on `ShadowTopicPrefix/get/accepted` subscribed topic.
+2. On successful connect with _AWS IOT Core_ endpoint & on successful subscription to reserved shadow topics, the _Device_ publish request to `ShadowTopicPrefix/get` topic and process latest shadow file received on `ShadowTopicPrefix/get/accepted` subscribed topic.
 3. After processing _command_ from shadow file, _Device_ makes publish request to `cmd/device1/response` (command action result) topic. Once _command_ action completed, _Device_ makes another publish request to `ShadowTopicPrefix/update` topic with command action completion status under _reported_ state on shadow file.     
-4. (Optional) Once the delta changes are processed from shadow get request on device inital connect/reconnect, and if device is continued to remain connected then it can further receive delta changes on shadow file from the _Application_  
+4. (Optional) Once the delta changes are processed from shadow get request on device initial connect/reconnect, and if device is continued to remain connected then it can further receive delta changes on shadow file from the _Application_  
 5. The _Application_ establishes an MQTT connection to the _AWS IoT Core_ endpoint, and then subscribe to the `ShadowTopicPrefix/update/accepted`,  `ShadowTopicPrefix/update/rejected` (response) shadow topics to process shadow update data from the device end. _Application_ also subscribe to `cmd/device1/response` (response) topic to process command action response.
 6. To send a command, the _Application_ publishes a message on the `ShadowTopicPrefix/update` topic by adding command request under _desired_ state data for device. 
 
@@ -168,21 +168,21 @@ app -> broker : subscribe("$aws/things/device1/shadow/update/rejected")
 app -> broker : subscribe("cmd/device1/response")
 
 == App to Device command control & response ==
-app -> broker : publish("$aws/things/device1/shadow/update", "desired : {cmd: { action: do-something, topic: cmd/device1/response, ttl:3600 }")
-broker -> shadow : updates shadow for desired commmand message from app
+app -> broker : publish("$aws/things/device1/shadow/update", "desired : {"command": [{ "do-something":{"payload":"goes here"} }]}")
+broker -> shadow : updates shadow for desired command message from app
 device -> broker : on initial connect/reconnect, publish("$aws/things/device1/shadow/get")
 broker -> device : send persisted shadow state, publish("$aws/things/device1/shadow/get/accepted") 
 device -> device : do-something as per command
-device -> broker : publish("$aws/things/device1/shadow/update", "reported : {cmd: {response: complete }")
+device -> broker : On completion of command update reported state, publish("$aws/things/device1/shadow/update", "reported : {"command": [{ "do-something":{"payload":"goes here"} }]}")
 broker -> shadow : updates reported state on shadow file
 broker -> app : publish("$aws/things/device1/shadow/update/accepted", "success")
 app -> app : reconcile("device1")
 rnote over device #FFFFFF: If device persistently connected
-app -> broker : publish("$aws/things/device1/shadow/update", "desired : {cmd: { action: do-something-else, topic: cmd/device1/response, ttl:3600 }")
+app -> broker : publish("$aws/things/device1/shadow/update", "desired : {"command": [{ "do-something":{"payload":"updated value"} }]}")
 broker -> shadow : updates shadow for desired command message from app
-broker -> device : publish("$aws/things/device1/shadow/update/delta", "desired : {cmd: { action: do-something-else, topic: cmd/device1/response, ttl:3600 }")
-device -> device : do-something-else as per command
-device -> broker : publish("$aws/things/device1/shadow/update", "reported : {cmd: {response: complete }")
+broker -> device : publish("$aws/things/device1/shadow/update/delta", "desired : {"command": [{ "do-something":{"payload":"updated value"} }]}"")
+device -> device : do-something as per command
+device -> broker : On completion of command update reported state, publish("$aws/things/device1/shadow/update", "reported : {"command": [{ "do-something":{"payload":"updated value"} }]}")
 broker -> shadow : updates reported state on shadow file
 broker -> app : publish("$aws/things/device1/shadow/update/accepted", "success")
 app -> app : reconcile("device1")
@@ -210,7 +210,7 @@ The code samples focus on the _command_ design in general. Please refer to the [
 
 ### Device
 
-The _Device_ code focuses on connecting to _Broker_ and then subscribing to reserved shadow topics to receive commands & configuration changes. Upon receipt of a command, the _Device_ performs some local action and then publishes the outcome (success, failure) of the command back to the _Application_, which then can reconcile the command.The _Device_ will continue to receive and respond to configuration updates or commands or both until stopped.
+The _Device_ code focuses on connecting to _Broker_ and then subscribing to reserved shadow topics to receive commands & configuration changes. Upon receipt of a command, the _Device_ performs some local action and then publishes the outcome (success, failure) of the command back to the _Application_, which then can reconcile the command. The _Device_ will continue to receive and respond to configuration updates or commands or both until stopped.
 
 {{< tabs groupId="device-code">}}
 {{% tab name="device1" %}}
@@ -224,22 +224,18 @@ Please refer to this [shadow sample](https://github.com/aws/aws-iot-device-sdk-p
 ```python
 # client.py - Demonstrates waiting for a command or configuration updates for evaluation & processing
 
-from AWSIoTPythonSDK.MQTTLib import AWSIoTMQTTShadowClient, AWSIoTMQTTClient
+from awscrt import auth, io, mqtt, http
+from awsiot import iotshadow
+from awsiot import mqtt_connection_builder
+from concurrent.futures import Future
+import sys
 import json
-import time
-from random import randint
+import datetime as datetime
+import time as time
 
-# This sample uses the AWS IoT Device Shadow Service to receive commands and also keep a property in 
-# sync between device and server. On startup, the device requests the shadow document to learn 
-# the property's initial state and process the attributes and commands passed in desired value of 
-# shadow file. 
-# The device also subscribes to "delta" events from the server,which are sent when a property's 
-# "desired" value differs from its "reported" value.When the device learns of a new desired value,
-# that data is processed on the device and an update is sent to the server with the new "reported" value.
-
-# In this sample implementation an IOT edge device acting as actuator to switch on/off the motor 
-# via shadow attribute.Additionally the device will action on command passed from server application
-# on device shadow file.
+###################################################################################################################
+# This sample uses the AWS IoT Device Shadow Service to receive commands and also keep a property in sync between device and server. On start-up, the device requests the shadow document to learn the property's initial state and process the attributes and commands passed in desired value of shadow file. The device also subscribes to "delta" events from the server, which are sent when a property's "desired" value differs from its "reported" value. When the device learns of a new desired value, that data is processed on the device and an update is sent to the server with the new "reported" value. In this sample implementation an IOT edge device acting as actuator to switch on/off the motor via shadow attribute. Additionally the device will action on command passed from server application on device shadow file.
+###################################################################################################################
 
 # Using globals to simplify sample code
 
@@ -250,218 +246,147 @@ client_certificate = "PATH_TO_CLIENT_CERTIFICATE_FILE"
 client_private_key = "PATH_TO_CLIENT_PRIVATE_KEY_FILE"
 root_ca = "PATH_TO_ROOT_CA_CERTIFICATE_FILE"
 thing_name = "REPLACE_WITH_DEVICE_NAME"
-motor_telemetry_topic = "REPLACE_WITH_TOPIC"
 
-### Dummy state variables to showcase sample program logic and validation. 
-## For actual implementation during device connect or reconnect, read this data as a last processed state from device store or via last reported state in shadow file.
+# Dummy state variables to showcase sample program logic and validation. 
+# For actual implementation during device connect or reconnect, read this data as a last processed state from device store or via last reported state in shadow file.
 
 DEVICE_MOTOR_STATUS = "off"
 SHADOW_FILE_VERSION = 0
 
+# For simplicity this implementation uses single threaded operation, in case of multi-threaded use cases consider utilizing lock. More details here - https://github.com/aws/aws-iot-device-sdk-python-v2/blob/main/samples/shadow.py
 
-#Using the Shadow Client rather than the regular AWSIoTMQTTClient. 
-# More details - https://s3.amazonaws.com/aws-iot-device-sdk-python-docs/sphinx/html/index.html#
-# Similar functionality can be achieved by using AWSIOTMQTTClient also. 
-# More details - https://github.com/aws/aws-iot-device-sdk-python-v2/blob/main/samples/shadow.py
-
-#Setup MQTT client and security certificates
-#Make sure your certificate names match what you downloaded from AWS IoT
-
-mqttShadowClient = AWSIoTMQTTShadowClient(thing_name)
-
-#Use the endpoint from the settings page in the IoT console
-mqttShadowClient.configureEndpoint(endpoint,8883)
-# Thing certificate files goes here from AWS IOT
-mqttShadowClient.configureCredentials(root_ca,client_private_key,client_certificate)
-
-#Set up the Shadow handlers, setting up the persistent subscribe flag to true to get device updates
-shadowClient=mqttShadowClient.createShadowHandlerWithName(thing_name,True)
-
-#We can retrieve the underlying MQTT connection from the Shadow client to make regular MQTT publish/subscribe
-mqttClient = mqttShadowClient.getMQTTConnection()
-
-# Callback to update device shadow
-def updateDeviceShadow(shadowMessage):
-    global shadowClient
-    print ("Updating reported state for shadow")
-    print(shadowMessage)
-    shadowMessage = json.dumps(shadowMessage)
-    shadowClient.shadowUpdate(shadowMessage, customShadowCallback_Update, 5)
-
-# Custom Shadow callback for update - checks if the update was successful.
-def customShadowCallback_Update(payload, responseStatus, token):
-    if responseStatus == "timeout":
-        print("Update request " + token + " time out!")
-    if responseStatus == "accepted":
-        print ("Reporting data state successfully updated in device shadow")
-    if responseStatus == "rejected":
-        print("Update request " + token + " rejected!")
-        
-# Custom Shadow callback for delta payload
-def customShadowCallback_Delta(payload, responseStatus, token):
-    global DEVICE_MOTOR_STATUS
-    global SHADOW_FILE_VERSION
-    global thing_name
-    global client_token
-    processedAttrib = False
-    processedCommand = False
-    print ("Device Shadow delta update received")
-    payloadDict = json.loads(payload)
+# Function for gracefully quitting this sample
+def exit(msg_or_exception):
     
-    # Validation check for out of sequence or multiple deliveries of message
-    if payloadDict.get("version") <= SHADOW_FILE_VERSION:
-        print("Received shadow file version is old, skipping rest of the process")
-        return
+    print("Exiting sample:", msg_or_exception)
+    future = mqtt_connection.disconnect()
+    future.add_done_callback(on_disconnected)
     
-    # Validate client Token received
-    if payloadDict.get("client_token") is not None:
-        if payloadDict.get("client_token") != client_token:
-            print("Invalid client token passed in delta update")
-            return
-    
-    # validate if there is any update to device attributes
-    if payloadDict["state"].get("deviceAttrib") is not None:
-        DEVICE_MOTOR_STATUS = payloadDict["state"]["deviceAttrib"].get("motorStatus")
-        print("Motor is turned - {}".format(DEVICE_MOTOR_STATUS))
-        processedAttrib = True
+def on_disconnected(disconnect_future):
+    print("Disconnected.")
 
-    # Validate if there is any new command for device action, additional checks can be made on 
-    # required keys existence
-    if payloadDict["state"].get("command") is not None:
-        value_ttl = payloadDict["state"]["command"].get("ttl")
-        # Validate command validity based on the time to live (TTL) value
-        if ((int(time.time()) - payloadDict.get("timestamp")) > value_ttl):
-            print("Command validity expired, skipping action")
-            return
-        
-        value_action = payloadDict["state"]["command"].get("action")
-        ## Action type code block goes here
-        if value_action == "relay-message":
-            value_message = payloadDict["state"]["command"].get("message")
-            value_topic = payloadDict["state"]["command"].get("topic")
-            relay_message = {'msg':value_message, 'deviceId': thing_name}
-            send(value_topic,mqttClient.json_encode(relay_message))
-            processedCommand = True
-
-    # Add code here to push latest processed shadow file version to local storage to pick during 
-    # next reconnect for validations - store__to_local_storage(SHADOW_FILE_VERSION)
-    if processedAttrib or processedCommand:
-        # Update latest shadow file version
-        SHADOW_FILE_VERSION = payloadDict["version"]
-        
-        print("Updated local shadow file version during delta callback")
-    
-    # For the purpose of demo, we are updating desired state from device, ideally modification of
-    # desired state should be done by apps and reporting state by devices.
-    # Update the shadow device file based on above processing as a response for sending application
-    if processedAttrib and processedCommand:
-        shadowMessage = {"state":{"desired":{"deviceAttrib":None,"command":None},"reported":{"deviceAttrib":{"motorStatus":DEVICE_MOTOR_STATUS},"command":{"action":"replay-message","response":"completed"}}}}
-        updateDeviceShadow(shadowMessage)
-    elif processedAttrib and not processedCommand:
-        shadowMessage = {"state":{"desired":{"deviceAttrib":None},"reported":{"deviceAttrib":{"motorStatus":DEVICE_MOTOR_STATUS}}}}
-        updateDeviceShadow(shadowMessage)
-    else:
-        shadowMessage = {"state":{"desired":{"command":None},"reported":{"command":{"action":"replay-message","response":"completed"}}}}
-        updateDeviceShadow(shadowMessage)
-
-    return
-
-        
-#Callback function to encode a payload into JSON
+# Call-back function to encode a payload into JSON
 def json_encode(string):
         return json.dumps(string)
 
-mqttClient.json_encode=json_encode
-
-#Callback function to publish data on MQTT topics
+# Call-back to publish message on specific topic
 def send(topicname,message):
-    mqttClient.publish(topicname, message, 1)
+    mqtt_connection.publish(
+                topic=topicname,
+                payload=message,
+                qos=mqtt.QoS.AT_LEAST_ONCE)
     print("Message published on topic - '{}'.".format(topicname))
 
-        
-
-# Callback function for shadow GET request on initial connect or reconnect 
-def on_initial_connect_or_reconnect(response, responseStatus, token):
+def on_get_shadow_accepted(response):
+    # type: (iotshadow.GetShadowResponse) -> None
     global SHADOW_FILE_VERSION
     global DEVICE_MOTOR_STATUS
     global thing_name
     global client_token
     processedAttrib = False
     processedCommand = False
-    print("Fetched latest shadow file")
-    payloadDict = json.loads(response)
-    
-    
+    print ("Processing response on GetShadow")
+  
     try:
-        # Validate response status
-        if (responseStatus != 'accepted'):
-            print("Not able to get shadow file for device, please create device shadow first. Or add shadow code here by publishing to /update Topic")
-            return
-        # Validate last processed shadow file version
-        if (payloadDict.get("version") != None and payloadDict.get("version")) <= SHADOW_FILE_VERSION:
-                print("No new data to process, skipping get shadow document processing!")
-                return
-        # Validate client token
-        if payloadDict.get("client_token") != None:
-            if payloadDict["client_token"] != client_token:
+        
+        if response is not None:
+            if response.client_token != client_token:
                 print("Invalid client token passed")
                 return
+        
+        if response.state is not None:
+            if response.version is not None and response.version <= SHADOW_FILE_VERSION:
+                print("No new data to process, skipping get shadow document processing!")
+                return
             
-        if payloadDict["state"].get("delta") is not None:
+            # Check if any delta changes to process    
+            if response.state.delta is not None:
                 
                 # Update latest shadow file version
-                SHADOW_FILE_VERSION = payloadDict.get("version")
-                # Push latest processed shadow file version to local storage to pick during 
-                # next reconnect for validations - store__to_local_storage(SHADOW_FILE_VERSION)
-                print("Updated local shadow file version after connect")
+                SHADOW_FILE_VERSION = response.version
+                #########################################################################
+                # Code to push processed shadow file version to device storage goes here
+                # store__to_local_storage(SHADOW_FILE_VERSION)
+                # We have just updated global variable to simplify code
+                #########################################################################
+                print("Updated local shadow file version on connect or reconnect")
                 
-                # Check for any device attribute changes 
-                if payloadDict["state"]["delta"].get("deviceAttrib") is not None:
-                    DEVICE_MOTOR_STATUS = payloadDict["state"]["delta"]["deviceAttrib"].get("motorStatus")
+                # Check for any device attribute/configuration changes to process 
+                if response.state.delta.get("deviceAttrib") is not None:
+                    DEVICE_MOTOR_STATUS = response.state.delta.get("deviceAttrib").get("motorStatus")
                     print("Motor is turned - {}".format(DEVICE_MOTOR_STATUS))
                     processedAttrib = True
                         
                 # Check if any command passed for device action
-                if payloadDict["state"]["delta"].get("command") is not None:
-                    value_ttl = payloadDict["state"]["delta"]["command"].get("ttl")
-                    print (int(time.time()))
-                    print (payloadDict.get("timestamp"))
-                    # Validate command validity based on TTL
-                    if ((int(time.time()) - payloadDict.get("timestamp")) > value_ttl):
-                        print("Command validity expired, skipping action")
-                        return
-                    else:
-                        # Action to perform on device for completing the command
+                if response.state.delta.get("command") is not None:
+                    
+                    #Loop through all the commands for processing 
+                    for eachcmd in response.state.delta.get("command"):
                         
-                        print("Executing command action..")
-                        value_action = payloadDict["state"]["delta"]["command"].get("action")
-                        if value_action == "relay-message":
-                            value_message = payloadDict["state"]["delta"]["command"].get("message")
-                            relay_message = {'msg':value_message,"deviceId": thing_name}
-                            value_topic = payloadDict["state"]["delta"]["command"].get("topic")
-                            send(value_topic,mqttClient.json_encode(relay_message))
-                            processedCommand = True
-                
-                # Update the shadow device file based on above processing as a response for sending application
+                        ####################################################
+                        # Command processing code goes here
+                        ####################################################
+                        if "relay-command" in eachcmd:
+                            if eachcmd.get("relay-command").get("ttl") is not None:
+                                value_ttl = eachcmd.get("relay-command").get("ttl")
+                            
+                            # Bypass command execution if lag between system time and time stamp  
+                            # on shadow file is beyond command threshold TTL
+                            if (int(datetime.datetime.now().timestamp()) - int(response.timestamp.timestamp()) > value_ttl):
+                                print("Command validity expired, skipping action")
+                                continue
+                            else:
+                                # Action to perform on device for completing the command
+                                
+                                print("Executing command action..")
+                                
+                                # Actual code for command action goes here. For this sample we 
+                                # are just relaying the message on specific topic    
+                                value_message = eachcmd.get("relay-command").get("message")
+                                relay_message = {'msg':value_message,'deviceId': thing_name}
+                                value_topic = eachcmd.get("relay-command").get("topic")
+                                send(value_topic,json_encode(relay_message))
+                                processedCommand = True
+
+                #Payload for Reported state on shadow file
                 if processedAttrib and processedCommand:
-                    shadowMessage = {"state":{"desired":{"deviceAttrib":None,"command":None},"reported":{"deviceAttrib":{"motorStatus":DEVICE_MOTOR_STATUS},"command":{"action":"replay-message","response":"completed"}}}}
-                    updateDeviceShadow(shadowMessage)
+                    shadowReportedMessage = {"deviceAttrib":{"motorStatus":DEVICE_MOTOR_STATUS},"command":[{"relay-command":{"message":value_message,"topic":value_topic,"ttl":value_ttl}}]}
                 elif processedAttrib and not processedCommand:
-                    shadowMessage = {"state":{"desired":{"deviceAttrib":None},"reported":{"deviceAttrib":{"motorStatus":DEVICE_MOTOR_STATUS}}}}
-                    updateDeviceShadow(shadowMessage)
-                else:
-                    shadowMessage = {"state":{"desired":{"command":None},"reported":{"command":{"action":"replay-message","response":"completed"}}}}
-                    updateDeviceShadow(shadowMessage)
-        
-        
+                    shadowReportedMessage = {"deviceAttrib":{"motorStatus":DEVICE_MOTOR_STATUS}}
+                elif processedCommand and not processedAttrib:
+                    shadowReportedMessage = {"command":[{"relay-command":{"message":value_message,"topic":value_topic,"ttl":value_ttl}}]}
+                    
+                if processedAttrib or processedCommand:
+                    
+                    # Update reported state on device shadow
+                    # use a unique token so we can correlate this "request" message to
+                    # any "response" messages received on the /accepted and /rejected topics
+                    token = client_token
+                    request = iotshadow.UpdateShadowRequest(
+                                thing_name=thing_name,
+                                state=iotshadow.ShadowState(
+                                    reported = shadowReportedMessage
+                                ),
+                                client_token=token,
+                            )
+                
+                    future = shadow_client.publish_update_shadow(request, mqtt.QoS.AT_LEAST_ONCE)
+                    future.add_done_callback(on_publish_update_shadow)
+                    print ("Device shadow updated during get accepted")
+                    return
+          
+        print("Get response has no state for processing")
+        return
+
     except Exception as e:
         exit(e)
-        
+
 def on_get_shadow_rejected(error):
-    
+    # type: (iotshadow.ErrorResponse) -> None
     try:
+        
         if error.code == 404:
-            exit("No shadow document found")
+            print("Thing has no shadow document. Consider creating shadow first")
         else:
             exit("Get request was rejected. code:{} message:'{}'".format(
                 error.code, error.message))
@@ -469,49 +394,240 @@ def on_get_shadow_rejected(error):
     except Exception as e:
         exit(e)
 
+def on_shadow_delta_updated(delta):
+    # type: (iotshadow.ShadowDeltaUpdatedEvent) -> None
+    global SHADOW_FILE_VERSION
+    global DEVICE_MOTOR_STATUS
+    global thing_name
+    global client_token
+    processedAttrib = False
+    processedCommand = False
+    print("Processing delta response from device shadow")
+    
+    try:
+        if delta.state is not None:
+            if delta.version is not None and delta.version <= SHADOW_FILE_VERSION:
+                print("No new data to process, skipping delta shadow document processing!")
+                return
+            
+            # Update latest shadow file version
+            SHADOW_FILE_VERSION = delta.version
+            ##################################################################################
+            # Code to push currently processed shadow file version to device storage goes here
+            # store__to_local_storage(SHADOW_FILE_VERSION)
+            # We have just updated global variable to simplify code
+            ##################################################################################
+            print("Updated local shadow file version for delta updates")
+            
+            # Check for any device attribute/configuration changes to process 
+            if delta.state.get("deviceAttrib") is not None:
+                DEVICE_MOTOR_STATUS = delta.state.get("deviceAttrib").get("motorStatus")
+                print("Motor is turned - {}".format(DEVICE_MOTOR_STATUS))
+                processedAttrib = True
+                    
+            # Check if any command passed for device action.
+            # Command array enables processing of multiple commands
+            if delta.state.get("command") is not None:
+                
+                #Loop through all the commands for processing 
+                for eachcmd in delta.state.get("command"):
+                    
+                    ###########################################################
+                    # Command processing code goes here.
+                    # we are just relaying message back on topic for simplicity
+                    ###########################################################
+                    if "relay-command" in eachcmd:
+                        if eachcmd.get("relay-command").get("ttl") is not None:
+                            value_ttl = eachcmd.get("relay-command").get("ttl")
+                        
+                        # Bypass command execution if lag between system time and 
+                        # time stamp on shadow file is beyond command threshold TTL
+                        if (int(datetime.datetime.now().timestamp()) - int(delta.timestamp.timestamp()) > value_ttl):
+                            print("Command validity expired, skipping action")
+                            continue
+                        else:
+                            # Action to perform on device for completing the command
+                            
+                            print("Executing command action..")
+                            
+                            value_message = eachcmd.get("relay-command").get("message")
+                            relay_message = {'msg':value_message,'deviceId': thing_name}
+                            value_topic = eachcmd.get("relay-command").get("topic")
+                            send(value_topic,json_encode(relay_message))
+                            processedCommand = True
+    
+            #Payload for Reported state on shadow file
+            if processedAttrib and processedCommand:
+                shadowReportedMessage = {"deviceAttrib":{"motorStatus":DEVICE_MOTOR_STATUS},"command":[{"relay-command":{"message":value_message,"topic":value_topic,"ttl":value_ttl}}]}
+            elif processedAttrib and not processedCommand:
+                shadowReportedMessage = {"deviceAttrib":{"motorStatus":DEVICE_MOTOR_STATUS}}
+            elif processedCommand and not processedAttrib:
+                shadowReportedMessage = {"command":[{"relay-command":{"message":value_message,"topic":value_topic,"ttl":value_ttl}}]}
+                
+            if processedAttrib or processedCommand:
+                
+                ## Update device shadow reported state
+                # use a unique token so we can correlate this "request" message to
+                # any "response" messages received on the /accepted and /rejected topics
+                token = client_token
+                request = iotshadow.UpdateShadowRequest(
+                            thing_name=thing_name,
+                            state=iotshadow.ShadowState(
+                                reported = shadowReportedMessage
+                            ),
+                            client_token=token,
+                        )
+            
+                future = shadow_client.publish_update_shadow(request, mqtt.QoS.AT_LEAST_ONCE)
+                future.add_done_callback(on_publish_update_shadow)
+                print ("Device shadow updated during get accepted")
+                return
+         
+        else:
+            print("Delta response has no state changes")
+            return
+            
+    except Exception as e:
+        exit(e)
+
+def on_publish_update_shadow(future):
+    #type: (Future) -> None
+    try:
+        future.result()
+        print("Update request published.")
+    except Exception as e:
+        print("Failed to publish update request.")
+        exit(e)
+
+def on_update_shadow_accepted(response):
+    # type: (iotshadow.UpdateShadowResponse) -> None
+    try:
+       
+       print("Shadow update acepted - {}".format(response))
+
+    except Exception as e:
+        exit(e)
 
 def on_update_shadow_rejected(error):
+    # type: (iotshadow.ErrorResponse) -> None
     try:
+       
         exit("Update request was rejected. code:{} message:'{}'".format(
             error.code, error.message))
 
     except Exception as e:
         exit(e)
 
-def exit(msg_or_exception):
-    print("Exiting sample:", msg_or_exception)
-    mqttShadowClient.disconnect()
 
-            
-#Connect to the IOT Core MQTT broker
-mqttShadowClient.connect()
-print ("Connected")
-
-# Read last processed shadow file version
-# SHADOW_FILE_VERSION = read__from_local_storage()
-
-# Device can only have one unnamed or classic shadow but can have multiple named shadows
-# Get the latest state from the Device shadow on initial connect
-shadowClient.shadowGet(on_initial_connect_or_reconnect, 5)
+if __name__ == '__main__':
+    
+    io.init_logging(getattr(io.LogLevel, "Info"), "stderr")
 
 
-print("registered for delta callback")
-# Listen for delta changes, when device is connected to IOT Core MQTT broker
-shadowClient.shadowRegisterDeltaCallback(customShadowCallback_Delta)
+    # Create SDK based resources
+    event_loop_group = io.EventLoopGroup(1)
+    host_resolver = io.DefaultHostResolver(event_loop_group)
+    client_bootstrap = io.ClientBootstrap(event_loop_group, host_resolver)
+
+    # Create native MQTT connection from credentials on path (filesystem)
+    mqtt_connection = mqtt_connection_builder.mtls_from_path(
+        endpoint=endpoint,
+        cert_filepath=client_certificate,
+        pri_key_filepath=client_private_key,
+        client_bootstrap=client_bootstrap,
+        ca_filepath=root_ca,
+        client_id=client_id,
+        clean_session=True,
+        keep_alive_secs=30,
+    )
+
+    print("Connecting to {} with client ID '{}'...".format(
+        endpoint, client_id))
+
+    connected_future = mqtt_connection.connect()
+
+    shadow_client = iotshadow.IotShadowClient(mqtt_connection)
+
+    # Wait for connection to be fully established.
+    # Note that it's not necessary to wait, commands issued to the
+    # mqtt_connection before its fully connected will simply be queued.
+    # But this sample waits here so it's obvious when a connection
+    # fails or succeeds.
+    connected_future.result()
+    print("Connected!")
+
+    try:
+        # Subscribe to necessary topics.
+        # Note that is **is** important to wait for "accepted/rejected" subscriptions
+        # to succeed before publishing the corresponding "request".
+        print("Subscribing to Update responses...")
+        update_accepted_subscribed_future, _ = shadow_client.subscribe_to_update_shadow_accepted(
+            request=iotshadow.UpdateShadowSubscriptionRequest(thing_name=thing_name),
+            qos=mqtt.QoS.AT_LEAST_ONCE,
+            callback=on_update_shadow_accepted)
+
+        update_rejected_subscribed_future, _ = shadow_client.subscribe_to_update_shadow_rejected(
+            request=iotshadow.UpdateShadowSubscriptionRequest(thing_name=thing_name),
+            qos=mqtt.QoS.AT_LEAST_ONCE,
+            callback=on_update_shadow_rejected)
+
+        # Wait for subscriptions to succeed
+        update_accepted_subscribed_future.result()
+        update_rejected_subscribed_future.result()
+
+        print("Subscribing to Get responses...")
+        get_accepted_subscribed_future, _ = shadow_client.subscribe_to_get_shadow_accepted(
+            request=iotshadow.GetShadowSubscriptionRequest(thing_name=thing_name),
+            qos=mqtt.QoS.AT_LEAST_ONCE,
+            callback=on_get_shadow_accepted)
+
+        get_rejected_subscribed_future, _ = shadow_client.subscribe_to_get_shadow_rejected(
+            request=iotshadow.GetShadowSubscriptionRequest(thing_name=thing_name),
+            qos=mqtt.QoS.AT_LEAST_ONCE,
+            callback=on_get_shadow_rejected)
+
+        # Wait for subscriptions to succeed
+        get_accepted_subscribed_future.result()
+        get_rejected_subscribed_future.result()
+
+        print("Subscribing to Delta events...")
+        delta_subscribed_future, _ = shadow_client.subscribe_to_shadow_delta_updated_events(
+            request=iotshadow.ShadowDeltaUpdatedSubscriptionRequest(thing_name=thing_name),
+            qos=mqtt.QoS.AT_LEAST_ONCE,
+            callback=on_shadow_delta_updated)
+
+        # Wait for subscription to succeed
+        delta_subscribed_future.result()
 
 
-try:
-    ## Publish Motor telemetry data when in on state
-    while True:
-        vibration = randint(-500, 500)
-        if DEVICE_MOTOR_STATUS == "on":
-            relay_message = {'vibration':vibration, 'deviceId': thing_name}
-            send(motor_telemetry_topic,mqttClient.json_encode(relay_message))
-            print("Motor vibration data pushed")
-            time.sleep(5)
-except KeyboardInterrupt:
-    print("disconnecting")
-    mqttShadowClient.disconnect()
+        # Issue request for shadow's current state.
+        # The response will be received by the on_get_accepted() callback
+        print("Requesting current shadow state...")
+
+        # use a unique token so we can correlate this "request" message to
+        # any "response" messages received on the /accepted and /rejected topics
+        token = client_token
+
+        publish_get_future = shadow_client.publish_get_shadow(
+            request=iotshadow.GetShadowRequest(thing_name=thing_name, client_token=token),
+            qos=mqtt.QoS.AT_LEAST_ONCE)
+     
+        # Ensure that publish succeeds
+        publish_get_future.result()
+
+    except Exception as e:
+        exit(e)
+
+    # Wait timer to receive delta events when device remain connected after initial connect/reconnect   
+    try:
+        while True:
+            time.sleep(1)
+    except KeyboardInterrupt:
+        # Disconnect
+        print("Disconnecting...")
+        disconnect_future = mqtt_connection.disconnect()
+        disconnect_future.result()
+        print("Disconnected!")
 
 ```
 
@@ -523,14 +639,15 @@ except KeyboardInterrupt:
   "state": {
     "desired": {
       "deviceAttrib" :{
-      		"motorStatus" : "off"
+      		"motorStatus" : "on"
       },
-      "command":{
-      		"action":"relay-message",
-      		"message": "Message sent as part of command action",
-      		"topic":"cmd/device1/response",
-      		"ttl":300
-      }
+      "command":[{
+      		"relay-command":{
+                "message": "Message sent as part of command action",
+      		    "topic":"cmd/device1/response",
+      		    "ttl":300
+              }
+      }]
     },
     "reported": {
       "deviceData" :{
@@ -548,9 +665,7 @@ except KeyboardInterrupt:
 
 ### Application
 
-The _Application_ code connects to the Broker and subscribes to the _Device_'s response topic. It then waits for a command to be entered and sends that to the _Device_'s request topic.
-
-This implementation uses AWS CLI to demonstrate how an app can interact with a shadow.
+The _Application_ code connects to the Broker and subscribes to the _Device_'s response topic as well as reserved MQTT topics for device shadow. This implementation uses AWS CLI to demonstrate how an app can interact with a shadow.
 
 - To get the current state of the shadow using the AWS CLI. From the command line, enter this command.
 
@@ -567,11 +682,37 @@ aws iot-data get-thing-shadow --thing-name REPLACE_WITH_DEVICE_NAME  /dev/stdout
 
 aws iot-data update-thing-shadow --thing-name REPACE_WITH_DEVICE_NAME \
     --cli-binary-format raw-in-base64-out \
-    --payload ''{"state":{"desired":{"deviceAttrib":{"motorStatus":"on"},"command":{"action":"relay-message","message":"Message sent as part of command action","topic":"cmd/REPLACE_WITH_DEVICE_NAME/resp","ttl":300}}},"clientToken":"myapp123"}'' /dev/stdout
+    --payload '{"state":{"desired":{"deviceAttrib":{"motorStatus":"on"},"command":[{"relay-command":{"message":"Message to relay back","topic":"relay-command/response","ttl":300}}]}},"clientToken":"myapp123"}' /dev/stdout
 
 ```
 
+Application can process reported state from device using response received on `get\accepted` topic, while processing shadow update event response on `update/accepted` topic. Reference implementation for full application side code can be tweaked using device implementation above.
 
 ## Considerations
 
-This implementation covers the basics of a command and control pattern. It does not cover certain aspects that may arise in production use.
+This implementation covers the basics of a command-and-control pattern. It does not cover certain aspects that may arise in production use.
+
+#### Choosing to use named or unnamed shadows
+The Device Shadow service supports named and unnamed, classic shadows, as have been used in the past. A thing object can have multiple named shadows, and no more than one unnamed, classic shadow. A thing object can have both named and unnamed shadows at the same time; however, the API used to access each is slightly different, so it might be more efficient to decide which type of shadow would work best for your solution and use that type only. For more information about the API to access the shadows, see [Shadow topics](https://docs.aws.amazon.com/iot/latest/developerguide/reserved-topics.html#reserved-topics-shadow).
+
+#### Message Versioning and Order
+There is no guarantee that messages from the AWS IoT service are received in order. This can result in old state updates being received by the device. However, the device can ignore previous state updates by leveraging the version number within each message and skip processing old versions.
+
+#### Detecting Device is Connected
+Last Will and Testament (LWT) is a feature of MQTT that AWS IoT Core supports. It is a message that the MQTT client configures to be sent to an MQTT topic when the device gets disconnected. This can be leveraged to set a property of the device shadow, such as a connected property. This allows other apps and services to know the connected state of the device. See [Detecting a device is connected](https://docs.aws.amazon.com/iot/latest/developerguide/device-shadow-comms-app.html) for more detail.
+
+#### Message Size
+Many IoT devices have limited bandwidth available to them which requires communication to be optimized. One way to mitigate the issue is to trim down MQTT messages and publish them to another topic for consumption by the device. For example, a rule can be setup to take messages from the shadow/update topic, trim them, and publish to shadow/trimmed/update topic for the device to subscribe to. See [Rules for AWS IoT](https://docs.aws.amazon.com/iot/latest/developerguide/iot-rules.html) for more detail.
+
+Another consideration with size is AWS IoT Device Shadow size limit of 8KB. This size limit applies to the overall message document, which includes both the desired and actual state. So, if there enough changes to the desired state, the supported shadow size of accepted values can effectively be reduced to 4KB.
+
+#### Tracking command progress
+Each command should have a solution unique type and each command message should contain a globally unique message ID. The command message’s ID allows the solution to track the status of distinct commands and the command type enables the diagnoses any potential issues across categories of commands over time. The messages should be idempotent and not allow for being missed or duplicated without knowledge of the device and requestor.
+
+#### Do some commands in the solution run significantly longer than the norm?
+When some commands run longer than the norm, a simple SUCCESS or FAILURE command completion message will not suffice. Instead, the solution should leverage at least three command states: SUCCESS, FAILURE, and RUNNING. RUNNING should be returned by the device on an expected interval until the command’s completion. By using a RUNNING state reported on an expected interval, a solution can determine when a long-running command actually fails quietly.
+
+#### Application Integration
+This example demonstrated how a device and application can interact with the AWS IoT Device Shadow service. However, the service also supports a REST API which may integrate better with certain applications. For example, a mobile application that already interacts with other REST APIs would be a good candidate for using the Device Shadow REST API. See [Device Shadow REST API](https://docs.aws.amazon.com/iot/latest/developerguide/device-shadow-rest-api.html) for more detail.
+
+Also consider how Rules for AWS IoT could be leveraged for your application. For example, you could leverage rules to push a notification to an application or run some custom logic before delivering the data to the mobile application. Using rules can make integrating with your application easier or bring additional features to your users. See [Rules for AWS IoT](https://docs.aws.amazon.com/iot/latest/developerguide/iot-rules.html) for more detail.
