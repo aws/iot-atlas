@@ -35,3 +35,7 @@ As the website is statically generated through a build process and synched to an
 **When adding or changing the weight of an article, the left-side menu is not updating even with a browser refresh. How can I see the new structure?**
 
 Certain changes to content are not reflected with the _fast render_ process. To see these, enter `CTRL+C` to stop the Hugo container process and run `./make_hugo.sh -d` again, then refresh the browser.
+
+**When I run `make_hugo.sh`, it fails to build the docker image completely due to issues with newer versions of Golang always connecting to upstream `proxy.gloang.org` to fetch modules when the `go get` command is issued. How do I work arround this issue?***
+
+Golang after version 1.13 will always try to fetch modules via upstream proxy `proxy.golang.org`. In some organizations, this domain is not accessible  due to corporate security mandates. To bypass this, you can explicitly set the environment variable `GOPROXY` to the value `direct`. Execute the following command to run the local development environment as: `GOPROXY=direct ./make_hugo.sh -d` bypassing the Golang proxy setting.

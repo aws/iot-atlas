@@ -74,7 +74,7 @@ devices -> broker : connect(iot_endpoint)
 devices -> broker : publish("dt/plant1/dev_1/temp")
 devices -> broker : publish("dt/plant1/dev_2/temp")
 devices -> broker : publish("dt/plant1/dev_n/temp")
-broker <- rule : select * from \n'dt/plant1/*/temp'
+broker <- rule : select * from \n'dt/plant1/+/temp'
 rule -> stream : put_records(events)
 stream -> lambda: handle(events)
 stream <- lambda: response
@@ -102,7 +102,7 @@ This implementation approach assumes all _Devices_ are not connected to the inte
 
 Once connected to _AWS IoT Core_, devices will transmit telemetry data to plant and device specific MQTT topics. The below example demonstrates MQTT topics and payloads for device1 and device2 in plant1. Your implementation might support hundreds, thousands, or millions of devices. Copy and paste the below topic names and message payloads into the subscribe and publish inputs of the MQTT test client to simulate the device traffic we will fan-in. You can subscribe to each topic to view the messages device specific as you publish them or you can subscribe to the wildcard topic `dt/plant1/+/temp` to see messages in aggregate.
 
-{{< tabs groupId="MQTT-scenario">}}
+{{< tabs groupId="fanIn">}}
 {{% tab name="device1" %}}
 
 MQTT Topic name for the temperature of device1 in plant1. 
