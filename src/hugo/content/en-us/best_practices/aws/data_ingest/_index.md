@@ -1,8 +1,7 @@
 ---
 title: "AWS IoT Data Ingest Best Practices"
 weight: 50
-aliases:
-  - /designs/gateway/
+author: felerp@amazon.com
 summary: "Best practices for data ingest with AWS IoT"
 ---
 
@@ -12,9 +11,15 @@ summary: "Best practices for data ingest with AWS IoT"
 
 A key feature of any IoT application is the collection of data from a fleet of devices, and being able to process and analyze that data in the cloud.  **Ingest** - where the data is received from the devices, and sent for processing - is a critical stage in this workflow.  When designing your application with AWS IoT, there are several factors and methods to consider regarding the ingest of your device data, and they may present different tradeoffs. 
 
-By following some best practices, you can ensure that your application’s ingestion layer is more closely aligned with your specific business needs, and with the pillars of the [**AWS Well-Architected Framework**](https://aws.amazon.com/architecture/well-architected) : [Cost Optimization](#cost), [Performance Efficiency](#performance), [Reliability](#reliability), [Security](#security), and [Operational Excellence](#operational).
+By following some best practices, you can ensure that your application’s ingestion layer is more closely aligned with your specific business needs, and with the pillars of the [**AWS Well-Architected Framework**](https://aws.amazon.com/architecture/well-architected): Cost Optimization, Performance Efficiency, Reliability, Security, and Operational Excellence.
 
 In the sections below, best practices are organized by pillar.  However, please note that some best practices have impact across multiple.  For optimal results, you should evaluate your IoT application from the perspective of all five pillars.
+
+* [Cost Optimization](#cost)  
+* [Performance Efficiency](#performance)   
+* [Reliability](#reliability)     
+* [Security](#security)  
+* [Operational Excellence](#operational)
 
 Additional ingest-related considerations and recommendations can be found in the [Appendix section](#appendix).
 
@@ -37,14 +42,11 @@ Some key questions to consider:
 
 *Is there business value to transmitting all data from your devices to the cloud?  Or are you able to summarize data, remove duplicate values, truncate, or ignore certain categories in order to transmit less data overall?*  
 
-* This will inform whether you can take steps to reduce the quantity of messages, and the corresponding payload size, which can save on messaging, and downstream storage and processing costs.  Local processing can be leveraged to perform these operations.
-* For example, consider whether you can safely ignore certain events entirely.  In such cases, your device can filter out those events to avoid incurring the costs of transmitting and processing them.
-* In situations where telemetry data must be sent, _do you need to include all of the raw data?_
+* This will inform whether you can take steps to reduce the quantity of messages, and the corresponding payload size, which can save on messaging, and downstream storage and processing costs.  Local processing can be leveraged to perform these operations. For example, consider whether you can safely ignore certain events entirely.  In such cases, your device can filter out those events to avoid incurring the costs of transmitting and processing them.
 * If you are able to reduce the number of decimal places/precision of values, or abbreviate certain text values to make them shorter, you can achieve a smaller message size/byte count.
-* You can also leverage local processing to aggregate or average data values, and just send the summarized results back to the cloud instead.
+* In situations where telemetry data must be sent, _do you need to include all of the raw data?_  For example, you can leverage local processing to aggregate or average data values, and just send the summarized results back to the cloud instead.
 
-You can also use serialization frameworks to compress the message payload.
-* <b>Caveat</b>: this is best suited for use cases where IoT Rules do not need to directly inspect the payload of the message, as it will be unreadable in its encoded state.
+You can also use serialization frameworks to compress the message payload. <b>Caveat</b>: this is best suited for use cases where IoT Rules do not need to directly inspect the payload of the message, as it will be unreadable in its encoded state.
 
 <a name="messagesize"></a>
 ##### About Message Size: 
