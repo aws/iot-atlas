@@ -37,12 +37,14 @@ Following section talks about architecture considerations for command & control 
 - _Device Shadow_ is the replica which makes device's state available to applications and other services
 - _ShadowTopicPrefix_ is an abbreviated form of the topic which can refer to either a named or an unnamed shadow, referred for `$aws/things/device1/shadow` (classic shadow) in explanation below.
 
-1. The _Device_ establishes an MQTT connection to the _AWS IoT Core_ endpoint, and then subscribes to the reserved [MQTT shadow topics](https://docs.aws.amazon.com/iot/latest/developerguide/reserved-topics.html#reserved-topics-shadow) for get & update shadow event operations-
+1. The _Device_ establishes an MQTT connection to the _AWS IoT Core_ endpoint, and then subscribes to the reserved [MQTT shadow topics](https://docs.aws.amazon.com/iot/latest/developerguide/reserved-topics.html#reserved-topics-shadow) for get & update shadow event operations. Also, instead of subscribing individually to each reserved shadow topic below, common prefix could be used for generalised subscription like `ShadowTopicPrefix/get/#` , `ShadowTopicPrefix/update/#`
+
 - `ShadowTopicPrefix/get/accepted`
 - `ShadowTopicPrefix/get/rejected`
 - `ShadowTopicPrefix/update/accepted`
 - `ShadowTopicPrefix/update/rejected`
 - `ShadowTopicPrefix/update/delta`
+
 2. On successful connect with _AWS IoT Core_ endpoint & on successful subscription to reserved shadow topics, the _Device_ publish request to `ShadowTopicPrefix/get` topic and process latest shadow file received on `ShadowTopicPrefix/get/accepted` subscribed topic. After processing _desired_ state or configuration changes from the shadow file, _Device_ makes publish request to `ShadowTopicPrefix/update` topic with device current state as _reported_ data on shadow file.     
 3. (Optional) Once the delta attributes are processed from shadow get request on device initial connect/reconnect, and if device is continued to remain connected then it can further receive delta changes on shadow file from the _Application_  
 4. The _Application_ establishes an MQTT connection to the _AWS IoT Core_ endpoint, and then subscribe to the `ShadowTopicPrefix/update/accepted`, `ShadowTopicPrefix/update/rejected` (response) shadow topics to process shadow update data from device end. 
@@ -119,12 +121,13 @@ app -> app : reconcile("device1")
 - _Device Shadow_ is the replica which makes device's state available to applications and other services
 - _ShadowTopicPrefix_ is an abbreviated form of the topic which can refer to either a named or an unnamed shadow, referred for `$aws/things/device1/shadow` (classic shadow) in explanation below.
 
-1. The _Device_ establishes an MQTT connection to the _AWS IoT Core_ endpoint, and then subscribes to the reserved [MQTT shadow topics](https://docs.aws.amazon.com/iot/latest/developerguide/reserved-topics.html#reserved-topics-shadow) for device shadow it supports. Below are the topics from where shadow event messages will be received and processed
+1. The _Device_ establishes an MQTT connection to the _AWS IoT Core_ endpoint, and then subscribes to the reserved [MQTT shadow topics](https://docs.aws.amazon.com/iot/latest/developerguide/reserved-topics.html#reserved-topics-shadow) for device shadow it supports. Below are the topics from where shadow event messages will be received and processed.Also, instead of subscribing individually to each reserved shadow topic below, common prefix could be used for generalised subscription like `ShadowTopicPrefix/get/#` , `ShadowTopicPrefix/update/#`
 - `ShadowTopicPrefix/get/accepted`
 - `ShadowTopicPrefix/get/rejected`
 - `ShadowTopicPrefix/update/accepted`
 - `ShadowTopicPrefix/update/rejected`
 - `ShadowTopicPrefix/update/delta`
+
 2. On successful connect with _AWS IOT Core_ endpoint & on successful subscription to reserved shadow topics, the _Device_ publish request to `ShadowTopicPrefix/get` topic and process latest shadow file received on `ShadowTopicPrefix/get/accepted` subscribed topic.
 3. After processing _command_ from shadow file, _Device_ makes publish request to `cmd/device1/response` (command action result) topic. Once _command_ action completed, _Device_ makes another publish request to `ShadowTopicPrefix/update` topic with command action completion status under _reported_ state on shadow file.     
 4. (Optional) Once the delta changes are processed from shadow get request on device initial connect/reconnect, and if device is continued to remain connected then it can further receive delta changes on shadow file from the _Application_  
@@ -630,9 +633,7 @@ if __name__ == '__main__':
         print("Disconnected!")
 
 ```
-
 - Update shadow request document 
-
 ```json
 
 {
