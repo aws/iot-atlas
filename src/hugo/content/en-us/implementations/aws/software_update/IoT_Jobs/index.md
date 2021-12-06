@@ -54,7 +54,7 @@ __Sample Job Document__:
 {{< /tabs >}}
 
 {{% notice note %}}
-Your job document can contain a presigned Amazon S3 URL that points to your code file (or other file). Presigned Amazon S3 URLs are valid for a limited amount of time and so are not generated until a device requests a job document. Because the presigned URL has not been created when you are creating the job document, you put a placeholder URL in your job document instead. A placeholder URL looks like the following: ${aws:iot:s3-presigned-url:https://s3.region.amazonaws.com/<_bucket_>/<_codefile_>} where bucket is the Amazon S3 bucket that contains the code file and code file is the Amazon S3 key of the code file
+Your job document can contain a presigned Amazon S3 URL that points to your code file (or other file). Presigned Amazon S3 URLs are valid for a limited amount of time and so are not generated until a device requests a job document. Because the presigned URL has not been created when you are creating the job document, you put a placeholder URL in your job document instead. A placeholder URL looks like the following: **${aws:iot:s3-presigned-url:https://s3.region.amazonaws.com/<_bucket_>/<_codefile_>}** where bucket is the Amazon S3 bucket that contains the code file and code file is the Amazon S3 key of the code file
 {{% /notice %}}
 
 {{% notice note %}}
@@ -141,7 +141,7 @@ To allow a device secure, time-limited access to data beyond that included in th
 
 When a device requests the job document, AWS IoT generates the presigned URL and replaces the placeholder URL with the presigned URL. Your job document is then sent to the device.
 
-When you create a job that uses presigned Amazon S3 URLs, you must provide an IAM role that grants permission to download files from the Amazon S3 bucket where the data or updates are stored. The role must also grant permission for AWS IoT to assume the role.
+When you create a job that uses presigned Amazon S3 URLs, you must provide an IAM role that grants permission to download files from the Amazon S3 bucket where the data or updates are stored. The role must also grant permission for AWS IoT to assume the role. Please refer to the [Managing Jobs documentation](https://docs.aws.amazon.com/iot/latest/developerguide/create-manage-jobs.html) for more info.
 
 ### Configuring Jobs
 Jobs can be configured to run on a target of devices or device groups either once _(snapshot job)_ or continuously ran whenever new devices are added to a device group _(continuous job)_. 
