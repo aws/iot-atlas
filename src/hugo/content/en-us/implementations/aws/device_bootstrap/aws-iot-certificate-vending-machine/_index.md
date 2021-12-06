@@ -2,6 +2,7 @@
 title: "Device Bootstrap - Certificate Vending Machine"
 weight: 10
 summary: "Device provisioning and registration using certificate vending machine method with AWS Lambda and Amazon DynamoDB"
+author: emirayar@amazon.lu
 ---
 
 Certificate Vending Machine is a device registration pattern applied when devices don't have unique certificates during manufacturing and share the same firmware. Using a Certificate Vending Machine API endpoint (CVM, in short) devices are registered by logic on the cloud with the device's claim of a unique identifier and a calculated hash with it. This unique identifier can be any serial number, MAC address, or IMEI. This exposed public API points to a cloud application that validates the incoming request and performs required operations to generate and attach certificates to the device. 
