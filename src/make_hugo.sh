@@ -19,7 +19,8 @@ HELP_USAGE
 function build_docker_image {
     if ! [[ $(docker images -q $IMAGE_NAME) ]]; then
         echo "********** Building container image for Hugo and dependencies"
-        docker build -t $IMAGE_NAME --build-arg GOPROXY=direct .
+        docker build -t $IMAGE_NAME --build-arg GOPROXY=$(go env GOPROXY) .
+
     fi
 }
 
