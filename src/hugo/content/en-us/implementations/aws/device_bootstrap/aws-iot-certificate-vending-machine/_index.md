@@ -8,7 +8,7 @@ author: emirayar@amazon.lu
 Certificate Vending Machine is a device registration pattern applied when devices don't have unique certificates during manufacturing and share the same firmware. Using a Certificate Vending Machine API endpoint (CVM, in short) devices are registered by logic on the cloud with the device's claim of a unique identifier and a calculated hash with it. This unique identifier can be any serial number, MAC address, or IMEI. This exposed public API points to a cloud application that validates the incoming request and performs required operations to generate and attach certificates to the device. 
 
 {{% notice note %}}
-This implementation focuses on the use of an AWS Lambda + Amazon DynamoDB + Amazon API Gateway combination to validate, register, and keep track of the devices and device registration process. The device invokes the API when it first connects to the internet. Then, AWS Lambda checks the identity and validity of the certificate request with the help of data stored about the device on DynamoDB. There are many device provisioning and registration options available for different types of manufacturing and distribution circumstances. Check [device bootstrap section of IoT Atlas](..) to explore other device provisioning and registration methods.
+This implementation focuses on the use of an AWS Lambda + Amazon DynamoDB + Amazon API Gateway combination to validate, register, and keep track of the devices and device registration process. The device invokes the API when it first connects to the internet. Then, AWS Lambda checks the identity and validity of the certificate request with the help of data stored about the device in DynamoDB. There are many device provisioning and registration options available for different types of manufacturing and distribution circumstances. Check [device bootstrap section of IoT Atlas](..) to explore other device provisioning and registration methods.
 {{% /notice %}}
 
 {{% notice note %}}
@@ -16,7 +16,7 @@ Another method can be [bootstrapping the device with a trusted user](../fleet\_p
 {{% /notice %}}
 
 
-## Use Cases
+## Use-Cases
 
 Certificate Vending Machine approach for device registration can be a preferred method under the following conditions:
 
@@ -49,7 +49,7 @@ The basic representation of this flow is shown as follows:
 
 ## Authentication
 
-Devices will use the public API endpoint to trigger their registration process. This request will contain the device's unique identifier and registration token. The unique identifier will be used to build the thing's name. The registration token is a calculated hash value to be stored on the DynamoDB table. The token will be calculated by the device using the same hashing algorithm during the preparation of the CVM API request. When the CVM Lambda receives a registration request, it validates the registration token provided by the device by comparing it with the one calculated previously and stored on the DynamoDB table. Since all devices share the same firmware, this token can be calculated by a combination of a "salt" and the device's unique identifier. This salt is a secret string that makes `SHA256()` less predictable by making the input string longer. This secret salt string will be placed into your firmware. Since the salt string is a sensitive piece of data for device bootstrapping, the solution must consider the security of how the salt string is stored. Read more on **Considerations** section below.
+Devices will use the public API endpoint to trigger their registration process. This request will contain the device's unique identifier and registration token. The unique identifier will be used to build the thing's name. The registration token is a calculated hash value to be stored in the DynamoDB table. The token will be calculated by the device using the same hashing algorithm during the preparation of the CVM API request. When the CVM Lambda receives a registration request, it validates the registration token provided by the device by comparing it with the one calculated previously and stored in the DynamoDB table. Since all devices share the same firmware, this token can be calculated by a combination of a "salt" and the device's unique identifier. This salt is a secret string that makes `SHA256()` less predictable by making the input string longer. This secret salt string will be placed into your firmware. Since the salt string is a sensitive piece of data for device bootstrapping, the solution must consider the security of how the salt string is stored. Read more on **Considerations** section below.
 
 We can summarise the process as follows:
 
@@ -132,8 +132,8 @@ Amazon DynamoDB stores the necessary device provisioning info before the registr
 | device_token | String | Device's calculated hash |
 | is_enabled | Number | Allow/deny device to register. Values: `0` - `1`. |
 | is_registered | Number | Device's registration status. This value is written as `1` after the registration. Values: `0` - `1`. |
-| iot_core_thing_name | String | Device's thing name registered on IoT Core service. Available only after registration. |
-| iot_core_registered_on | String | Device's registration time stamp on IoT Core service. Available only after registration. |
+| iot_core_thing_name | String | Device's thing name registered in IoT Core service. Available only after registration. |
+| iot_core_registered_on | String | Device's registration time stamp in IoT Core service. Available only after registration. |
 
 
 Navigate to the Amazon DynamoDB console to create a table. Give the table name as `DeviceProvisioningInfoDB`, configure the partition key field `device_uid` as `String`, leave the sort key blank. DynamoDB records in a table are accessed using a combination of partition and sort keys. With this configuration, the CVM Lambda function can access the device's information using the device's unique identifier. As another option, you can run the following command to create the DynamoDB table in your default region.
@@ -151,7 +151,7 @@ aws dynamodb create-table \
 
 AWS Lambda runs the application logic that performs the registration and provisioning of the device in the cloud. The function interacts with Amazon DynamoDB and AWS IoT Core services to perform validations and to create the device's identity in the IoT Core service. Finally, the AWS Lambda function prepares a response in JSON format that is returned to the device through the API Gateway.
 
-You can use following the implementation as the CVM Lambda function. Navigate Amazon Lambda console and create a new `python3.9` lambda function.
+You can use following the implementation as the CVM Lambda function. Navigate Amazon Lambda console and create a new `python3.9` Lambda function.
 
 ```python
 import json
@@ -299,7 +299,7 @@ def prepare_result(event, result_type, status_code=200, payload=None):
 
 ```
 
-Make sure that you've created an IAM role to allow Lambda function accesses to AWS IoT Core and DynamoDB services to run required API calls. You can use the following file as an example policy to be attached to the role. This reference IAM policy will allow lambda function to perform following restricted IoT and DynamoDB actions.
+Make sure that you've created an IAM role to allow Lambda function accesses to AWS IoT Core and DynamoDB services to run required API calls. You can use the following file as an example policy to be attached to the role. This reference IAM policy will allow Lambda function to perform following restricted IoT and DynamoDB actions.
 
 ```json
 {
@@ -332,10 +332,10 @@ Make sure that you've created an IAM role to allow Lambda function accesses to A
 }
 ```
 
-This Amazon Lambda function implementation uses some environment variables to store various configuration parameters. After deployment of the Lambda function. navigate to **Configuration > Environment Variables** to define the following variables.
+This Amazon Lambda function implementation uses the following environment variables to store configurable parameters. After deployment of the Lambda function, navigate to **Configuration > Environment Variables** to define the following variables.
 
 
-| Variable | Default Value | Description |
+| Variable | Example Value | Description |
 | ----------- | ----------- |----- |
 | device_dynamodb_table | `DeviceProvisioningInfoDB` | Name of the DynamoDB table used as device store. |
 | iot_root_ca_url | `https://www.amazontrust.com/repository/AmazonRootCA1.pem` | IoT Root CA certificate URL, this certificate will be included in the API response. |
@@ -343,44 +343,51 @@ This Amazon Lambda function implementation uses some environment variables to st
 | thing_name_format | `thing_%DEVICE_UID%` | Device name template for AWS IoT Core things, use `%DEVICE_UID%` variable to build dynamic thing names. |
 | iot_policy_name | `SingleDevicePolicy` | Default IoT policy to be assigned to devices after registration. |
 
-After deployment of the lambda function, configure it to be triggered by Amazon API Gateway.
+After deployment of the Lambda function, configure it to be triggered by Amazon API Gateway.
 
 ### 4\. Configure API Gateway to trigger Lambda function
 
+Create and configure an AWS API Gateway to make your Lambda function triggered by an HTTP POST call from the device. AWS API Gateway service provides you an API endpoint. The device will use this API endpoint to perform the registration process.
 
-You need to create and configure an AWS API Gateway to make your Lambda function triggered by an HTTP POST call from the device. 
-Navigate to [API Gateway console](https://console.aws.amazon.com/apigateway), create an API Gateway REST API (`IoTCVMApi`) with one resource (`Registration`) as endpoint `/registration` and one method (`POST`). You associate the POST method with your Lambda function. Then, you deploy the API. Copy and save the API invoke URL. This URL is the IoT CVM API endpoint.
+- Navigate to [API Gateway console](https://console.aws.amazon.com/apigateway).
+- Create an API Gateway REST API (`IoTCVMApi`).
+- Create one resource (`Registration`) as endpoint `/registration` .
+- Create one method (`POST`) for the resource.
+- Associate the POST method with your Lambda function.
+- Deploy the API.
+
+After deployment of the API, copy and save the API invoke URL. This URL is the IoT CVM API endpoint. 
 
 ## Testing and simulation of a device behavior
 
-Let's assume `device_uid=DEVICE001` and calculate its SHA256 hash using python on the shell console. Copy the calculated hash.
+To test the registration of a device with the UID of `DEVICE001`, first create the SHA256 hash using following python code on the shell console. Then, copy the calculated hash.
 
 ```bash
-python3 <<< 'import hashlib; print(hashlib.sha256(b"DEVICE001//YOURSECRETSALTHERE").hexdigest())'
+python3 <<< 'import hashlib; print(hashlib.sha256(b"YOUR_SECRET_SALT//DEVICE001").hexdigest())'
  
-$ d20085ec140486cc01d0cade40e71a9f056fa2cadb2c4f78c883a3db5b5ec72e
+$ ecab892722df5937d055dd496cdff41ac6bdece2cfc18b31e896960e52df5787
 ```
 
-Navigate to DynamoDB console and add a record to DynamoDB table. As initial state, set `is_enabled=0` to demonstrate the error behavior. Place your calculated device token to `<DEVICE_TOKEN>`. You can use the following JSON as a reference:
+Navigate to DynamoDB console and add a record to DynamoDB table. The Lambda function will check the device's identity against the DynamoDB record. You can use the following JSON as a reference:
 
 ```json
 {
     "device_uid": "DEVICE001",
-    "device_token": "<DEVICE_TOKEN>",
+    "device_token": "ecab892722df5937d055dd496cdff41ac6bdece2cfc18b31e896960e52df5787",
     "is_enabled": "1",
     "is_registered": "0"
 }
 ```
 
-Replace `API_ENDPOINT` with your API Gateway endpoint and perform a device registration API call as acting like your device's firmware.
+Use following shell command to perform a device registration API call as acting like your device's firmware. Replace `API_ENDPOINT` in the URL with your IoT CVM API endpoint you deployed earlier.
 
 ```bash
-curl -d '{"device_uid":"DEVICE001", "device_token":"d2008..."}' -H "Content-Type: application/json" -X POST https://API_ENDPOINT/registration
+curl -d '{"device_uid":"DEVICE001", "device_token":"ecab892722df5937d055dd496cdff41ac6bdece2cfc18b31e896960e52df5787"}' -H "Content-Type: application/json" -X POST https://API_ENDPOINT/registration
 
 {"statusCode": 200, "status": "SUCCESS", "payload": {...}}
 ```
 
-You registered the device. The response contains the connection info and certificates. This response is only available once so make sure that you saved the HTTP response. Later requests will responded as _device is already registered._
+The response indicates that the device has been successfully registered and contains the connection information and certificates. This response is only available once so make sure that you saved the HTTP response. Later requests will responded as _device is already registered._
 
 Check the DynamoDB record to see the device's updated info.
 
@@ -391,21 +398,19 @@ Device is registered to AWS IoT Core using certificate vending machine method. Y
 This implementation covers the basics of an IoT certificate vending machine method. It does not cover certain aspects that may arise in production use.
 
 ### Security and Authentication
-If your IoT devices are exposed to the internet instead of an intranet, your API should be deployed as a public API endpoint. This will allow any internet-connected network to connect your API but also it exposes your API endpoint to possible attacks. To protect your API Gateway endpoint, use [Security in Amazon API Gateway
-](https://docs.aws.amazon.com/apigateway/latest/developerguide/security.html) documentation to enable features like API rate limiting or IP address-based restrictions with AWS WAF.
+If your IoT devices are exposed to the internet instead of an intranet, your API should be deployed as a public API endpoint. This will allow any internet-connected network to connect your API but also it exposes your API endpoint to possible attacks. To protect your API Gateway endpoint, refer to the [Security in Amazon API Gateway](https://docs.aws.amazon.com/apigateway/latest/developerguide/security.html) documentation to enable features like API rate limiting or IP address-based restrictions with AWS WAF - Web Application Firewall.
 
-This implementation depends on a single unique identifier of a device. If your device unique identifiers are sequential or easy-to-estimate, you need to consider the leakage of your device token calculation formula and hash string. For this reason, you may need to implement a second unique identifier to mitigate the replay or increment attacks. In this situation, the device should claim its first unique ID, matching second unique ID, and matching calculated hash, for example `device_token=SHA256("YOUR_SECRET_SALT//DEVICE_UID_1+DEVICE_UID_2")` to be registered.
+This implementation depends on a single unique identifier of a device. If your device's unique identifiers are sequential or easy to predict, you need to consider your device token calculation formula being reverse-engineered. For this reason, you may need to implement a second unique identifier to mitigate the replay or increment attacks. In this situation, the device should claim its first unique ID, matching second unique ID, and matching calculated hash, for example `device_token=SHA256("YOUR_SECRET_SALT//DEVICE_UID_1+DEVICE_UID_2")` to be registered.
 
-Your `device_token` is calculated by hashing functions using your secret salt string. You need to implement some extra layers to increase the protection of registration logic and protect your sensitive material. 
-- If your device's computing environment provides hardware-based encryption blocks or read-protected memory blocks, you can leverage these features to reduce the possible attack surface. Almost all modern MCU's provide these feature sets out of the box, otherwise, you may need to include a TPM (Trusted Platform Module) component to your hardware design.
-- You can use different secrets salts for different batches/series of devices. This makes only one batch/series of devices use the same secret durinng the registration. This reduces the blast radius of leakage of your secret salt.
-
+Your `device_token` is calculated by hashing functions using your secret salt string. To increase the protection of registration logic and protect the sensitive material, you should implement some extra layers, such as:
+- If your device's computing environment provides hardware-based encryption blocks or read-protected memory blocks, you can leverage these features to reduce the possible attack surface. Otherwise, you may need to include a TPM (Trusted Platform Module) component to your hardware design.
+- You can use different secrets salts for different batches or series of devices. This reduces the blast radius if your your secret salt is obtained to a single batch or series of devices.
 ### Service Quotas
 This implementation uses an AWS Lambda function to make AWS IoT Core API calls. You need to identify possible batch registration events and estimated throughput of IoT API calls to avoid hitting service limits and quotas.
 
 ### Logging and Monitoring of Device Registration
 
-Implement a logging and monitoring mechanism for critical steps and KPI's regarding your device registration use-case to build a registration dashboard. This monitoring strategy can include the following:
+Define KPI's such as "registration success rate" and "registration attempts per device" regarding your device registration use-case. Then, implement a logging and monitoring mechanism for critical steps to build a registration dashboard. This monitoring strategy can include the following:
 
 - CloudWatch log insights of the CVM Lambda function
 - Lambda function invocation metrics
@@ -417,9 +422,9 @@ Implement a logging and monitoring mechanism for critical steps and KPI's regard
 
 Your IoT device's registration implementation should be aware of the CVM API response times and possible error codes. In case of an error, it should trigger retries or reporting scenarios within a well-defined flow.
 
-CVM API response time depends on possible Lambda cold starts, IoT Core API calls run in the lambda function, and your other custom logic in the function.
+CVM API response time depends on possible Lambda cold starts, IoT Core API calls run in the Lambda function, and your other custom logic in the function.
 
-Some possible application-level error catches are implemented in the lambda function as examples. But they may differ according to your use case.
+In the Lambda code above, some possible application-level error catches (try/except) are implemented as examples. Ensure your application code can handle all potential error conditions and always respond with a descriptive error message.
 
 ### Multi-Region Strategy
-This implementation shows to provision IoT resources on a single defined region. Also, the device database on Amazon DynamoDB and Amazon API Gateway endpoint are deployed on a single region. If your use case requires the creation of IoT resources in different regions, you can implement additional logic in the Lambda function and call APIs in different regions to create resources. If your usecase requires complete isolation of resources in different regions or a multi-region fault tolerance, you can deploy CVM solution to multiple resources. You can leverage multi-region features of services used, e.g. **global tables** feature of Amazon DynamoDB which provides fully managed, multi-region, and multi-active database, replicates automatically across your choice of AWS Regions.
+This implementation shows how to provision IoT resources in a single region. Also, the device database in Amazon DynamoDB and Amazon API Gateway endpoint are deployed in a single region. If your use-case requires the creation of IoT resources in different regions, you can implement additional logic in the Lambda function and call APIs in different regions to create resources. If your use-case requires complete isolation of resources in different regions, or a multi-region fault tolerance, you can deploy the CVM solution to multiple regions. You can leverage multi-region features of services used, e.g. **global tables** feature of Amazon DynamoDB, which provides fully managed, multi-region, and multi-active database, that replicates automatically across your choice of AWS Regions.
