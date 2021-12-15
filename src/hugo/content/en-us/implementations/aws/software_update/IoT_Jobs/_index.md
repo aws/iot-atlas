@@ -36,8 +36,7 @@ This implementation also assumes that proper permissions have already been grant
 To create a job, you must first create a job document that is a description of the remote operations to be performed by the devices. A job document contains one or more URLs where the device can download an update or some other data. The job document can be stored in an Amazon S3 bucket, or be included inline with the command that creates the job.
 
 __Sample Job Document__:
-{{< tabs groupId="device-code">}}
-{{% tab name="example-job.json" %}}
+
 
 ```json
 { 
@@ -50,8 +49,7 @@ __Sample Job Document__:
         }
 }
 ```
-{{% /tab %}}
-{{< /tabs >}}
+
 
 {{% notice note %}}
 Your job document can contain a presigned Amazon S3 URL that points to your code file (or other file). Presigned Amazon S3 URLs are valid for a limited amount of time and so are not generated until a device requests a job document. Because the presigned URL has not been created when you are creating the job document, you put a placeholder URL in your job document instead. A placeholder URL looks like the following: **${aws:iot:s3-presigned-url:https://s3.region.amazonaws.com/<_bucket_>/<_codefile_>}** where bucket is the Amazon S3 bucket that contains the code file and code file is the Amazon S3 key of the code file
