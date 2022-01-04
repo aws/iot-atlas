@@ -85,7 +85,7 @@ def message_listener(message):
 
 #### Device applies software and publishes acknowledgement message
 
-A device will apply the downloaded software and acknowledge the command completion with a message to `state/deviceID/update/accepted` topic
+A device will apply the downloaded software and acknowledge the command completion with a message to `state/deviceID/update` topic
 
 ```python
 def apply_software(software, job_id):
@@ -100,7 +100,7 @@ def apply_software(software, job_id):
         message = 'jobID:' + job_id + " FAILURE"
 
     # the topic used to publish the acknowledge message
-    topic = 'state/deviceID/update/accepted'
+    topic = 'state/deviceID/update'
     # ...and finally, publish the acknowledge message
     message_publish(topic, message, quality_of_service)
 ```

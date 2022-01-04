@@ -88,7 +88,7 @@ def message_listener(message):
 
 #### 设备应用软件更新并发布确认消息
 
-设备执行更新并将执行更新的结果发布到`state/deviceID/update/accepted`主题上以完成对命令的确认
+设备执行更新并将执行更新的结果发布到`state/deviceID/update`主题上以完成对命令的确认
 
 ```python
 def apply_software(software, job_id):
@@ -103,7 +103,7 @@ def apply_software(software, job_id):
         message = 'jobID:' + job_id + "FAILURE"
 
     # the topic used to publish the acknowledge message
-    topic = 'state/deviceID/update/accepted'
+    topic = 'state/deviceID/update'
     # ...and finally, publish the acknowledge message
     message_publish(topic, message, quality_of_service)
 ```

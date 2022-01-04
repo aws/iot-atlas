@@ -88,7 +88,7 @@ def message_listener(message):
 
 #### L'appareil effectue une mmise à jour logicielle et publie un message d'accusé de réception
 
-Un appareil effectuera la mise à jour logicielle téléchargée et accusera réception de la commande avec un message sur le sujet `state/deviceID/update/accepted`
+Un appareil effectuera la mise à jour logicielle téléchargée et accusera réception de la commande avec un message sur le sujet `state/deviceID/update`
 
 ```python
 def apply_software(software, job_id):
@@ -103,7 +103,7 @@ def apply_software(software, job_id):
         message = 'jobID:' + job_id + " FAILURE"
 
     # the topic used to publish the acknowledge message
-    topic = 'state/deviceID/update/accepted'
+    topic = 'state/deviceID/update'
     # ...and finally, publish the acknowledge message
     message_publish(topic, message, quality_of_service)
 ```
