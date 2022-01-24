@@ -74,8 +74,10 @@ function uri_path_validate {
     #      - Exclude on github.com/aws in case of editURL changes. Will catch during automation
     echo "********** Running link checks on language: $1"
     if ! docker run --rm --net="host" raviqqe/muffet \
-            "--exclude=https://github.com/aws/" \
-            "--buffer-size=8192" \
+            --exclude="https://github.com/aws/" \
+            --buffer-size="8192"  \
+            --header="User-Agent: IotAtlasBot/1.0 (+http://iotatlas.net/en/bot/)" \
+            --max-connections=512 --max-connections-per-host=2 --rate-limit=16 \
             http://localhost:1313/$1/; then
         echo "********** $1: Invalid links (see above)"
         return 1   # 1 = failure
