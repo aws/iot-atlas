@@ -58,11 +58,11 @@ If large messages **can be sent in batches**, each message should be saved as a 
 
 #### What are the sample vs. reporting frequencies of a device?
 
-**Sample frequency** is the frequency at which sensed data is retrieved, or _sampled_ from an attached [sensor]({{< ref "/glossary/vocabulary#sensor" >}}).
+**Sampling frequency** is the frequency at which sensed data is retrieved, or _sampled_ from an attached [sensor]({{< ref "/glossary/vocabulary#sensor" >}}).
 
 **Reporting frequency** is the frequency at which sample data stored on the device is sent into the broader IoT solution.
 
-Device-based code will either obtain sensed data and queue it for delivery or deliver the sensed data immediately. These two different behaviors are often discussed as the _difference between the sample frequency and the reporting frequency_. When the sample and reporting frequencies are equal and aligned, all sensed data is expected to be delivered immediately. When the two frequencies are different, choosing the correct logging algorithm for the enqueued data must be considered.
+Device-based code will either obtain sensed data and queue it for delivery or deliver the sensed data immediately. These two different behaviors are often discussed as the _difference between the sampling frequency and the reporting frequency_. When the sample and reporting frequencies are equal and aligned, all sensed data is expected to be delivered immediately. When the two frequencies are different, choosing the correct logging algorithm for the enqueued data must be considered.
 
 The expected values for these two frequencies are important when determining the scale and cost of an IoT solution.
 
@@ -115,7 +115,7 @@ while should_poll():  # loop until we should no longer poll sensors
         # add sensed data to message
         msq = create_message(device_id, sensor.get_id(), ts, value)
         send_sensor_message(msg)  # send or enqueue message
-    # sleep according to the sample frequency before next reading
+    # sleep according to the sampling frequency before next reading
     sleep(<duration>)
 ```
 
