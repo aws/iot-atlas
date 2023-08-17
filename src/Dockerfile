@@ -8,7 +8,7 @@ FROM public.ecr.aws/ubuntu/ubuntu:20.04_stable AS base
 ARG TARGETARCH
 ARG BUILDARCH
 
-RUN echo "TARGETARCH=${TARGETARCH}\BUILDARCH=${BUILDARCH}"
+RUN echo "TARGETARCH=${TARGETARCH}\nBUILDARCH=${BUILDARCH}"
 
 RUN [ ${TARGETARCH} = ${BUILDARCH} ] || { echo "Error: the target architecture is not the same as the build architecture"; exit 1; }
 
