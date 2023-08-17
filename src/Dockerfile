@@ -1,9 +1,13 @@
 # Version of Hugo to build.
 # NOTE: For now, version 0.82.0 needed until hard-coded files for PlantUML addressed
 ARG HUGO_VERSION=0.82.0
+ARG TARGETARCH
+ARG BUILDARCH
 
 ################################################################################
 FROM public.ecr.aws/ubuntu/ubuntu:20.04_stable AS base
+
+RUN [ ${TARGETARCH} = ${BUILDARCH} ] || { echo "Error: the target architecture is not the same as the build architecture"; exit 1; }
 
 RUN apt-get update && apt-get upgrade -y \
     && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
@@ -25,9 +29,9 @@ ENV PATH="${PATH}:/usr/local/go/bin"
 WORKDIR /tmp
 
 # Install golang
-RUN curl -JLO https://golang.org/dl/go${GO_VERSION}.linux-amd64.tar.gz \
+RUN curl -JLO https://golang.org/dl/go${GO_VERSION}.linux-${TARGETARCH}.tar.gz \
     && rm -rf /usr/local/go \
-    && tar -C /usr/local -xzf go${GO_VERSION}.linux-amd64.tar.gz
+    && tar -C /usr/local -xzf go${GO_VERSION}.linux-${TARGETARCH}.tar.gz
 
 # Configure GOPROXY if passed in as build argument
 ARG GOPROXY
