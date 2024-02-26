@@ -19,12 +19,12 @@ disableNextPrev = true
 disableInlineCopyToClipBoard = true
 
 [markup]
-  defaultMarkdownHandler = "goldmark"
-  [markup.goldmark]
-    [markup.goldmark.renderer]
-      unsafe = true
-    [markup.goldmark.extensions]
-      plantuml = true
+defaultMarkdownHandler = "goldmark"
+[markup.goldmark]
+[markup.goldmark.renderer]
+unsafe = true
+[markup.goldmark.extensions]
+plantuml = true
 
 [taxonomies]
 tag = "tags"
@@ -32,7 +32,7 @@ category = "categories"
 persona = "personae"
 
 [outputs]
-home = [ "HTML", "RSS", "JSON" ]
+home = ["HTML", "RSS", "JSON"]
 
 [[menu.shortcuts]]
 name = "<i class='fas fa-tags'></i> Tags"
@@ -47,8 +47,8 @@ contentDir = "content/en-us"
 languageName = "English"
 weight = 1
 
-  [languages.en.params]
-  editURL = "https://github.com/aws/iot-atlas/tree/main/src/hugo/content/en-us/"
+[languages.en.params]
+editURL = "https://github.com/aws/iot-atlas/tree/main/src/hugo/content/en-us/"
 
 [languages.zh]
 lang = "zh"
@@ -57,8 +57,8 @@ contentDir = "content/zh-cn"
 languageName = "中文(简体)"
 weight = 2
 
-  [languages.zh.params]
-  editURL = "https://github.com/aws/iot-atlas/tree/main/src/hugo/content/zh-cn/"
+[languages.zh.params]
+editURL = "https://github.com/aws/iot-atlas/tree/main/src/hugo/content/zh-cn/"
 
 [languages.fr]
 lang = "fr"
@@ -67,5 +67,5 @@ contentDir = "content/fr-fr"
 languageName = "French"
 weight = 3
 
-  [languages.fr.params]
-  editURL = "https://github.com/aws/iot-atlas/tree/main/src/hugo/content/fr-fr/"
+[languages.fr.params]
+editURL = "https://github.com/aws/iot-atlas/tree/main/src/hugo/content/fr-fr/"
