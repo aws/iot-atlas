@@ -30,6 +30,7 @@ import (
 
 	"github.com/spf13/afero"
 
+	uml "github.com/OhYee/goldmark-plantuml"
 	"github.com/gohugoio/hugo/hugofs"
 	"github.com/gohugoio/hugo/markup/converter"
 	"github.com/gohugoio/hugo/markup/highlight"
@@ -42,7 +43,6 @@ import (
 	"github.com/yuin/goldmark/renderer/html"
 	"github.com/yuin/goldmark/text"
 	"github.com/yuin/goldmark/util"
-	uml "github.com/OhYee/goldmark-plantuml"
 )
 
 // Provider is the package entry point.
@@ -152,7 +152,6 @@ func newMarkdown(pcfg converter.ProviderConfig) goldmark.Markdown {
 	if cfg.Extensions.Plantuml {
 		extensions = append(extensions, uml.Default)
 	}
-
 
 	md := goldmark.New(
 		goldmark.WithExtensions(
