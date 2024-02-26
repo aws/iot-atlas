@@ -30,7 +30,7 @@ var Default = Config{
 		Strikethrough:  true,
 		Linkify:        true,
 		TaskList:       true,
-		Plantuml:	true,
+		Plantuml:       true,
 	},
 	Renderer: Renderer{
 		Unsafe: false,
