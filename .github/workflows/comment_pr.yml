@@ -5,6 +5,9 @@ on:
     workflows: ["Receive PR"]
     types:
       - completed
+permissions:
+  pull-requests: write
+
 jobs:
   comment_on_success:
     runs-on: ubuntu-latest
