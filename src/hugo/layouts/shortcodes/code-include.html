@@ -1,0 +1,64 @@
+{{- /*
+  code-include shortcode
+  Includes code from a shared file with syntax highlighting.
+
+  Code files live in /static/code/ and are shared across all languages.
+  This avoids duplicating code examples per translation.
+
+  Usage:
+    {{< code-include file="implementations/aws/command/command1/client.py" title="client.py" >}}
+
+  Parameters:
+    - file: Path relative to static/code/ directory
+    - language: (optional) Language for syntax highlighting (auto-detected from extension)
+    - title: (optional) Caption shown above the code block
+    - lines: (optional) Line range to include, e.g. "10-25"
+*/ -}}
+{{- $file := .Get "file" -}}
+{{- $language := .Get "language" -}}
+{{- $title := .Get "title" -}}
+{{- $lines := .Get "lines" -}}
+
+{{- /* Auto-detect language from file extension if not specified */ -}}
+{{- if not $language -}}
+  {{- $ext := path.Ext $file -}}
+  {{- if eq $ext ".py" }}{{ $language = "python" }}
+  {{- else if eq $ext ".js" }}{{ $language = "javascript" }}
+  {{- else if eq $ext ".ts" }}{{ $language = "typescript" }}
+  {{- else if eq $ext ".json" }}{{ $language = "json" }}
+  {{- else if eq $ext ".yaml" }}{{ $language = "yaml" }}
+  {{- else if eq $ext ".yml" }}{{ $language = "yaml" }}
+  {{- else if eq $ext ".sh" }}{{ $language = "bash" }}
+  {{- else if eq $ext ".bash" }}{{ $language = "bash" }}
+  {{- else if eq $ext ".java" }}{{ $language = "java" }}
+  {{- else if eq $ext ".c" }}{{ $language = "c" }}
+  {{- else if eq $ext ".cpp" }}{{ $language = "cpp" }}
+  {{- else if eq $ext ".go" }}{{ $language = "go" }}
+  {{- else if eq $ext ".tf" }}{{ $language = "hcl" }}
+  {{- else if eq $ext ".html" }}{{ $language = "html" }}
+  {{- else if eq $ext ".css" }}{{ $language = "css" }}
+  {{- else }}{{ $language = "text" }}
+  {{- end -}}
+{{- end -}}
+
+{{- /* Read the file from static/code/ */ -}}
+{{- $path := printf "static/code/%s" $file -}}
+{{- $content := readFile $path -}}
+{{- if not $content -}}
+  {{- errorf "[code-include] File not found: %s" $path -}}
+{{- end -}}
+
+{{- /* Apply line range if specified */ -}}
+{{- if and $lines $content -}}
+  {{- $parts := split $lines "-" -}}
+  {{- $start := int (index $parts 0) -}}
+  {{- $end := int (index $parts 1) -}}
+  {{- $allLines := split $content "\n" -}}
+  {{- $selected := first (sub $end (sub $start 1)) (after (sub $start 1) $allLines) -}}
+  {{- $content = delimit $selected "\n" -}}
+{{- end -}}
+
+{{- if $title -}}
+<div class="code-include-title">{{ $title }}</div>
+{{- end }}
+{{ highlight (trim $content "\n") $language "" }}
