@@ -26,7 +26,7 @@ Una solución IoT debe aprovechar el siguiente patrón cuando un _componente_ de
 
 ### Pasos del Diagrama de Componente a Dispositivo
 
-1. Un dispositivo reporta el **estado inicial del dispositivo** publicando ese estado como un [mensaje]({{< ref "/glossary/vocabulary#mensaje" >}}) al [tema]({{< ref "/glossary/vocabulary#tema-mensaje" >}}) `state/deviceID/update`.
+1. Un dispositivo reporta el **estado inicial del dispositivo** publicando ese estado como un [mensaje]({{< ref "/glossary/vocabulary#mensaje" >}}) al [tema]({{< ref "/glossary/vocabulary#tema-de-mensaje" >}}) `state/deviceID/update`.
 2. La Réplica del Estado del Dispositivo que rastrea este dispositivo lee el mensaje del tema `state/deviceID/update` y registra el estado del dispositivo en un almacén de datos persistente.
 3. Un dispositivo se suscribe al tema de mensajes delta `state/deviceID/update/delta` sobre el cual llegarán los mensajes de cambio de estado relacionados con el dispositivo.
 4. Un componente de la solución publica un mensaje de estado deseado en el tema `state/deviceID/update` y la Réplica del Estado del Dispositivo que rastrea este dispositivo registra el estado deseado del dispositivo en un almacén de datos persistente.

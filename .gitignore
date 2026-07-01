@@ -20,6 +20,7 @@ cfg.tmp.json
 !/src/hugo/public/.gitkeep
 /src/hugo/tmp/*
 /src/hugo/.asciidoctor/*
+/src/hugo/.hugo_build.lock
 
 # Dev files
 Pipfile*

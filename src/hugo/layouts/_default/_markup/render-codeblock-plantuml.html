@@ -1,0 +1,14 @@
+{{- /*
+  Render hook for ```plantuml code blocks.
+  Stores the PlantUML source in a hidden element and renders it client-side
+  using the PlantUML server (configurable).
+  
+  Site params:
+    plantuml.server - PlantUML server URL (default: https://www.plantuml.com/plantuml)
+    plantuml.format - Output format: svg or png (default: svg)
+*/ -}}
+{{- $source := trim .Inner "\n\r" -}}
+{{- $id := printf "plantuml-%s" (md5 $source) -}}
+<div class="plantuml-diagram" id="{{ $id }}">
+  <pre class="plantuml-source" style="display:none;">{{ $source }}</pre>
+</div>

@@ -1,2 +1,0 @@
-#!/bin/bash
-echo "$(cat)" | java -jar /opt/plantuml/plantuml.jar "$@"

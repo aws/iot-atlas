@@ -56,7 +56,7 @@ Your job document can contain a presigned Amazon S3 URL that points to your code
 {{% /notice %}}
 
 {{% notice note %}}
-For more job document examples, see the [jobs-agent.js](https://www.npmjs.com/package/aws-iot-device-sdk) example in the AWS IoT SDK for JavaScript.
+For more job document examples, see the [jobs-agent.js](https://github.com/aws/aws-iot-device-sdk-js-v2) example in the AWS IoT SDK for JavaScript.
 {{% /notice %}}
 
 {{< tabs groupId="device-code">}}
@@ -151,4 +151,4 @@ You can also create a set of conditions to abort rollouts when criteria that you
 ### Deploying Jobs to Multiple Sets of Targets
 Job templates enable you to preconfigure jobs so that you can deploy them to multiple sets of target devices. They provide an efficient way to create standard configurations for remote actions that you need to deploy repeatedly to your devices.
 
-You can create jobs from job templates by using the AWS CLI and the AWS IoT console. Operators can also create jobs from job templates by using Fleet Hub for AWS IoT Device Management web applications. For more information about working with job templates in Fleet Hub applications, see [Working with job templates in Fleet Hub for AWS IoT Device Management](https://docs.aws.amazon.com/iot/latest/fleethubuserguide/aws-iot-monitor-technician-job-templates.html).
+You can create jobs from job templates by using the AWS CLI and the AWS IoT console. Operators can also create jobs from job templates by using Fleet Hub for AWS IoT Device Management web applications. For more information about working with job templates in Fleet Hub applications, see [Working with job templates in Fleet Hub for AWS IoT Device Management](https://docs.aws.amazon.com/iot/latest/developerguide/iot-jobs.html).

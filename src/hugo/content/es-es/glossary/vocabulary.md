@@ -8,10 +8,10 @@ Palabras y definiciones utilizadas en todo el IoT Atlas.
 > un actuador se utiliza para mover o controlar un mecanismo en el entorno
 
 ### Mensaje de Comando
-> un [mensaje](#message) que describe una acción que debe realizarse y que el dispositivo sabe que debe ser reconocida en otro tema una vez que la acción se complete.
+> un [mensaje](#mensaje) que describe una acción que debe realizarse y que el dispositivo sabe que debe ser reconocida en otro tema una vez que la acción se complete.
 
 ### Dispositivo
-> una entidad que tiene suficiente energía y recursos de cómputo para ser parte de una solución IoT. La mayoría de las veces, los dispositivos tienen [sensores](#sensor) o [actuadores](#actuator) adjuntos.
+> una entidad que tiene suficiente energía y recursos de cómputo para ser parte de una solución IoT. La mayoría de las veces, los dispositivos tienen [sensores](#sensor) o [actuadores](#actuador) adjuntos.
 
 ### Densidad de Datos del Dispositivo
 > la densidad de datos de un dispositivo es: `densidad = frecuencia de muestreo * tamaño de muestra * frecuencia de reporte`

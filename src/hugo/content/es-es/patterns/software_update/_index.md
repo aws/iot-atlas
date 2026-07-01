@@ -22,7 +22,7 @@ El patrón de Actualización de Software mostrado en el siguiente diagrama puede
 
 ### Pasos del Diagrama
 
-1. Un dispositivo se suscribe al [tema de mensajes]({{< ref "/glossary/vocabulary#message-topic" >}}) delta `state/deviceID/update/delta` sobre el cual llegarán los mensajes de cambio de estado relacionados con el dispositivo desde la réplica del estado del dispositivo.
+1. Un dispositivo se suscribe al [tema de mensajes]({{< ref "/glossary/vocabulary#tema-de-mensaje" >}}) delta `state/deviceID/update/delta` sobre el cual llegarán los mensajes de cambio de estado relacionados con el dispositivo desde la réplica del estado del dispositivo.
 2. Una aplicación obtiene la nueva distribución de software y la coloca en una solución de almacenamiento accesible para los dispositivos de producción.
 3. Una aplicación identifica un dispositivo que debe recibir el nuevo software y publica un mensaje de estado deseado en el tema `state/deviceID/update` del dispositivo. El mensaje de estado deseado contiene una URL de actualización de software diferente a la URL de la versión actual del software del dispositivo.
 4. La réplica del estado del dispositivo que rastrea este dispositivo registra el estado deseado del dispositivo en un almacén de datos persistente y publica un mensaje delta en el tema `state/deviceID/update/delta` que se envía al dispositivo.
@@ -52,7 +52,7 @@ Un ejemplo de la lógica involucrada para que un dispositivo en una solución Io
 
 #### El dispositivo se prepara para los mensajes de comando de actualización
 
-Un dispositivo suscribe una función de escucha de mensajes para procesar [mensajes de comando]({{< ref "/glossary/vocabulary#command-message" >}}) provenientes del tema `state/deviceID/update/delta`
+Un dispositivo suscribe una función de escucha de mensajes para procesar [mensajes de comando]({{< ref "/glossary/vocabulary#mensaje-de-comando" >}}) provenientes del tema `state/deviceID/update/delta`
 
 ```python
 def message_listener(message):

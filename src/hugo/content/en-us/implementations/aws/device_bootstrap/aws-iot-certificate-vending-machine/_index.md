@@ -12,7 +12,7 @@ This implementation focuses on the use of an AWS Lambda + Amazon DynamoDB + Amaz
 {{% /notice %}}
 
 {{% notice note %}}
-Another method can be [bootstrapping the device with a trusted user](../fleet\_provisioning\_trusted\_user/) when devices don't have unique certificates and a trusted user is available with a mobile app that can relay the certificates to the device.
+Another method can be [bootstrapping the device with a trusted user](../fleet_provisioning_trusted_user/) when devices don't have unique certificates and a trusted user is available with a mobile app that can relay the certificates to the device.
 {{% /notice %}}
 
 

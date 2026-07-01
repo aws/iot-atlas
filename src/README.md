@@ -8,7 +8,12 @@ Following the steps below will ensure that any changes you make can be tested an
 
 ### Pre-requisites
 
-To reduce installing dependencies, the main requirement is to have Docker installed locally. Also, the `make_hugo.sh` script is Linux/macOS (well, bash) specific, so for Microsoft Windows the commands would need to reviewed and changed.
+You can develop locally with either:
+
+- **Docker** (recommended for CI parity): Only Docker is required. The `make_hugo.sh` script builds and runs everything in a container.
+- **Hugo installed locally**: Install [Hugo Extended](https://gohugo.io/installation/) (v0.163.0+). Then run `hugo server` from the `src/hugo/` directory.
+
+The `make_hugo.sh` script is Linux/macOS (bash) specific. For Microsoft Windows, the commands would need to be reviewed and changed.
 
 ### Testing Process
 
@@ -19,10 +24,32 @@ To reduce installing dependencies, the main requirement is to have Docker instal
    ./make_hugo.sh -d
    ```
 
-1. This starts a local server on port 1313 serving the rendered content. The default URL is `http://localhost:1313` and will show _most_ content with the exception of rendered images from AsciiDoc or PlantUML. To see this content, fully generate the content and view locally from a web browser opening `src/hugo/public/index.html`.
-1. Every time you make and save a change, the local server will re-render and trigger your local browser to reload the page. If changes are not reflected, enter `CTRL+C` to stop the process and start `./make_hugo.sh -d` again.
+   Or, if you have Hugo installed locally:
 
-Once you have completed development, run `./make_hugo.sh` without any arguments to have it fully generate and validate the content. Once successful, you can commit and perform a pull requests.
+   ```bash
+   cd src/hugo/
+   hugo server
+   ```
+
+1. This starts a local server on port 1313 serving the rendered content. The default URL is `http://localhost:1313` and will show all content including PlantUML diagrams (rendered client-side via the public PlantUML server).
+1. Every time you make and save a change, the local server will re-render and trigger your local browser to reload the page. If changes are not reflected, enter `CTRL+C` to stop the process and restart.
+
+Once you have completed development, run `./make_hugo.sh` without any arguments to have it fully generate and validate the content. Once successful, you can commit and perform a pull request.
+
+### PlantUML Diagrams
+
+PlantUML diagrams are written as fenced code blocks with the `plantuml` language identifier:
+
+````markdown
+```plantuml
+@startuml
+Alice -> Bob: Hello
+Bob -> Alice: Hi!
+@enduml
+```
+````
+
+Diagrams are rendered client-side using the public PlantUML server. No local Java/PlantUML installation is required.
 
 ### FAQ
 
@@ -34,8 +61,4 @@ As the website is statically generated through a build process and synched to an
 
 **When adding or changing the weight of an article, the left-side menu is not updating even with a browser refresh. How can I see the new structure?**
 
-Certain changes to content are not reflected with the _fast render_ process. To see these, enter `CTRL+C` to stop the Hugo container process and run `./make_hugo.sh -d` again, then refresh the browser.
-
-**When I run `make_hugo.sh`, it fails to build the docker image completely due to issues with newer versions of Golang always connecting to upstream `proxy.gloang.org` to fetch modules when the `go get` command is issued. How do I work arround this issue?***
-
-Golang after version 1.13 will always try to fetch modules via upstream proxy `proxy.golang.org`. In some organizations, this domain is not accessible  due to corporate security mandates. To bypass this, you can explicitly set the environment variable `GOPROXY` to the value `direct`. Execute the following command to run the local development environment as: `GOPROXY=direct ./make_hugo.sh -d` bypassing the Golang proxy setting.
+Certain changes to content are not reflected with the _fast render_ process. To see these, enter `CTRL+C` to stop the Hugo container process and restart, then refresh the browser.

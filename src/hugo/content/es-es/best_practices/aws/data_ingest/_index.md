@@ -15,12 +15,12 @@ In the sections below, best practices are organized by pillar.  However, please 
 En las secciones a continuación, las mejores prácticas están organizadas por pilar. Sin embargo, tenga en cuenta que algunas mejores prácticas tienen impacto en múltiples pilares. Para obtener resultados óptimos, debe evaluar su aplicación IoT desde la perspectiva de los cinco pilares.
 
 * [Optimización de Costos](#cost)  
-* [Eficiencia de Rendimiento](#eficioencia-de-rendimiento)   
-* [Confiabilidad](#confiabilidad) 
-* [Seguridad](#seguridad)  
-* [Excelencia Operacional](#excelencia-operacional)
+* [Eficiencia de Rendimiento](#consideraciones-de-eficiencia-de-rendimiento)   
+* [Confiabilidad](#consideraciones-de-confiabilidad) 
+* [Seguridad](#consideraciones-de-seguridad)  
+* [Excelencia Operacional](#consideraciones-de-excelencia-operacional)
 
-Consideraciones y recomendaciones adicionales relacionadas con la ingesta se pueden encontrar en la [sección de Apéndice](#apendice).
+Consideraciones y recomendaciones adicionales relacionadas con la ingesta se pueden encontrar en la [sección de Apéndice](#apéndice-consideraciones-y-recomendaciones-adicionales-relacionadas-con-la-ingesta).
 
 <a name="cost"></a>
 
