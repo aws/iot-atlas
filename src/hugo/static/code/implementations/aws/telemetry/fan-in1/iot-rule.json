@@ -1,0 +1,11 @@
+{
+    "timestamp": 1601048303,
+    "sensorId": 17,
+    "deviceSerial": "sd89w7e82349",
+    "sensorData": [
+        {
+        "sensorName": "Temperature Celsius",
+        "sensorValue": 34.2211224
+        }
+    ]
+}

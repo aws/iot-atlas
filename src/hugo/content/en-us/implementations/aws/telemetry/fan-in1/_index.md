@@ -110,19 +110,7 @@ MQTT Topic name for the temperature of device1 in plant1.
 dt/plant1/dev_1/temp
 ```
 Temperature in Celsius telemetry JSON payload for device1 in plant1. 
-```json 
-{
-    "timestamp": 1601048303,
-    "sensorId": 17,
-    "deviceSerial": "sd89w7e82349",
-    "sensorData": [
-        {
-        "sensorName": "Temperature Celsius",
-        "sensorValue": 34.2211224
-        }
-    ]
-}
-```
+{{< code-include file="implementations/aws/telemetry/fan-in1/iot-rule.json" language="json" title="IoT Rule Action" >}}
 
 {{% /tab %}}
 {{% tab name="device2" %}}
@@ -132,19 +120,7 @@ MQTT Topic name for the temperature of device2 in plant1.
 dt/plant1/dev_2/temp
 ```
 Temperature in Fahrenheit telemetry JSON payload for device2 in plant1. 
-```json
-{
-    "timestamp": 1601048303,
-    "sensorId": 4,
-    "deviceSerial": "324l5;k;a3",
-    "sensorData": [
-        {
-        "sensorName": "Temperature Fahrenheit",
-        "sensorValue": 120.3806
-        }
-    ]
-}
-```
+{{< code-include file="implementations/aws/telemetry/fan-in1/iot-rule-error.json" language="json" title="IoT Rule Error Action" >}}
 
 {{% /tab %}}
 {{< /tabs >}}
@@ -162,42 +138,7 @@ In the AWS _Lambda_ console create a new _Lambda_ function. To use the code belo
 {{< tabs groupId="lambda-code">}}
 {{% tab name="python" %}}
 
-```python
-import base64
-import json
-
-print('Loading function')
-
-
-def lambda_handler(event, context):
-    output = []
-
-    for record in event['records']:
-        print(record['recordId'])
-        payload = json.loads(base64.b64decode(record['data']).decode('utf-8'))
-
-        transformedPayload = {}
-        transformedPayload['deviceSerial'] = payload['deviceSerial']
-        transformedPayload['timestamp'] = payload['timestamp']
-        
-        for data in payload['sensorData']:
-
-            if data['sensorName'] == 'Temperature Celsius':
-                transformedPayload['temperature'] = (data['sensorValue'] * 9/5) + 32  
-            else:
-                transformedPayload['temperature'] = data['sensorValue']
-
-        output_record = {
-            'recordId': record['recordId'],
-            'result': 'Ok',
-            'data': base64.b64encode(json.dumps(transformedPayload).encode('utf-8'))
-        }
-        
-        output.append(output_record)
-
-    print('Successfully processed {} records.'.format(len(event['records'])))
-
-    return {'records': output}    
+{{< code-include file="implementations/aws/telemetry/fan-in1/publish_telemetry.py" title="publish_telemetry.py - Device Simulator" >}}
 ```
 
 {{% /tab %}}

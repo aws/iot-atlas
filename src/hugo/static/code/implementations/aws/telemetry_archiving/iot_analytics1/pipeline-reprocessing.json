@@ -1,0 +1,26 @@
+{
+    "pipelineName": "calculate_fahrenheit",
+    "pipelineActivities": [
+        {
+            "channel": {
+                "name": "read_channel",
+                "channelName": "etl_archive_telemetry",
+                "next": "calculate_fahrenheit"
+            }
+        },
+        {
+            "math": {
+                "name": "calculate_fahrenheit",
+                "attribute": "temperature_fahrenheit",
+                "math": "(temperature * 9/5) + 32 ",
+                "next": "write_datastore"
+            }
+        },
+        {
+            "datastore": {
+                "name": "write_datastore",
+                "datastoreName": "etl_archival_store"
+            }
+        }
+    ]
+}
