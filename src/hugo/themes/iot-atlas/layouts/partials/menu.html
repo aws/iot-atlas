@@ -14,7 +14,7 @@
         <section id="homelinks">
           <ul>
             <li>
-                <a class="padding" href='{{ (cond (and (ne .Site.Params.landingPageURL nil) (hugo.IsMultilingual)) .Site.Params.landingPageURL "/") }}'>{{ safeHTML (cond (ne .Site.Params.landingPageName nil) .Site.Params.landingPageName "<i class='fas fa-home'></i> Home") }}</a>
+                <a class="padding" href='{{ (cond (and (ne .Site.Params.landingPageURL nil) (hugo.IsMultilingual)) .Site.Params.landingPageURL (.Site.Home.RelPermalink)) }}'>{{ safeHTML (cond (ne .Site.Params.landingPageName nil) .Site.Params.landingPageName "<i class='fas fa-home'></i> Home") }}</a>
             </li>
           </ul>
         </section>
