@@ -34,7 +34,7 @@ Lors de la mise en œuvre de ce design, tenez compte des questions suivantes:
 
 #### Avez-vous d'abord envisagé la réplique de l'état de l'appareil?
 
-Étant donné que l'exécution de commandes entraîne en fait un changement d'état dans un appareil, le design [Réplique de l'état de l'appareil](/fr/designs/device_state_replica/) (REA) est la méthode préférée pour exécuter des commandes dans une solution IoT. Dans les situations où REA ne convient pas ou dépasse certaines limites d'implémentation, envisagez cette conception de commande et une implémentation personnalisée de contrôle.
+Étant donné que l'exécution de commandes entraîne en fait un changement d'état dans un appareil, le design [Réplique de l'état de l'appareil](/fr/patterns/device_state_replica/) (REA) est la méthode préférée pour exécuter des commandes dans une solution IoT. Dans les situations où REA ne convient pas ou dépasse certaines limites d'implémentation, envisagez cette conception de commande et une implémentation personnalisée de contrôle.
 
 #### Comment la solution peut-elle suivre la progression des commandes de chaque appareil?
 
