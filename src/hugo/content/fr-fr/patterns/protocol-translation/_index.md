@@ -25,14 +25,14 @@ En règle générale, le déplacement de toutes les données sous une forme non 
 
 ## Solution
 
-Les solutions IoT relèvent ces défis en utilisant une [Passerelle]({{< ref "/designs/gateway">}}) en combinaison avec la logique locale exécutée sur la passerelle.
+Les solutions IoT relèvent ces défis en utilisant une [Passerelle]({{< ref "/patterns/gateway">}}) en combinaison avec la logique locale exécutée sur la passerelle.
 La logique se trouvant sur la passerelle exécute la traduction des protocoles industriels dans un format/protocole de données commun qui peut être traité par des systèmes informatiques tels que des bases de données, des lacs de données ou des services Web.
 
 Le design de Conversion de protocole illustrée dans le diagramme suivant peut être utilisée pour résoudre ces problèmes.
 
 ![Design de conversion de protocole](ProtocolTranslation.png) ([PPTx](/iot-atlas-patterns.pptx))
 
-- La partie gauche de ce diagramme représente les appareils locaux de la solution IoT qui sont connectés à au moins une [passerelle]({{<ref "/designs/gateway">}}).
+- La partie gauche de ce diagramme représente les appareils locaux de la solution IoT qui sont connectés à au moins une [passerelle]({{<ref "/patterns/gateway">}}).
 - La passerelle est le seul composant connecté à Internet et la flèche rouge indique que cette connexion doit être cryptée / protégée en conséquence.
 - La passerelle exécute une logique de traduction de protocole locale pour traduire différents protocoles en un protocole commun.
 - Si les données générées par l'un des appareils connectés doivent être transférées vers le cloud, la passerelle transmettra en toute sécurité les données dans un format commun après la traduction.
@@ -55,11 +55,11 @@ Par exemple, pour utiliser une connexion série avec Modbus, le chemin d'accès 
 #### Existe-t-il un moyen de retarder / grouper / agréger les messages sur la passerelle?
 
 L'agrégation ou la mise en lots de données ne fait pas partie de ce design car elle est discutée dans les considérations du design de la passerelle.
-Le design de la passerelle contient des [considérations]({{<ref "/designs/gateway#quelle-approche-devrait-être-utilisée-lors-du-stockage-des-messages-pour-une-distribution-ultérieure">}}) sur la façon dont la logique de conversion de protocole peut être étendu avec des mécanismes qui regroupent les résultats ou calculent des agrégations sur eux-mêmes.
+Le design de la passerelle contient des [considérations]({{<ref "/patterns/gateway#quelle-approche-devrait-être-utilisée-lors-du-stockage-des-messages-pour-une-distribution-ultérieure">}}) sur la façon dont la logique de conversion de protocole peut être étendu avec des mécanismes qui regroupent les résultats ou calculent des agrégations sur eux-mêmes.
 
 #### Comment le processus de conversion de protocole doit-il traduire les données lorsque le réseau vers le serveur n'est pas disponible?
 
-Le design passerelle contient certaines [considérations]({{<ref "/designs/gateway#quelle-approche-devrait-être-utilisée-lors-du-stockage-des-messages-pour-une-distribution-ultérieure">}} ) pour ce scénario.
+Le design passerelle contient certaines [considérations]({{<ref "/patterns/gateway#quelle-approche-devrait-être-utilisée-lors-du-stockage-des-messages-pour-une-distribution-ultérieure">}} ) pour ce scénario.
 Autrement dit, la passerelle ne sera pas en mesure de publier des données tant que la connexion sera perdue. Pour éviter la perte de données, il est recommandé d'implémenter une approche de message ascendante pour tous les messages traduits en utilisant un mécanisme de stockage local.
 
 #### Pourquoi les protocoles non sécurisés utilisés dans les solutions IoT existent-ils en premier lieu?
@@ -93,7 +93,7 @@ Les deux principales raisons pour lesquelles la simple connexion de ces machines
   Certaines de ces normes n'ont pas été conçues pour être utilisées sur Internet et d'autres, par exemple, Modbus série, ne sont même pas basées sur le [protocole IP](https://en.wikipedia.org/wiki/Internet_Protocol).
 - **Sécurité:** La connexion directe d'un actif industriel à Internet est un risque pour la sécurité. Par exemple, Modbus dans sa version de base ne dispose d'aucun type de mécanisme de sécurité pour authentifier un système qui lit ou écrit sur l'équipement industriel sous-jacent.
 
-Pour surmonter ces défis, le designe de conversion de protocole nécessite le déploiement d'une [passerelle]({{<ref "/designs/gateway">}}) pour connecter les machines ainsi que pour fournir une connexion sécurisée au cloud.
+Pour surmonter ces défis, le designe de conversion de protocole nécessite le déploiement d'une [passerelle]({{<ref "/patterns/gateway">}}) pour connecter les machines ainsi que pour fournir une connexion sécurisée au cloud.
 Le réseau local à gauche du diagramme suivant est communément appelé _l'atelier_ dans les domaines de la fabrication ou _de la technologie opérationnelle (OT)_.
 
 ![Design d'extraction de données industrielles](IIoT-Extraction-Architecture.png)

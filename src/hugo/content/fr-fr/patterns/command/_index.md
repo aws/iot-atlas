@@ -34,7 +34,7 @@ Lors de la mise en œuvre de ce design, tenez compte des questions suivantes:
 
 #### Avez-vous d'abord envisagé la réplique de l'état de l'appareil?
 
-Étant donné que l'exécution de commandes entraîne en fait un changement d'état dans un appareil, le design [Réplique de l'état de l'appareil](/fr/designs/device_state_replica/) (REA) est la méthode préférée pour exécuter des commandes dans une solution IoT. Dans les situations où REA ne convient pas ou dépasse certaines limites d'implémentation, envisagez cette conception de commande et une implémentation personnalisée de contrôle.
+Étant donné que l'exécution de commandes entraîne en fait un changement d'état dans un appareil, le design [Réplique de l'état de l'appareil](/fr/patterns/device_state_replica/) (REA) est la méthode préférée pour exécuter des commandes dans une solution IoT. Dans les situations où REA ne convient pas ou dépasse certaines limites d'implémentation, envisagez cette conception de commande et une implémentation personnalisée de contrôle.
 
 #### Comment la solution peut-elle suivre la progression des commandes de chaque appareil?
 
@@ -51,7 +51,7 @@ Lorsqu'une commande dans une solution nécessite l'approbation humaine avant qu'
 #### Un type de commande doit-il annulé pour revenir à un état précédent?
 
 Si une solution possède certaines commandes qui peuvent avoir besoin d'être annulées, il est presque toujours plus facile de gérer cette annulation à partir de la solution elle-même au lieu d'attendre de chaque appareil qu'il comprenne et se souvienne des considérations relatives à l'annulation. Par exemple, un dispositif reçoit une commande pour déplacer un actionneur d'une position actuelle signalée de `0`&#176; à une position de `45`&#176;. L'appareil exécute cette commande avec succès. À un moment ultérieur, la solution nécessite que l'appareil revienne à l'état précédent, l'état précédent est souvent plus facile à suivre dans la solution elle-même que de s'attendre à ce que chaque appareil suive son ou ses anciens états. L'annulation de cette situation serait effectuée par la solution envoyant une commande pour que l'appareil change de position de nouveau vers `0`&#176;.
-Dans le cas où des annulations sont nécessaires même en l'absence de connectivité au serveur, la solution peut exploiter une [passerelle]({{<ref "/designs/gateway">}}) pour enregistrer les anciens états des périphériques et pour effectuer les annulations basées sur ces valeurs.
+Dans le cas où des annulations sont nécessaires même en l'absence de connectivité au serveur, la solution peut exploiter une [passerelle]({{<ref "/patterns/gateway">}}) pour enregistrer les anciens états des périphériques et pour effectuer les annulations basées sur ces valeurs.
 
 ## Exemples
 

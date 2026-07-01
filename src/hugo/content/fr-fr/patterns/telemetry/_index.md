@@ -35,7 +35,7 @@ Lors de la mise en œuvre de ce design, tenez compte des questions suivantes:
 
 #### Quelle est la latence de traitement _mesure-à-information_ ou _mesure-à-action_ souhaitée des messages de télémétrie dans la solution IoT?
 
-Les solutions IoT avec des exigences de latence de traitement de l'ordre de **&micro;-secondes ou millisecondes** devraient effectuer ce traitement sur l'appareil lui-même ou éventuellement sur une [passerelle]({{<ref "/designs/gateway">}} ) connecté à l'appareil.
+Les solutions IoT avec des exigences de latence de traitement de l'ordre de **&micro;-secondes ou millisecondes** devraient effectuer ce traitement sur l'appareil lui-même ou éventuellement sur une [passerelle]({{<ref "/patterns/gateway">}} ) connecté à l'appareil.
 Les solutions IoT avec des exigences de latence de traitement de l'ordre de **secondes**, **minutes**, voire **heures** devraient effectuer ce traitement sur le cloud par défaut.
 En général, le traitement des messages en "secondes" ou "quelques minutes" doit être effectué par des composants connectés directement au point de terminaison du protocole. Généralement, le traitement d'un composant sera déclenché par l'arrivée de messages correspondant à certains critères.
 Le traitement de la télémétrie de "quelques minutes" à "quelques heures" doit être effectué de manière asynchrone. Lorsque des messages qui correspondent aux critères souhaités arrivent, les événements sont le plus souvent placés dans une file d'attente de traitement et un composant effectue le travail nécessaire. Une fois terminé, le composant émet souvent un message vers un [sujet]({{< ref "/glossary/vocabulary#sujet-du-message">}}) "de travail terminée".
@@ -57,7 +57,7 @@ Si **non**, le message volumineux doit être divisé en parties, chaque partie d
 
 Si des messages volumineux doivent être **livrés dès que possible**, le message volumineux peut être téléchargé directement vers un service de stockage d'objets hautement durable et disponible à l'échelle mondiale.
 
-Si des messages volumineux **peuvent être envoyés par lots**, chaque message doit être enregistré en tant que partie d'un lot jusqu'à ce que le lot puisse être envoyé. Étant donné que le stockage sur un appareil est souvent une ressource limitée, le traitement par lots des messages doit tenir compte des mêmes [compromis algorithmiques]({{<ref "/designs/gateway#quelle-approche-devrait-être-utilisée-lors-du-stockage-des-messages-pour-une-distribution-ultérieure">}}) comme un appareil faisant office de [passerelle]({{<ref "/designs/gateway">}}).
+Si des messages volumineux **peuvent être envoyés par lots**, chaque message doit être enregistré en tant que partie d'un lot jusqu'à ce que le lot puisse être envoyé. Étant donné que le stockage sur un appareil est souvent une ressource limitée, le traitement par lots des messages doit tenir compte des mêmes [compromis algorithmiques]({{<ref "/patterns/gateway#quelle-approche-devrait-être-utilisée-lors-du-stockage-des-messages-pour-une-distribution-ultérieure">}}) comme un appareil faisant office de [passerelle]({{<ref "/patterns/gateway">}}).
 
 #### Quelles sont les fréquences d'échantillonnage et de rapport d'un appareil?
 
@@ -81,7 +81,7 @@ Si la réponse est "supérieure à une seconde", la solution IoT doit écrire ch
 
 #### Quels sont certains des inducteurs de coûts de la télémétrie dans une solution IoT?
 
-Habituellement, les facteurs de coût les plus courants dans une solution IoT sont le nombre d'appareils, les fréquences d'échantillonnage et de rapport, la latence de traitement de la télémétrie _mesure-à-information_ ou _mesure-à-action_, la [densité de données de l'appareil]({{<ref "/glossary/vocabulary#densité-des-données-de-lappareil">}}) et enfin la durée de rétention de [l'archivage de télémétrie]({{<ref "/designs/telemetry_archiving">}})
+Habituellement, les facteurs de coût les plus courants dans une solution IoT sont le nombre d'appareils, les fréquences d'échantillonnage et de rapport, la latence de traitement de la télémétrie _mesure-à-information_ ou _mesure-à-action_, la [densité de données de l'appareil]({{<ref "/glossary/vocabulary#densité-des-données-de-lappareil">}}) et enfin la durée de rétention de [l'archivage de télémétrie]({{<ref "/patterns/telemetry_archiving">}})
 
 #### Est-ce que chaque appareil doit "désaligner activement" son intervalle de rapport avec les autres appareils?
 
@@ -89,13 +89,13 @@ Une erreur courante qui a un impact important se produit lorsque tous les appare
 
 #### Que doit faire un appareil lorsqu'il ne peut pas se connecter à son point de terminaison de solution IoT par défaut?
 
-**Durée prévue** - Lorsqu'un appareil ne peut pas se connecter avec le point de terminaison de la solution IoT par défaut pendant une durée prévue, l'appareil doit avoir un comportement configuré pour _la mise en file d'attente des messages de l'appareil_. Cette mise en file d'attente peut être la même réponse fournie lors de la détermination de la différence entre les fréquences de détection et de rapport des appareils. De plus, tout appareil ayant la capacité d'effectuer une mise en file d'attente de messages doit considérer les mêmes compromis algorithmiques qu'un appareil agissant comme un appareil [passerelle]({{<ref "/designs/gateway">}}). Ces compromis surviennent lorsque le stockage local n'est pas suffisant pour stocker tous les messages pendant la durée prévue et auront un impact sur les données détectées. Les catégories communes d'algorithmes à considérer sont: **Premier rentré, premier sorti [(FIFO)](https://en.wikipedia.org/wiki/FIFO_ "computing_and_electronics")**, **Abbatage(Culling)** et **Aggrégation (Aggregate)**.
+**Durée prévue** - Lorsqu'un appareil ne peut pas se connecter avec le point de terminaison de la solution IoT par défaut pendant une durée prévue, l'appareil doit avoir un comportement configuré pour _la mise en file d'attente des messages de l'appareil_. Cette mise en file d'attente peut être la même réponse fournie lors de la détermination de la différence entre les fréquences de détection et de rapport des appareils. De plus, tout appareil ayant la capacité d'effectuer une mise en file d'attente de messages doit considérer les mêmes compromis algorithmiques qu'un appareil agissant comme un appareil [passerelle]({{<ref "/patterns/gateway">}}). Ces compromis surviennent lorsque le stockage local n'est pas suffisant pour stocker tous les messages pendant la durée prévue et auront un impact sur les données détectées. Les catégories communes d'algorithmes à considérer sont: **Premier rentré, premier sorti [(FIFO)](https://en.wikipedia.org/wiki/FIFO_ "computing_and_electronics")**, **Abbatage(Culling)** et **Aggrégation (Aggregate)**.
 
-**Durée lors d'un sinistre** - Lorsqu'un appareil ne peut pas se connecter avec le point de terminaison de la solution IoT par défaut pour une durée dûe à un sinistre, un _basculement régional_ est requis. Pour ce faire, un appareil doit d'abord avoir un point de terminaison de basculement préconfiguré. Ensuite, lorsqu'un appareil se réoriente vers le point de terminaison de basculement, l'appareil est **déjà enregistré** avec la nouvelle région et il possède déjà les informations d'identification appropriées, le périphérique commence simplement à envoyer des messages comme si le nouveau point de terminaison était la valeur par défaut. Sinon, lorsque l'appareil **n'est pas enregistré** auprès de la nouvelle région, l'appareil devra effectuer une [configuration initiale d'appareil]({{<ref "/designs/device_bootstrap">}}) avec le nouveau point de terminaison régional avant d'envoyer messages.
+**Durée lors d'un sinistre** - Lorsqu'un appareil ne peut pas se connecter avec le point de terminaison de la solution IoT par défaut pour une durée dûe à un sinistre, un _basculement régional_ est requis. Pour ce faire, un appareil doit d'abord avoir un point de terminaison de basculement préconfiguré. Ensuite, lorsqu'un appareil se réoriente vers le point de terminaison de basculement, l'appareil est **déjà enregistré** avec la nouvelle région et il possède déjà les informations d'identification appropriées, le périphérique commence simplement à envoyer des messages comme si le nouveau point de terminaison était la valeur par défaut. Sinon, lorsque l'appareil **n'est pas enregistré** auprès de la nouvelle région, l'appareil devra effectuer une [configuration initiale d'appareil]({{<ref "/patterns/device_bootstrap">}}) avec le nouveau point de terminaison régional avant d'envoyer messages.
 
 #### Comment les messages peuvent-ils être stockés et disponibles pour un prochain renvoi dans la solution IoT?
 
-Cela peut être accompli avec le design d'[archivage de télémétrie]({{<ref "/designs/telemetry_archiving">}}).
+Cela peut être accompli avec le design d'[archivage de télémétrie]({{<ref "/patterns/telemetry_archiving">}}).
 
 ## Exemples
 
@@ -105,7 +105,7 @@ Un exemple détaillé de la logique impliquée pour collecter les données des c
 
 #### Un appareil échantillonne un capteur et crée un message
 
-Soit avec du code sur l'appareil ou du code fonctionnant dans un appareil [passerelle]({{<ref "/designs/gateway">}}), un appareil échantillonne un capteur d'une manière similaire au pseudocode suivant:
+Soit avec du code sur l'appareil ou du code fonctionnant dans un appareil [passerelle]({{<ref "/patterns/gateway">}}), un appareil échantillonne un capteur d'une manière similaire au pseudocode suivant:
 
 ```python3
 device_id = get_device_id()
