@@ -4,7 +4,7 @@ weight: 10
 summary: "Arranque del aprovisionamiento de dispositivos utilizando un usuario autenticado por Amazon Cognito y una plantilla de aprovisionamiento"
 ---
 
-AWS IoT proporciona una interfaz de programación de aplicaciones (API) que permite a las aplicaciones móviles/web generar certificados temporales y claves privadas. El dispositivo sale de la fábrica sin credenciales únicas, y solo los [Usuarios de Confianza]({{< ref "/glossary/vocabulary#trusted-user" >}}) pueden aprovisionar el dispositivo con sus credenciales únicas.
+AWS IoT proporciona una interfaz de programación de aplicaciones (API) que permite a las aplicaciones móviles/web generar certificados temporales y claves privadas. El dispositivo sale de la fábrica sin credenciales únicas, y solo los [Usuarios de Confianza]({{< ref "/glossary/vocabulary#usuario-de-confianza" >}}) pueden aprovisionar el dispositivo con sus credenciales únicas.
 
 Un instalador utiliza la aplicación y se autentica con AWS. Usando las APIs de Usuario de Confianza, el instalador recibe un certificado X.509 temporal y una clave privada que son válidos por cinco minutos. Usando la aplicación, las credenciales se entregan al dispositivo. El dispositivo se conecta a AWS IoT e intercambia las credenciales temporales por un certificado X.509 único firmado con la CA de AWS y una clave privada. Durante este flujo de trabajo, los recursos de AWS, incluyendo el nombre del Thing, la Política y el Certificado, se configuran en la Cuenta de AWS.
 

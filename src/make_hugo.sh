@@ -19,7 +19,7 @@ HELP_USAGE
 function build_docker_image {
     if ! [[ $(docker images -q $IMAGE_NAME) ]]; then
         echo "********** Building container image for Hugo and dependencies"
-        docker build -t $IMAGE_NAME --build-arg GOPROXY=$(go env GOPROXY) .
+        docker build -t $IMAGE_NAME .
     fi
 }
 
@@ -57,7 +57,8 @@ function hugo_validate {
     # Run for every translated language
     if ! uri_path_validate "en" ||
        ! uri_path_validate "zh" ||
-       ! uri_path_validate "fr"; then
+       ! uri_path_validate "fr" ||
+       ! uri_path_validate "es"; then
         echo "********** Validation errors, stopping local Hugo instance"
         docker stop hugo_checker 1>/dev/null
         echo "Link checks failed, exiting"

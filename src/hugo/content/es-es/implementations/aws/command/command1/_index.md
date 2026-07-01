@@ -393,7 +393,7 @@ Esta implementación cubre los aspectos básicos de un patrón de comando y cont
 
 En la operación normal, los mensajes de comando MQTT pueden perderse entre la _aplicación_ y el _broker_, o entre el _broker_ y el _dispositivo_. Esto puede ser causado por configuraciones de QoS, retransmisiones o reintentos de los publicadores o del _broker_, u otros errores internos de la aplicación, como un hilo bloqueado.
 
-Para mensajes duplicados o fuera de orden, un comando debería procesarse nominalmente solo una vez, la inclusión de un id de transacción único (TID) [(ver ejemplos del patrón _Comando_)]({{< ref "/patterns/command/#examples" >}}) tanto en la solicitud como en la respuesta permite que la _aplicación_ resuelva el mensaje. Para mensajes duplicados, el _dispositivo_ puede mantener una lista de mensajes procesados recientemente y solo actuar sobre nuevos TIDs.
+Para mensajes duplicados o fuera de orden, un comando debería procesarse nominalmente solo una vez, la inclusión de un id de transacción único (TID) [(ver ejemplos del patrón _Comando_)]({{< ref "/patterns/command/#ejemplos" >}}) tanto en la solicitud como en la respuesta permite que la _aplicación_ resuelva el mensaje. Para mensajes duplicados, el _dispositivo_ puede mantener una lista de mensajes procesados recientemente y solo actuar sobre nuevos TIDs.
 
 Para mensajes fuera de orden, el TID puede abarcar un número o secuencia incremental, y el _dispositivo_ puede rastrear el orden de los mensajes recibidos. Otro enfoque podría ser usar una [marca de tiempo](https://en.wikipedia.org/wiki/Timestamp) para un TID donde el _dispositivo_ rastrea el último mensaje procesado y si recibe uno con una marca de tiempo anterior, puede descartar o actuar sobre este mensaje fuera de orden.
 

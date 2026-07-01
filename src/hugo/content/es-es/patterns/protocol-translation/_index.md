@@ -50,11 +50,11 @@ Por ejemplo, para usar una conexión serial con Modbus, se utilizaría la ruta d
 #### ¿Hay una manera de retrasar/agrupación/agregar mensajes en el gateway?
 
 La agregación o agrupación de datos no es parte de este diseño, ya que se discute en las consideraciones del diseño de Gateway.
-El diseño de Gateway contiene [consideraciones]({{< ref "/patterns/gateway#what-approach-should-be-used-when-storing-messages-for-later-delivery" >}}) sobre cómo la lógica de traducción de protocolos puede extenderse con mecanismos que agrupen resultados o calculen agregaciones sobre ellos.
+El diseño de Gateway contiene [consideraciones]({{< ref "/patterns/gateway#qué-enfoque-se-debe-utilizar-al-almacenar-mensajes-para-su-entrega-posterior" >}}) sobre cómo la lógica de traducción de protocolos puede extenderse con mecanismos que agrupen resultados o calculen agregaciones sobre ellos.
 
 #### ¿Cómo debe el proceso de traducción de protocolos manejar los datos traducidos cuando la red hacia el servidor no está disponible?
 
-El diseño de Gateway contiene algunas [consideraciones]({{< ref "/patterns/gateway#how-should-the-gateway-process-data-when-the-network-to-the-server-is-unavailable" >}}) para este escenario.
+El diseño de Gateway contiene algunas [consideraciones]({{< ref "/patterns/gateway#cómo-debe-el-gateway-procesar-los-datos-cuando-la-red-hacia-el-servidor-no-está-disponible" >}}) para este escenario.
 En pocas palabras, el gateway no podrá publicar datos mientras la conexión esté perdida. Para evitar la pérdida de datos, se recomienda implementar un enfoque de mensaje ascendente para cualquier mensaje traducido utilizando un mecanismo de almacenamiento local.
 
 #### ¿Por qué existen protocolos inseguros utilizados en soluciones IoT?

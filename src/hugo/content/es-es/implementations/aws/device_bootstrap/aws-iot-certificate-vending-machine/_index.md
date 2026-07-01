@@ -12,7 +12,7 @@ Esta implementación se centra en el uso de una combinación de AWS Lambda + Ama
 {{% /notice %}}
 
 {{% notice note %}}
-Otro método puede ser [arrancar el dispositivo con un usuario de confianza](../fleet\_provisioning\_trusted\_user/) cuando los dispositivos no tienen certificados únicos y un usuario de confianza está disponible con una aplicación móvil que puede retransmitir los certificados al dispositivo.
+Otro método puede ser [arrancar el dispositivo con un usuario de confianza](../fleet_provisioning_trusted_user/) cuando los dispositivos no tienen certificados únicos y un usuario de confianza está disponible con una aplicación móvil que puede retransmitir los certificados al dispositivo.
 {{% /notice %}}
 
 

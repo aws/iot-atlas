@@ -1,7 +1,6 @@
 baseURL = "https://iotatlas.net"
 title = "IoT Atlas"
 theme = "iot-atlas"
-pygmentsCodeFences = true
 # English is the default language
 defaultContentLanguage = "en"
 # Force to have /en/my-page and /fr/my-page routes, even for default language.
@@ -23,8 +22,8 @@ defaultMarkdownHandler = "goldmark"
 [markup.goldmark]
 [markup.goldmark.renderer]
 unsafe = true
-[markup.goldmark.extensions]
-plantuml = true
+[markup.highlight]
+codeFences = true
 
 [taxonomies]
 tag = "tags"
@@ -44,7 +43,7 @@ weight = 30
 lang = "en"
 langCode = "en-us"
 contentDir = "content/en-us"
-languageName = "English"
+label = "English"
 weight = 1
 
 [languages.en.params]
@@ -54,7 +53,7 @@ editURL = "https://github.com/aws/iot-atlas/tree/main/src/hugo/content/en-us/"
 lang = "zh"
 langCode = "zh-cn"
 contentDir = "content/zh-cn"
-languageName = "中文(简体)"
+label = "中文(简体)"
 weight = 2
 
 [languages.zh.params]
@@ -64,8 +63,18 @@ editURL = "https://github.com/aws/iot-atlas/tree/main/src/hugo/content/zh-cn/"
 lang = "fr"
 langCode = "fr-fr"
 contentDir = "content/fr-fr"
-languageName = "French"
+label = "French"
 weight = 3
 
 [languages.fr.params]
 editURL = "https://github.com/aws/iot-atlas/tree/main/src/hugo/content/fr-fr/"
+
+[languages.es]
+lang = "es"
+langCode = "es-es"
+contentDir = "content/es-es"
+label = "Español"
+weight = 4
+
+[languages.es.params]
+editURL = "https://github.com/aws/iot-atlas/tree/main/src/hugo/content/es-es/"

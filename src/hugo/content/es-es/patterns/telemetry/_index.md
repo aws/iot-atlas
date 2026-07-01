@@ -59,7 +59,7 @@ Si **no**, entonces el mensaje grande debe dividirse en partes, cada parte debe 
 
 Si los mensajes grandes deben ser **entregados lo antes posible**, el mensaje grande puede ser subido directamente a un servicio de almacenamiento de objetos altamente duradero y disponible globalmente.
 
-Si los mensajes grandes **pueden ser enviados en lotes**, cada mensaje debe ser guardado como parte de un lote hasta que el lote pueda ser enviado. Dado que el almacenamiento en un dispositivo es a menudo un recurso limitado, el procesamiento por lotes de mensajes debe considerar los mismos [compromisos algorítmicos]({{< ref "/patterns/gateway#how-should-the-gateway-process-data-when-the-network-to-the-server-is-unavailable" >}}) que un dispositivo actuando como un [gateway]({{< ref "/patterns/gateway" >}}).
+Si los mensajes grandes **pueden ser enviados en lotes**, cada mensaje debe ser guardado como parte de un lote hasta que el lote pueda ser enviado. Dado que el almacenamiento en un dispositivo es a menudo un recurso limitado, el procesamiento por lotes de mensajes debe considerar los mismos [compromisos algorítmicos]({{< ref "/patterns/gateway#cómo-debe-el-gateway-procesar-los-datos-cuando-la-red-hacia-el-servidor-no-está-disponible" >}}) que un dispositivo actuando como un [gateway]({{< ref "/patterns/gateway" >}}).
 
 #### ¿Cuáles son las frecuencias de muestreo vs. las frecuencias de reporte de un dispositivo?
 

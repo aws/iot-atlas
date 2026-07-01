@@ -8,7 +8,7 @@ summary: "Patrón de diseño utilizado en dispositivos de borde IoT para traduci
 
 ## Desafío
 
-[Endpoints]({{< ref "/glossary/vocabulary#endpoint" >}}) en una solución IoT a menudo no son lo suficientemente capaces para conectarse directamente a internet ni están operando en redes con acceso directo a internet. Incluso con estas limitaciones, obtener datos de los endpoints e interactuar con ellos requiere un mecanismo de conectividad.
+[Endpoints]({{< ref "/glossary/vocabulary#dispositivo" >}}) en una solución IoT a menudo no son lo suficientemente capaces para conectarse directamente a internet ni están operando en redes con acceso directo a internet. Incluso con estas limitaciones, obtener datos de los endpoints e interactuar con ellos requiere un mecanismo de conectividad.
 
 ## Solución
 
@@ -22,20 +22,20 @@ Ambos diseños en el diagrama anterior exponen un endpoint de gateway utilizando
 
 #### Gateway ascendente (también conocido como "Norte")
 
-1. el diseño de gateway "ascendente" está configurado para reflejar mensajes "ascendentes"; en el diagrama, los mensajes que llegan desde el dispositivo con el [tema]({{< ref "/glossary/vocabulary#tema-mensaje" >}}) `telemetry/deviceID` se reflejarán hacia el servidor utilizando el mismo tema.
+1. el diseño de gateway "ascendente" está configurado para reflejar mensajes "ascendentes"; en el diagrama, los mensajes que llegan desde el dispositivo con el [tema]({{< ref "/glossary/vocabulary#tema-de-mensaje" >}}) `telemetry/deviceID` se reflejarán hacia el servidor utilizando el mismo tema.
 2. El dispositivo publica un mensaje que contiene la medición a través de un protocolo de transporte al endpoint de protocolo local expuesto por el gateway.
 3. El gateway recibe el mensaje.
 4. El gateway publica el mensaje al servidor en el mismo tema que el mensaje recibido.
-   - si el gateway no tiene éxito al enviar el mensaje al servidor, el mensaje se procesa utilizando un [enfoque](#what-approach-should-be-used-when-storing-messages-for-later-delivery) de mensaje ascendente.
+   - si el gateway no tiene éxito al enviar el mensaje al servidor, el mensaje se procesa utilizando un [enfoque](#qué-enfoque-se-debe-utilizar-al-almacenar-mensajes-para-su-entrega-posterior) de mensaje ascendente.
 5. El servidor recibe el mensaje.
 
 #### Gateway descendente (también conocido como "Sur")
 
-1. el diseño de gateway "descendente" está configurado para escuchar al servidor y reflejar mensajes "descendentes"; en el diagrama, los mensajes que llegan desde el servidor con el [tema]({{< ref "/glossary/vocabulary#tema-mensaje" >}}) `commands/deviceID` se reflejarán hacia el dispositivo que escucha mensajes con el mismo tema.
+1. el diseño de gateway "descendente" está configurado para escuchar al servidor y reflejar mensajes "descendentes"; en el diagrama, los mensajes que llegan desde el servidor con el [tema]({{< ref "/glossary/vocabulary#tema-de-mensaje" >}}) `commands/deviceID` se reflejarán hacia el dispositivo que escucha mensajes con el mismo tema.
 2. El servidor publica un mensaje al gateway a través del endpoint del protocolo de transporte.
 3. El gateway recibe el mensaje.
 4. El gateway publica el mensaje al dispositivo que escucha en el endpoint del gateway en el mismo tema que el mensaje recibido.
-   - si el gateway no tiene éxito al enviar el mensaje al dispositivo, el mensaje se procesa utilizando un [enfoque](#what-approach-should-be-used-when-storing-messages-for-later-delivery) de mensaje descendente.
+   - si el gateway no tiene éxito al enviar el mensaje al dispositivo, el mensaje se procesa utilizando un [enfoque](#qué-enfoque-se-debe-utilizar-al-almacenar-mensajes-para-su-entrega-posterior) de mensaje descendente.
 5. El dispositivo recibe el mensaje.
 
 ## Consideraciones
@@ -49,13 +49,13 @@ Dado que los temas de mensajes son la interfaz a través de la cual los componen
 #### ¿Cómo debe el Gateway procesar los datos cuando la red hacia el Dispositivo no está disponible?
 
 La respuesta simple es que el Gateway necesita un _enfoque de mensaje descendente_ utilizado para guardar los mensajes en el gateway hasta que puedan ser reportados al dispositivo.  
-Desafortunadamente, la respuesta simple oculta la realidad, que es más compleja. Una cosa clave a determinar es el [enfoque](#what-approach-should-be-used-when-storing-messages-for-later-delivery) correcto a tomar con los mensajes descendentes cuando la red está ausente.
+Desafortunadamente, la respuesta simple oculta la realidad, que es más compleja. Una cosa clave a determinar es el [enfoque](#qué-enfoque-se-debe-utilizar-al-almacenar-mensajes-para-su-entrega-posterior) correcto a tomar con los mensajes descendentes cuando la red está ausente.
 
 #### ¿Cómo debe el Gateway procesar los datos cuando la red hacia el Servidor no está disponible?
 
 La respuesta simple es que el Gateway necesita un _enfoque de mensaje ascendente_ utilizado para guardar los mensajes en el gateway hasta que puedan ser reportados al servidor.
 
-Desafortunadamente, la respuesta simple oculta la realidad, que es más compleja. Una cosa clave a determinar es el [enfoque](#what-approach-should-be-used-when-storing-messages-for-later-delivery) correcto a tomar con los mensajes ascendentes cuando la red está ausente.
+Desafortunadamente, la respuesta simple oculta la realidad, que es más compleja. Una cosa clave a determinar es el [enfoque](#qué-enfoque-se-debe-utilizar-al-almacenar-mensajes-para-su-entrega-posterior) correcto a tomar con los mensajes ascendentes cuando la red está ausente.
 
 #### ¿Qué enfoque se debe utilizar al almacenar mensajes para su entrega posterior?
 
