@@ -47,5 +47,4 @@ Enfin, chaque design suivra quelques conventions. Pour transmettre un exemple de
 ## Équipe
 
 À l'heure actuelle, les principaux responsables de l'IoT Atlas sont [Brett Francis](https://github.com/brettf),
-[Gavin Adams](https://github.com/gadams999), et
-[Craig Williams](https://github.com/typemismatch). Nous sommes ravis de diffuser ces designs dans le monde ici et sur [GitHub](https://github.com/aws/iot-atlas); ainsi, ensemble, nous pouvons accélérer ensemble les progrès dans le domaine de l'IoT.
+[Gavin Adams](https://github.com/gadams999), [Craig Williams](https://github.com/typemismatch), et [Pablo Arias](https://github.com/pabloariasmora). Nous sommes ravis de diffuser ces designs dans le monde ici et sur [GitHub](https://github.com/aws/iot-atlas); ainsi, ensemble, nous pouvons accélérer ensemble les progrès dans le domaine de l'IoT.
