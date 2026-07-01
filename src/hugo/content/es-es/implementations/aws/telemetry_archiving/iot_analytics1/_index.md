@@ -189,22 +189,7 @@ aws iam create-role --role-name EtlAnalyticsRole --assume-role-policy-document f
 ```
 Guarda el siguiente JSON en un archivo llamado policy_assume_role.json antes de ejecutar el comando anterior.
 
-```json
-{
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Effect": "Allow",
-            "Principal": {
-                "Service": [
-                    "iot.amazonaws.com",
-                    "iotanalytics.amazonaws.com"
-                ]
-            },
-            "Action": "sts:AssumeRole"
-        }
-    ]
-}
+{{< code-include file="implementations/aws/telemetry_archiving/iot_analytics1/channel-message.json" language="json" title="Formato de Mensaje del Canal" >}}
 ```
 
 A continuación, crea y adjunta una política a tu EtlAnalyticsRole dando a tu Regla de Tópico los permisos necesarios.
@@ -215,30 +200,7 @@ aws iam put-role-policy --role-name EtlAnalyticsRole --policy-name EtlAnalyticsP
 
 Guarda el siguiente JSON en un archivo llamado policy_etl_analytics.json. Asegúrate de reemplazar `<REGION>` con tu región y `<ACCOUNT-ID>` con tu ID de cuenta antes de ejecutar el comando anterior.
 
-```json
-{
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Effect": "Allow",
-            "Action": "iotanalytics:BatchPutMessage",
-            "Resource": [
-               "arn:aws:iotanalytics:<REGION>:<ACCOUNT-ID>:channel/etl_archive_telemetry"
-            ]
-        },
-        {
-            "Effect": "Allow",
-            "Action": [
-                "logs:CreateLogStream",
-                "logs:DescribeLogStreams",
-                "logs:PutLogEvents"
-            ],
-            "Resource": [
-                "arn:aws:logs:<REGION>:<ACCOUNT-ID>:log-group:/iotanalytics/pipeline:*"
-            ]
-        }
-    ]
-}
+{{< code-include file="implementations/aws/telemetry_archiving/iot_analytics1/iot-rule-action.json" language="json" title="Acción de Regla IoT" >}}
 ```
 
 Para habilitar el registro para IoT Analytics e IoT Core, ejecuta los siguientes comandos y asegúrate de reemplazar `<ACCOUNT-ID>` con tu ID de cuenta. Este paso es opcional.
@@ -257,26 +219,7 @@ aws iot create-topic-rule --rule-name etl_archival --topic-rule-payload file://t
 
 Guarda el siguiente JSON en un archivo llamado topic_rule.json. Asegúrate de reemplazar `<ACCOUNT-ID>` con tu ID de cuenta antes de ejecutar el comando anterior.
 
-```json
-{
-    "sql": "SELECT * FROM 'dt/plant1/+/aggregate'",
-    "ruleDisabled": false,
-    "awsIotSqlVersion": "2016-03-23",
-    "actions": [
-        {
-            "iotAnalytics": {
-                "channelName": "etl_archive_telemetry",
-                "roleArn": "arn:aws:iam::<ACCOUNT-ID>:role/EtlAnalyticsRole"
-            }
-        }
-    ],
-    "errorAction": {
-        "cloudwatchLogs": {
-            "roleArn": "arn:aws:iam::<ACCOUNT-ID>:role/EtlAnalyticsRole",
-            "logGroupName": "/aws/iot-rules/etl_data"
-        }
-    }
-}
+{{< code-include file="implementations/aws/telemetry_archiving/iot_analytics1/pipeline-activities.json" language="json" title="Actividades del Pipeline" >}}
 ```
 
 ## IoT Analytics Datastore
@@ -290,54 +233,7 @@ aws iotanalytics create-datastore --cli-input-json file://datastore.json
 
 Guarda el siguiente JSON en un archivo llamado datastore.json antes de ejecutar el comando anterior.
 
-```JSON
-{
-    "datastoreName": "etl_archival_store",
-    "datastoreStorage": {
-        "serviceManagedS3": {}
-    },
-    "retentionPeriod": {
-        "unlimited": true
-    },
-    "fileFormatConfiguration": {
-        "parquetConfiguration": {
-            "schemaDefinition": {
-                "columns": [
-                    {
-                        "name": "device_id",
-                        "type": "string"
-                    },
-                    {
-                        "name": "temperature",
-                        "type": "int"
-                    },
-                    {
-                        "name": "temperature_fahrenheit",
-                        "type": "int"
-                    },
-                    {
-                        "name": "humidity",
-                        "type": "int"
-                    },
-                    {
-                        "name": "timestamp",
-                        "type": "string"
-                    }
-                ]
-            }
-        }
-    },
-    "datastorePartitions": {
-        "partitions": [
-            {
-                "timestampPartition": {
-                    "attributeName": "timestamp",
-                    "timestampFormat": "yyyy-MM-dd HH:mm:ss"
-                }
-            }
-        ]
-    }
-}
+{{< code-include file="implementations/aws/telemetry_archiving/iot_analytics1/cloudformation-stack.json" language="json" title="Stack de CloudFormation" >}}
 ```
 
 ## IoT Analytics Pipeline
@@ -351,33 +247,7 @@ aws iotanalytics create-pipeline --cli-input-json file://pipeline.json
 
 Guarda el JSON a continuación en un archivo llamado pipeline.json antes de ejecutar el comando anterior.
 
-```JSON
-{
-    "pipelineName": "calculate_fahrenheit",
-    "pipelineActivities": [
-        {
-            "channel": {
-                "name": "read_channel",
-                "channelName": "etl_archive_telemetry",
-                "next": "calculate_fahrenheit"
-            }
-        },
-        {
-            "math": {
-                "name": "calculate_fahrenheit",
-                "attribute": "temperature_fahrenheit",
-                "math": "(temperature * 9/5) + 32 ",
-                "next": "write_datastore"
-            }
-        },
-        {
-            "datastore": {
-                "name": "write_datastore",
-                "datastoreName": "etl_archival_store"
-            }
-        }
-    ]
-}
+{{< code-include file="implementations/aws/telemetry_archiving/iot_analytics1/pipeline-reprocessing.json" language="json" title="Reprocesamiento del Pipeline" >}}
 ```
 
 ## Simulación de Dispositivos
@@ -396,44 +266,7 @@ python3 data_generator.py
 
 Antes de ejecutar el comando anterior, guarda el siguiente código python en un archivo llamado data_generator.py
 
-```python
-#!/usr/bin/env python3
-
-import random
-import time
-import boto3
-import json
-from multiprocessing import Pool
-from datetime import datetime
-
-
-iot_client = boto3.client(
-    "iot-data", endpoint_url="https://<IOT-CORE-ENDPOINT>"
-)
-
-
-def read(sensor):
-    message = {}
-    message["device_id"] = f"sensor{sensor}"
-    message["temperature"] = random.randrange(45, 92, 2)
-    message["humidity"] = random.randrange(0, 99, 2)
-    message["timestamp"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    print(message)
-
-    topic = f"dt/plant1/{message['device_id']}/aggregate"
-    iot_client.publish(topic=topic, payload=json.dumps(message))
-
-
-if __name__ == "__main__":
-    sensor_count = 10  # maps to physical threads on your machine
-    seconds_between_publishing = 2
-    publishes = 100
-
-    with Pool(sensor_count) as p:
-        for _ in range(publishes):
-            p.map(read, range(sensor_count))
-            time.sleep(seconds_between_publishing)
-
+{{< code-include file="implementations/aws/telemetry_archiving/iot_analytics1/generate_data.py" title="generate_data.py - Generador de Datos" >}}
 ```
 
 ## IoT Analytics Datasets
@@ -523,41 +356,7 @@ aws iotanalytics update-pipeline --cli-input-json file://pipeline.json
 
 Guarda el JSON a continuación en tu archivo existente llamado pipeline.json antes de ejecutar el comando anterior.
 
-```JSON
-{
-    "pipelineName": "calculate_fahrenheit",
-    "pipelineActivities": [
-        {
-            "channel": {
-                "name": "read_channel",
-                "channelName": "etl_archive_telemetry",
-                "next": "calculate_fahrenheit"
-            }
-        },
-        {
-            "math": {
-                "name": "calculate_fahrenheit",
-                "attribute": "temperature_fahrenheit",
-                "math": "(temperature * 9/5) + 32 ",
-                "next": "update_humidity"
-            }
-        },
-        {
-            "math": {
-                "name": "update_humidity",
-                "attribute": "humidity",
-                "math": "humidity + 1",
-                "next": "write_datastore"
-            }
-        },
-        {
-            "datastore": {
-                "name": "write_datastore",
-                "datastoreName": "etl_archival_store"
-            }
-        }
-    ]
-}
+{{< code-include file="implementations/aws/telemetry_archiving/iot_analytics1/dataset-query.json" language="json" title="Consulta SQL del Dataset" >}}
 ```
 
 Ahora que hemos actualizado nuestro pipeline, necesitaremos reprocesarlo para que los valores corregidos de humedad estén disponibles para análisis. Después de que el reprocesamiento esté completo, también necesitaremos actualizar nuestros Datasets. Puedes ver tanto la regla actualizada como el estado del reprocesamiento en la Consola de AWS.

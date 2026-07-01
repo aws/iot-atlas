@@ -108,18 +108,7 @@ dt/plant1/dev_1/temp
 
 Payload JSON de telemetría de temperatura en Celsius para device1 en plant1.
 
-```json 
-{
-    "timestamp": 1601048303,
-    "sensorId": 17,
-    "deviceSerial": "sd89w7e82349",
-    "sensorData": [
-        {
-        "sensorName": "Temperature Celsius",
-        "sensorValue": 34.2211224
-        }
-    ]
-}
+{{< code-include file="implementations/aws/telemetry/fan-in1/iot-rule.json" language="json" title="Acción de Regla IoT" >}}
 ```
 
 {{% /tab %}}
@@ -133,18 +122,7 @@ dt/plant1/dev_2/temp
 
 Payload JSON de telemetría de temperatura en Fahrenheit para device2 en plant1.
 
-```json
-{
-    "timestamp": 1601048303,
-    "sensorId": 4,
-    "deviceSerial": "324l5;k;a3",
-    "sensorData": [
-        {
-        "sensorName": "Temperature Fahrenheit",
-        "sensorValue": 120.3806
-        }
-    ]
-}
+{{< code-include file="implementations/aws/telemetry/fan-in1/iot-rule-error.json" language="json" title="Acción de Error de Regla IoT" >}}
 ```
 
 {{% /tab %}}
@@ -164,42 +142,7 @@ En la consola de AWS _Lambda_ crea una nueva función _Lambda_. Para usar el có
 {{< tabs groupId="lambda-code">}}
 {{% tab name="python" %}}
 
-```python
-import base64
-import json
-
-print('Loading function')
-
-
-def lambda_handler(event, context):
-    output = []
-
-    for record in event['records']:
-        print(record['recordId'])
-        payload = json.loads(base64.b64decode(record['data']).decode('utf-8'))
-
-        transformedPayload = {}
-        transformedPayload['deviceSerial'] = payload['deviceSerial']
-        transformedPayload['timestamp'] = payload['timestamp']
-        
-        for data in payload['sensorData']:
-
-            if data['sensorName'] == 'Temperature Celsius':
-                transformedPayload['temperature'] = (data['sensorValue'] * 9/5) + 32  
-            else:
-                transformedPayload['temperature'] = data['sensorValue']
-
-        output_record = {
-            'recordId': record['recordId'],
-            'result': 'Ok',
-            'data': base64.b64encode(json.dumps(transformedPayload).encode('utf-8'))
-        }
-        
-        output.append(output_record)
-
-    print('Successfully processed {} records.'.format(len(event['records'])))
-
-    return {'records': output}    
+{{< code-include file="implementations/aws/telemetry/fan-in1/publish_telemetry.py" title="publish_telemetry.py - Simulador de Dispositivo" >}}
 ```
 
 {{% /tab %}}

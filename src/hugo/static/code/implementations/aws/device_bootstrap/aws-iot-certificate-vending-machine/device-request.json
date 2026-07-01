@@ -1,0 +1,28 @@
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "AllowIoTActions",
+            "Effect": "Allow",
+            "Action": [
+                "iot:CreateKeysAndCertificate",
+                "iot:AttachPolicy",
+                "iot:CreateThing",
+                "iot:AttachThingPrincipal",
+                "iot:DescribeEndpoint"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Sid": "AllowDeviceTableAccess",
+            "Effect": "Allow",
+            "Action": [
+                "dynamodb:Query",
+                "dynamodb:UpdateItem"
+            ],
+            "Resource": [
+                "arn:aws:dynamodb:*:*:table/DeviceProvisioningInfoDB"
+            ]
+        }
+    ]
+}
