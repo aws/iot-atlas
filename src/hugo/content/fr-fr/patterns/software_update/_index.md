@@ -15,7 +15,7 @@ Les solutions IoT doivent fournir un mécanisme permettant aux appareils de mett
 
 ## Solution
 
-Les solutions IoT qui exploitent les designs de [Commande]({{<ref "/designs/command">}}) et de [Réplication de l'état de l'appareil]({{<ref "/designs/device_state_replica">}}) combinés à une solution de stockage évolutive et globalement disponible sont en mesure de relever tous les défis inhérents à la mise à jour du logiciel des appareils dans une grande flotte.
+Les solutions IoT qui exploitent les designs de [Commande]({{<ref "/patterns/command">}}) et de [Réplication de l'état de l'appareil]({{<ref "/patterns/device_state_replica">}}) combinés à une solution de stockage évolutive et globalement disponible sont en mesure de relever tous les défis inhérents à la mise à jour du logiciel des appareils dans une grande flotte.
 
 Le design de Mise à jour logicielle illustré dans le diagramme suivant peut fournir cette fonctionnalité.
 
@@ -49,7 +49,7 @@ La solution peut garantir que seul l'appareil ciblé pour une mise à jour logic
 
 ### Perspective d'une mise à niveau logicielle depuis l'appareil
 
-Un exemple de la logique impliquée pour qu'un appareil reçoive et exécute une commande de «mise à jour» reçue peut se faire via l'implémentation d'une [Réplique d'état de l'appareil]({{<ref "/designs/device_state_replica">}}). Plus précisément, l'appareil obtiendra un nouveau logiciel, effectuera une mise à jour à l'aide de ce logiciel et en accusera réception.
+Un exemple de la logique impliquée pour qu'un appareil reçoive et exécute une commande de «mise à jour» reçue peut se faire via l'implémentation d'une [Réplique d'état de l'appareil]({{<ref "/patterns/device_state_replica">}}). Plus précisément, l'appareil obtiendra un nouveau logiciel, effectuera une mise à jour à l'aide de ce logiciel et en accusera réception.
 
 #### L'appareil se prépare pour les messages de commande de mise à jour
 
