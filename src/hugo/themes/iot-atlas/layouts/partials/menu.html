@@ -61,9 +61,9 @@
               {{ $pageLang := .Page.Lang}}
               {{ range .Page.AllTranslations }}
                 {{ if eq .Lang $pageLang }}
-                  <option id="{{ .Lang }}" value="{{ .Permalink }}" selected>{{ .Language.Label }}</option>
+                  <option id="{{ .Lang }}" value="{{ .RelPermalink }}" selected>{{ .Language.Label }}</option>
                 {{ else }}
-                  <option id="{{ .Lang }}" value="{{ .Permalink }}">{{ .Language.Label }}</option>
+                  <option id="{{ .Lang }}" value="{{ .RelPermalink }}">{{ .Language.Label }}</option>
                 {{ end }}
               {{ end }}
             </select>
