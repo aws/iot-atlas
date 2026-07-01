@@ -73,9 +73,18 @@ function uri_path_validate {
     # Run link checker for specific URI
     # Note - run the container on the host network to access Hugo running in a separate container
     #      - Exclude on github.com/aws in case of editURL changes. Will catch during automation
+    #      - Exclude npmjs.com (returns 403 to crawlers)
+    #      - Exclude plantuml.com (client-side rendered, not real links)
+    #      - Exclude wikipedia.org and docs.aws.amazon.com (return 403 to bot user agents)
     echo "********** Running link checks on language: $1"
     if ! docker run --rm --net="host" raviqqe/muffet \
             --exclude="https://github.com/aws/" \
+            --exclude="https://www.npmjs.com/" \
+            --exclude="https://www.plantuml.com/" \
+            --exclude="https://en.wikipedia.org/" \
+            --exclude="https://docs.aws.amazon.com/" \
+            --exclude="https://.*\.wikipedia.org/" \
+            --exclude="https://.*\.github.io/" \
             --buffer-size="8192"  \
             --header="User-Agent: IotAtlasBot/1.0 (+http://iotatlas.net/en/bot/)" \
             --max-connections=512 --max-connections-per-host=2 --rate-limit=16 \

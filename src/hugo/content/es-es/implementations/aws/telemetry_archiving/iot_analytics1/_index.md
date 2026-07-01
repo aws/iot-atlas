@@ -162,7 +162,7 @@ pipeline -> bucket: put(xformed_data)
 En esta implementación configurarás un flujo de archivado y procesamiento ETL de IoT Analytics y luego usarás un script en Python para simular dispositivos que publican mensajes en tu endpoint de AWS IoT Core para probar tu configuración. Al desplegar en producción, configurarás múltiples dispositivos como Cosas de AWS IoT que se comuniquen de manera segura con un Gateway y/o tu endpoint de AWS IoT Core.
 
 {{% notice note %}}
-El flujo de procesamiento para el camino **1a** se cubre en la implementación a continuación. El flujo **1b** tiene el mismo flujo de procesamiento que **1a** para el paso 2 y más allá una vez que los datos se colocan en el Canal. En el flujo **1b** los datos en masa se obtienen de una base de datos de historiador SCADA y se envían al _IoT Analytics Channel_ usando [BatchPutMessage](https://docs.aws.amazon.com/iotanalytics/latest/APIReference/API_BatchPutMessage.html) por una función Lambda después de que DMS replica los datos a Kinesis. Consulta el blog de AWS titulado *Injecting data into AWS IoT Analytics from a Kinesis Data Stream* para consumir datos de Kinesis con una Lambda. Consulta [AWS DMS with a Kinesis target](https://docs.aws.amazon.com/dms/latest/userguide/CHAP_Target.Kinesis.html) para leer datos de una base de datos de historiador y escribir en Kinesis.
+El flujo de procesamiento para el camino **1a** se cubre en la implementación a continuación. El flujo **1b** tiene el mismo flujo de procesamiento que **1a** para el paso 2 y más allá una vez que los datos se colocan en el Canal. En el flujo **1b** los datos en masa se obtienen de una base de datos de historiador SCADA y se envían al _IoT Analytics Channel_ usando [BatchPutMessage](https://aws.amazon.com/blogs/iot/unlocking-scalable-iot-analytics-on-aws/) por una función Lambda después de que DMS replica los datos a Kinesis. Consulta el blog de AWS titulado *Injecting data into AWS IoT Analytics from a Kinesis Data Stream* para consumir datos de Kinesis con una Lambda. Consulta [AWS DMS with a Kinesis target](https://docs.aws.amazon.com/dms/latest/userguide/CHAP_Target.Kinesis.html) para leer datos de una base de datos de historiador y escribir en Kinesis.
 {{% /notice %}}
 
 <!--- Link update required: Refer to the aws blog titled Injecting data into [AWS IoT Analytics from a Kinesis Data Stream](https://aws.amazon.com/blogs/iot/injecting-data-into-aws-iot-analytics-from-amazon-kinesis-data-streams/) to consume Kinesis data with a Lambda.  --->
@@ -576,7 +576,7 @@ Si deseas actualizar SPICE en QuickSight, navega a QuickSight, elige Datasets, s
 
 ### Consideraciones
 
-Las actividades del Pipeline pueden ser más robustas que el ejemplo que creamos y pueden contener más pasos de los que incluimos. Consulta la [Guía del Usuario](https://docs.aws.amazon.com/iotanalytics/latest/userguide/pipeline-activities.html) para obtener una visión general de todas las actividades.
+Las actividades del Pipeline pueden ser más robustas que el ejemplo que creamos y pueden contener más pasos de los que incluimos. Consulta la [Guía del Usuario](https://aws.amazon.com/blogs/iot/unlocking-scalable-iot-analytics-on-aws/) para obtener una visión general de todas las actividades.
 
 Además, podrías crear otro pipeline que lea configuraciones del dispositivo desde la sombra del dispositivo o atributos del dispositivo desde el registro del dispositivo, como la versión del software, para comparar cómo el estado del dispositivo afecta las lecturas del dispositivo. Intenta agregar otro pipeline propio para mejorar los datos en tu datastore.
 
@@ -584,7 +584,7 @@ Cubrimos la obtención de datos del Broker MQTT y de un Historiador. AWS SiteWis
 
 En esta implementación cubrimos el uso de buckets administrados por AWS, también puedes usar tus propios buckets para almacenar datos del Canal, DataStore y DataSet. Un bucket administrado por el cliente es especialmente útil como destino de un Dataset para su inclusión con otros datos en un DataLake. Tienes la opción de enviar la salida del Dataset a un bucket de S3, AWS IoT Events, QuickSight o un cuaderno de Jupyter.
 
-Los conjuntos de datos que creamos se basaron en SQL. Se pueden crear análisis más complejos con un flujo de trabajo automatizado usando un contenedor Docker y este enfoque permite contenedorización de un cuaderno de Jupyter. Consulta la [Guía del Usuario](https://docs.aws.amazon.com/iotanalytics/latest/userguide/automate.html) para obtener detalles sobre cómo funciona esto. Si tomas este enfoque, incluso puedes incrustar visualizaciones de tu conjunto de datos de contenedor en la consola de IoT Analytics.
+Los conjuntos de datos que creamos se basaron en SQL. Se pueden crear análisis más complejos con un flujo de trabajo automatizado usando un contenedor Docker y este enfoque permite contenedorización de un cuaderno de Jupyter. Consulta la [Guía del Usuario](https://aws.amazon.com/blogs/iot/unlocking-scalable-iot-analytics-on-aws/) para obtener detalles sobre cómo funciona esto. Si tomas este enfoque, incluso puedes incrustar visualizaciones de tu conjunto de datos de contenedor en la consola de IoT Analytics.
 
 ### Limpieza
 

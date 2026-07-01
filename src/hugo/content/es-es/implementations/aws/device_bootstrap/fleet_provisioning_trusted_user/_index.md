@@ -74,7 +74,7 @@ Una vez agregado, puedes aprovechar [Cognito User Pool](https://docs.aws.amazon.
 Sin embargo, autenticar a un usuario no es suficiente. Los usuarios deben ser autorizados si desean acceder a los servicios de AWS. Para este propósito, utiliza
 [Cognito Identity Pool](https://docs.aws.amazon.com/cognito/latest/developerguide/cognito-identity.html). Con un grupo de identidades, puedes obtener credenciales temporales y de privilegios limitados de AWS para acceder a otros servicios de AWS.
 
-La clase [Auth](https://aws-amplify.github.io/amplify-js/api/classes/authclass.html) de Amplify proporciona pasos de autenticación, y 
+La clase [Auth](https://docs.amplify.aws/javascript/build-a-backend/auth/) de Amplify proporciona pasos de autenticación, y 
 tiene más de 30 métodos, incluyendo signUp, signIn, forgotPassword y signOut, que te permiten tener control total sobre todos los aspectos del flujo de autenticación de usuarios.
 
 #### Agregar flujo de autenticación

@@ -162,7 +162,7 @@ pipeline -> bucket: put(xformed_data)
 In this implementation you'll setup an IoT Analytics archival and ETL processing flow and then use a python script to simulate devices publishing messages to your AWS IoT Core endpoint to test you setup. Upon deployment into production you’ll configure multiple devices as AWS IoT Things that each securely communicate with a Gateway and or your AWS IoT Core endpoint.
 
 {{% notice note %}}
-The processing flow for path **1a** is covered in the implementation below. Flow **1b** has the same processing flow as **1a** for step 2 and beyond once data is put  onto the Channel. In flow **1b** bulk data is sourced from a SCADA historian database and is pushed into the _IoT Analytics Channel_ using [BatchPutMessage](https://docs.aws.amazon.com/iotanalytics/latest/APIReference/API_BatchPutMessage.html) by a Lambda function after DMS replicates data to Kinesis. Refer to the aws blog titled *Injecting data into AWS IoT Analytics from a Kinesis Data Stream* to consume Kinesis data with a Lambda. Refer to  [AWS DMS with a Kinesis target](https://docs.aws.amazon.com/dms/latest/userguide/CHAP_Target.Kinesis.html) to read data from a historian database and write to Kinesis. 
+The processing flow for path **1a** is covered in the implementation below. Flow **1b** has the same processing flow as **1a** for step 2 and beyond once data is put  onto the Channel. In flow **1b** bulk data is sourced from a SCADA historian database and is pushed into the _IoT Analytics Channel_ using [BatchPutMessage](https://aws.amazon.com/blogs/iot/unlocking-scalable-iot-analytics-on-aws/) by a Lambda function after DMS replicates data to Kinesis. Refer to the aws blog titled *Injecting data into AWS IoT Analytics from a Kinesis Data Stream* to consume Kinesis data with a Lambda. Refer to  [AWS DMS with a Kinesis target](https://docs.aws.amazon.com/dms/latest/userguide/CHAP_Target.Kinesis.html) to read data from a historian database and write to Kinesis. 
 {{% /notice %}}
 
 <!--- Link update required: Refer to the aws blog titled Injecting data into [AWS IoT Analytics from a Kinesis Data Stream](https://aws.amazon.com/blogs/iot/injecting-data-into-aws-iot-analytics-from-amazon-kinesis-data-streams/) to consume Kinesis data with a Lambda.  --->
@@ -553,7 +553,7 @@ If you'd like to refresh SPICE in QuickSight navigate to QuickSight, choose Data
 
 ### Considerations
 
-Pipeline activities can be more robust than the sample we created, and can contain more steps than we included. Reference the [User Guide](https://docs.aws.amazon.com/iotanalytics/latest/userguide/pipeline-activities.html) for an overview of all the activities.
+Pipeline activities can be more robust than the sample we created, and can contain more steps than we included. Reference the [User Guide](https://aws.amazon.com/blogs/iot/unlocking-scalable-iot-analytics-on-aws/) for an overview of all the activities.
 
 In Addition you might create another pipeline that reads in device settings from the device shadow or device attributes from the device registry such as software version to compare how the state of the device affects the device readings. Try adding another pipeline of your own to enhance data in your datastore.
 
@@ -561,7 +561,7 @@ We covered sourcing out data from the MQTT Broker and from a Historian. AWS Site
 
 In this implementation we covered using AWS managed buckets, you can also use your own buckets to store Channel, DataStore and DataSet data. A customer managed bucket is especially useful as the destination of a Dataset for inclusion with other data in a DataLake. You have the option to send Dataset output to an S3 bucket, AWS IoT Events, QuickSight, or a Jupyter Notebook.
 
-The datasets we created were based on SQL. More complex Analyses can be created with an automated workflow using a Docker Container and this approach allows for containerizing a Jupyter Notebook. See the [User Guide](https://docs.aws.amazon.com/iotanalytics/latest/userguide/automate.html) for details on how this works. If you take this approach you can even embed visualizations from your container dataset in the IoT Analytics console. 
+The datasets we created were based on SQL. More complex Analyses can be created with an automated workflow using a Docker Container and this approach allows for containerizing a Jupyter Notebook. See the [User Guide](https://aws.amazon.com/blogs/iot/unlocking-scalable-iot-analytics-on-aws/) for details on how this works. If you take this approach you can even embed visualizations from your container dataset in the IoT Analytics console. 
 
 ### Cleanup
 
