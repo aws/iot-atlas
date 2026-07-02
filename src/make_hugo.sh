@@ -76,6 +76,7 @@ function uri_path_validate {
     #      - Exclude npmjs.com (returns 403 to crawlers)
     #      - Exclude plantuml.com (client-side rendered, not real links)
     #      - Exclude wikipedia.org and docs.aws.amazon.com (return 403 to bot user agents)
+    #      - Exclude gohugo.io (intermittent timeouts in CI)
     echo "********** Running link checks on language: $1"
     if ! docker run --rm --net="host" raviqqe/muffet \
             --exclude="https://github.com/aws/" \
@@ -85,6 +86,7 @@ function uri_path_validate {
             --exclude="https://docs.aws.amazon.com/" \
             --exclude="https://.*\.wikipedia.org/" \
             --exclude="https://.*\.github.io/" \
+            --exclude="https://gohugo.io/" \
             --buffer-size="8192"  \
             --header="User-Agent: IotAtlasBot/1.0 (+http://iotatlas.net/en/bot/)" \
             --max-connections=512 --max-connections-per-host=2 --rate-limit=16 \
